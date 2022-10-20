@@ -1,12 +1,162 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="shortcut icon" href="imagenes/balance-1172786.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Controlador de gastos</title>
 </head>
-<body>
+
+<body class="leading-normal">
+    <header>
+        <nav class="lg:px-40 lg:h-24 h-20 border-b-2 border-[#f8b6ce] flex justify-between items-center">
+            <a href="" class="logo font-['Noto_Sans'] font-semibold flex px-2">
+                <i class="text-[#D3375C] text-4xl mr-2 fa-solid fa-dollar-sign"></i>
+                <h1 class="text-4xl text-center flex">Ahorr<span class="text-[#D3375C]">ADA</span>s</h1>
+            </a>
+            <div
+                class="lg:hidden flex  items-center h-20 hover:bg-[#D3375C] cursor-pointer px-4 navbarBurguer">
+                <i class="md:text-2xl text-lg fa-solid fa-bars"></i>
+            </div>
+            <div
+                class="lg:hidden xmark hidden flex items-center h-20 hover:bg-[#D3375C] cursor-pointer px-4">
+                <i class="md:text-2xl text-xl fa-solid fa-xmark"></i>
+            </div>
+            <ul class="lg:flex hidden justify-end items-center">
+                <li class="linkNavbar_balance">
+                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                        <i class="mr-1 fa-solid fa-chart-line"></i>
+                        Balance
+                        <span
+                            class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
+                    </a>
+                </li>
+                <li class="ml-5 linkNavbar_categories">
+                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                        <i class="mr-1 fa-solid fa-tag"></i>
+                        Categorías
+                        <span
+                            class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
+                    </a>
+                </li>
+                <li class="ml-5 linkNavbar_reports">
+                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                        <i class="mr-1 fa-solid fa-chart-pie"></i>
+                        Reportes
+                        <span
+                            class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="lg:hidden navbarMenu hidden">
+            <ul class="flex flex-col bg-gray-200">
+                <li class="linkNavbar_balance px-4 py-2">
+                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                        <i class="mr-1 fa-solid fa-chart-line"></i>
+                        Balance
+                        <span
+                            class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
+                    </a>
+                </li>
+                <li class="linkNavbar_categories px-4 py-2">
+                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                        <i class="mr-1 fa-solid fa-tag"></i>
+                        Categorías
+                        <span
+                            class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
+                    </a>
+                </li>
+                <li class="linkNavbar_reports px-4 py-2">
+                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                        <i class="mr-1 fa-solid fa-chart-pie"></i>
+                        Reportes
+                        <span
+                            class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <!-- Sección Balance -->
+    <div class="mainContainer py-16 flex lg:flex-row flex-col justify-center lg:items-start items-center w-full">
+        <!--Balance y filtros -->
+        <!--Balance-->
+        <div class="lg:w-1/4 w-4/5">
+            <section class="mb-6 p-5 rounded border-t-4 border-[#D3375C] shadow-lg shadow-gray-400">
+                <h2 class="mb-4 text-3xl font-semibold">Balance</h2>
+                <ul class="text-xl">
+                    <li class="mb-4 flex justify-between">
+                        <p>Ganacias</p>
+                        <p class="text-green-500">+$0</p>
+                    </li>
+                    <li class="mb-4 flex justify-between">
+                        <p>Gastos</p>
+                        <p class="text-red-500">-$0</p>
+                    </li>
+                    <li class="text-2xl flex justify-between">
+                        <p>Total</p>
+                        <p class="font-semibold">$0</p>
+                    </li>
+                </ul>
+            </section>
+            <!--Filtros -->
+            <section class="p-5 rounded border-t-4 border-[#D3375C] shadow-xl shadow-gray-400">
+                <div class="mb-4 flex justify-between items-center">
+                    <h3 class="text-2xl font-semibold">Filtros</h3>
+                    <button class="btnHideFilters text-blue-800 hover:text-blue-500">Ocultar filtros</button>
+                </div>
+                <div class="filters flex flex-col">
+                    <label for="type" class="mb-1 font-semibold">Tipo</label>
+                    <select name="" id="type" class="mb-2 p-2 rounded border-2 border-stone-400">
+                        <option value="1">Todos</option>
+                        <option value="2">Gastos</option>
+                        <option value="3">Ganancias</option>
+                    </select>
+                    <label for="category" class="mb-1 font-semibold">Categoría</label>
+                    <select name="" id="category" class="mb-2 p-2 rounded border-2 border-stone-400">
+                        <option value="">Todas</option>
+                    </select>
+                    <label for="date" class="mb-1 font-semibold">Desde</label>
+                    <input type="date" name="date" class="mb-2 p-2 rounded border-2 border-stone-400">
+                    <label for="order-by" class="mb-2 font-semibold">Ordenar por</label>
+                    <select name="" id="order-by" class="mb-2 p-2 rounded border-2 border-stone-400">
+                        <option value="">Más reciente</option>
+                        <option value="">Menos reciente</option>
+                        <option value="">Mayor monto</option>
+                        <option value="">Menor monto</option>
+                        <option value="">A/Z</option>
+                        <option value="">Z/A</option>
+                    </select>
+                </div>
+            </section>
+        </div>
+        <!--Operaciones -->
+        <section class="lg:w-2/4 w-4/5 lg:ml-6 ml-0 lg:mt-0 mt-6 p-5 h-fit rounded border-r-8 border-b-8 border-t-2 border-l-2 border-[#D3375C] shadow-xl shadow-gray-400">
+            <div class="flex justify-between md:flex-row flex-col">
+                <h3 class="text-2xl font-semibold">Operaciones</h3>
+                <button class="btnOperation py-2 px-4 text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 md:mt-0 mt-4">+ Nueva operación</button>
+            </div>
+        
+            <div>
+                <div class="p-2 sm:p-10 flex flex-col items-center w-full">
+                    <img src="assets/main-illustration.svg" alt="" class="w-full sm:w-1/2">
+                    <p class="mb-2 text-lg sm:text-2xl font-semibold text-center">Oops! No se han encontrado resultados</p>
+                    <p class="lg:w-1/2 w-3/4 mt-2 text-center">Cambia los filtros o agrega operaciones para comenzar</p>
+                </div>
+            </div>
+        </section>
+    </div>
     <script src="js/script.js"></script>
 </body>
+
 </html>
