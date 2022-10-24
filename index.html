@@ -9,23 +9,154 @@
 </head>
 
 <body>
-    <div class="hidden categories lg:p-16 py-16 px-4 flex justify-center">
+    <!--Sección reportes-->
+    <div class="hidden reports lg:p-16 py-16 px-4 flex justify-center">
         <section
-            class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
-            <h2 class="lg:text-4xl text-3xl font-bold">Categorías</h2>
-            <div class="flex flex-col mt-8">
-                <label for="nameCategory" class="mb-1 font-bold">Nombre</label>
-                <div class="flex w-full">
-                    <input type="text" name="nameCategory" class="mb-2 p-2 rounded border-2 border-stone-400 w-4/5">
-                    <input
-                        class="px-6 ml-4 h-[44px] text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 cursor-pointer"
-                        type="submit" value="Agregar" />
-                </div>
-            </div>
-            <section class="mt-8">
-                
+            class="lg:max-w-5xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
+            <h2 class="lg:text-4xl text-3xl font-bold">Reportes</h2>
+            <section class="hidden py-5 flex flex-col items-center">
+                <img src="imagenes/reports-illustration.svg" alt="" class="max-w-sm">
+                <p class="text-center mb-2 lg:text-2xl text-xl font-semibold">Operaciones insuficientes</p>
+                <p class="text-center">Prueba agregando más operaciones</p>
             </section>
 
+            <section class="sm:p-5 p-2">
+                <section class="mb-7">
+                    <h3 class="mb-7 text-2xl font-semibold underline underline-offset-4 decoration-[#F2002c]">Resumen
+                    </h3>
+                    <ul class="text-slate-900">
+                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
+                            <div class="sm:w-1/3 mb-2 sm:mb-0">
+                                <p class="font-semibold">Categoría con mayor ganancia</p>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end">
+                                <span class="category">categoria</span>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end font-semibold">
+                                <span class="profit">ganancia</span>
+                            </div>
+                        </li>
+                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
+                            <div class="sm:w-1/3 mb-2 sm:mb-0">
+                                <p class="font-semibold">Categoría con mayor gasto</p>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end">
+                                <span class="category">categoria</span>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end font-semibold">
+                                <span class="most-category-spend">gasto</span>
+                            </div>
+                        </li>
+                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
+                            <div class="sm:w-1/3 mb-2 sm:mb-0">
+                                <p class="font-semibold">Categoria con mayor balance</p>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end">
+                                <span class="category">categoria</span>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end font-semibold">
+                                <span class="most-category-balance">balance</span>
+                            </div>
+                        </li>
+                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
+                            <div class="sm:w-1/3 mb-2 sm:mb-0">
+                                <p class="font-semibold">Mes con mayor ganancia</p>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end">
+                                <span class="category">fecha</span>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end font-semibold">
+                                <span class="most-month-profit">ganancia</span>
+                            </div>
+                        </li>
+                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
+                            <div class="sm:w-1/3 mb-2 sm:mb-0">
+                                <p class="font-semibold">Mes con mayor gasto</p>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end">
+                                <span class="category">fecha</span>
+                            </div>
+                            <div class="sm:w-1/3 sm:text-end font-semibold">
+                                <span class="most-month-spend">gasto</span>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="mb-7">
+                    <h3 class="mb-7 text-2xl font-semibold underline underline-offset-4 decoration-[#F2002c]">Totales
+                        por categorías</h3>
+                    <div class="overflow-auto">
+                        <table class="sm:w-full text-slate-800">
+                            <thead>
+                                <tr class="flex justify-between">
+                                    <th class="font-medium">Categoria</th>
+                                    <th class="ml-10 sm:ml-0 font-medium">Ganancias</th>
+                                    <th class="ml-10 sm:ml-0 font-medium">Gastos</th>
+                                    <th class="ml-10 sm:ml-0 font-medium">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="flex justify-between">
+                                    <th class="font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                </tr>
+                                <tr class="flex justify-between">
+                                    <th class="font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                </tr>
+                                <tr class="flex justify-between">
+                                    <th class="font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="mb-7 text-2xl font-semibold underline underline-offset-4 decoration-[#F2002c]">Totales
+                        por mes</h3>
+                    <div class="overflow-auto">
+                        <table class="sm:w-full text-slate-800">
+                            <thead>
+                                <tr class="flex justify-between">
+                                    <th class="font-medium">Mes</th>
+                                    <th class="ml-20 sm:ml-10 font-medium">Ganancias</th>
+                                    <th class="ml-10 sm:ml-0 font-medium">Gastos</th>
+                                    <th class="ml-10 sm:ml-0 font-medium">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="flex justify-between">
+                                    <th class="font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                </tr>
+                                <tr class="flex justify-between">
+                                    <th class="font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                </tr>
+                                <tr class="flex justify-between">
+                                    <th class="font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                    <th class="ml-10 font-medium">sldjalksd</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </section>
         </section>
     </div>
     <script src="js/script.js"></script>
