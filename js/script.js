@@ -2,6 +2,15 @@
 const $ = (selector) => document.querySelector(selector)
 const $$ = (selector) => document.querySelectorAll(selector)
 
+// Variables links navbar
+const $linkNavbar_balance = $$(".linkNavbar_balance")
+const $linkNavbar_categories = $$(".linkNavbar_categories")
+const $linkNavbar_reports = $$(".linkNavbar_reports")
+
+// Variables navbar
+const $navbarBurguer = $(".navbarBurguer")
+const $navbarMenu = $(".navbarMenu")
+const $xmark = $(".xmark")
 
 // Variables seccion categorias
 const $categories = $(".categories")
@@ -12,7 +21,17 @@ const $tableCategories = $(".tableCategories")
 const $addCategories = $(".addCategories")
 const $btnAddCategories = $(".btnAddCategories")
 
+// Variables seccion operaciones
+const $mainContainer = $(".mainContainer")
+const $filters = $(".filters")
+const $btnHideFilters = $(".btnHideFilters")
+const $btnOperation = $(".btnOperation")
+const $newOperation = $(".newOperation")
+const $cancelNewOperation = $(".cancelNewOperation")
+const newOperationArray = [$("#description"), $("#amount"), $("#type"), $("#category"), $("#date")]
 
+// Variables seccion reportes
+const $reports = $(".reports")
 
 // Id Random
 const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
