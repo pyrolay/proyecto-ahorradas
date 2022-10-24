@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="imagenes/balance-1172786.jpg" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
         integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -82,6 +81,7 @@
             </ul>
         </div>
     </header>
+
     <!-- Sección Balance -->
     <div class="mainContainer py-16 flex lg:flex-row flex-col justify-center lg:items-start items-center w-full">
         <!--Balance y filtros -->
@@ -151,6 +151,41 @@
             </div>
         </section>
     </div>
+
+    <!-- Sección Nueva operación -->
+    <div class="hidden newOperation lg:p-16 py-16 px-4 flex justify-center">
+        <section
+            class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
+            <h2 class="lg:text-4xl text-3xl font-bold">Nueva operación</h2>
+            <div class="flex flex-col mt-8">
+                <label for="description" class="mb-1 font-bold">Descripción</label>
+                <input type="text" name="description" id="description"
+                    class="mb-2 p-2 rounded border-2 border-stone-400">
+                <label for="amount" class="mb-1 font-bold">Monto</label>
+                <input type="number" name="amount" id="amount" value=0
+                    class="mb-2 p-2 rounded border-2 border-stone-400">
+                <label for="type" class="mb-1 font-bold">Tipo</label>
+                <select name="type" id="type" class="mb-2 p-2 rounded border-2 border-stone-400">
+                    <option selected="selected" value="1">Gasto</option>
+                    <option value="2">Ganancia</option>
+                </select>
+                <label for="category" class="mb-1 font-bold">Categoría</label>
+                <select name="category" id="category" class="mb-2 p-2 rounded border-2 border-stone-400">
+                </select>
+                <label for="date" class="mb-1 font-semibold">Fecha</label>
+                <input type="date" name="date" id="date" class="mb-2 p-2 rounded border-2 border-stone-400">
+                <div class="flex justify-end mt-4">
+                    <input
+                        class="cancelNewOperation px-6 h-[44px] text-white bg-gray-400 mr-2 rounded hover:bg-gray-800 transition duration-100 cursor-pointer"
+                        type="submit" value="Cancelar" />
+                    <input
+                        class="px-6 h-[44px] text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 cursor-pointer"
+                        type="submit" value="Agregar" />
+                </div>
+            </div>
+        </section>
+    </div>
+
     <!-- Sección Categorías -->
     <div class="hidden categories lg:p-16 py-16 px-4 flex justify-center">
         <section
@@ -171,6 +206,7 @@
 
         </section>
     </div>
+
     <!-- Sección Editar -->
     <div class="hidden editCategory lg:p-16 py-16 px-4 flex justify-center">
         <section class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
