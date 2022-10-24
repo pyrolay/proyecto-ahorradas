@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -152,6 +152,45 @@
                     <img src="assets/main-illustration.svg" alt="" class="w-full sm:w-1/2">
                     <p class="mb-2 text-lg sm:text-2xl font-semibold text-center">Oops! No se han encontrado resultados</p>
                     <p class="lg:w-1/2 w-3/4 mt-2 text-center">Cambia los filtros o agrega operaciones para comenzar</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- Sección Categorías -->
+    <div class="categories lg:p-16 py-16 px-4 flex justify-center">
+        <section
+            class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
+            <h2 class="lg:text-4xl text-3xl font-bold">Categorías</h2>
+            <div class="flex flex-col mt-8">
+                <label for="nameCategory" class="mb-1 font-bold">Nombre</label>
+                <div class="flex w-full">
+                    <input type="text" name="nameCategory" class="addCategories mb-2 p-2 rounded border-2 border-stone-400 w-4/5">
+                    <input
+                        class="btnAddCategories px-6 ml-4 h-[44px] text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 cursor-pointer"
+                        type="submit" value="Agregar" />
+                </div>
+            </div>
+            <section class="tableCategories mt-8">
+
+            </section>
+
+        </section>
+    </div>
+    <!-- Sección Editar -->
+    <div class="hidden editCategory lg:p-16 py-16 px-4 flex justify-center">
+        <section
+            class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
+            <h2 class="lg:text-4xl text-3xl font-bold">Editar categoría</h2>
+            <div class="flex flex-col mt-8">
+                <label for="nameCategory" class="mb-1 font-bold">Nombre</label>
+                <input type="text" name="nameCategory" class="mb-2 p-2 rounded border-2 border-stone-400">
+                <div class="flex justify-end mt-4">
+                    <input
+                        class="cancelEdit px-6 h-[44px] text-white bg-gray-400 mr-2 rounded hover:bg-gray-800 transition duration-100 cursor-pointer"
+                        type="submit" value="Cancelar" />
+                    <input
+                        class="px-6 h-[44px] text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 cursor-pointer"
+                        type="submit" value="Editar" />
                 </div>
             </div>
         </section>
