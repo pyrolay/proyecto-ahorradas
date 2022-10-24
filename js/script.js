@@ -124,12 +124,76 @@ const addCategory = () => {
         `
 }
 
-$btnAddCategories.addEventListener("click", (e) => {
+$btnAddCategories.addEventListener("click", () => {
     addCategory()
     categoryNew()
 })
 
-// Eventos de navegción interna de la página
+// Eventos de navegación interna de la página
+
+$navbarBurguer.addEventListener("click", () => {
+    $navbarMenu.classList.remove("hidden")
+    $xmark.classList.remove("hidden")
+    $navbarBurguer.classList.add("hidden")
+})
+
+$xmark.addEventListener("click", () => {
+    $navbarMenu.classList.add("hidden")
+    $xmark.classList.add("hidden")
+    $navbarBurguer.classList.remove("hidden")
+})
+
+for (const linkNavbar_balance of $linkNavbar_balance) {
+    linkNavbar_balance.addEventListener("click", () => {
+        $categories.classList.add("hidden")
+        $mainContainer.classList.remove("hidden")
+        $reports.classList.add("hidden")
+        $newOperation.classList.add("hidden")
+        $editCategory.classList.add("hidden")
+    })
+}
+
+for (const linkNavbar_categories of $linkNavbar_categories) {
+    linkNavbar_categories.addEventListener("click", () => {
+        $categories.classList.remove("hidden")
+        $mainContainer.classList.add("hidden")
+        $reports.classList.add("hidden")
+        $newOperation.classList.add("hidden")
+        $editCategory.classList.add("hidden")
+    })
+}
+
+for (const linkNavbar_reports of $linkNavbar_reports) {
+    linkNavbar_reports.addEventListener("click", () => {
+        $categories.classList.add("hidden")
+        $mainContainer.classList.add("hidden")
+        $reports.classList.remove("hidden")
+        $newOperation.classList.add("hidden")
+        $editCategory.classList.add("hidden")
+    })
+}
+
+$btnOperation.addEventListener("click", () => {
+    $mainContainer.classList.add("hidden")
+    $newOperation.classList.remove("hidden")
+})
+
+
+$cancelNewOperation.addEventListener("click", () => {
+    $newOperation.classList.add("hidden")
+    $mainContainer.classList.remove("hidden")
+
+})
+
+$btnHideFilters.addEventListener("click", () => {
+    if ($btnHideFilters.textContent === "Mostrar filtros") {
+        $filters.classList.remove("hidden")
+        $btnHideFilters.textContent = "Ocultar filtros"
+    } else {
+        $filters.classList.add("hidden")
+        $btnHideFilters.textContent = "Mostrar filtros"
+    }
+})
 
 for (const btnEdit of $btnEdit) {
     btnEdit.addEventListener("click", (e) => {
@@ -139,7 +203,7 @@ for (const btnEdit of $btnEdit) {
     })
 }
 
-$cancelEdit.addEventListener("click", (e) => {
+$cancelEdit.addEventListener("click", () => {
     $categories.classList.remove("hidden")
     $editCategory.classList.add("hidden")
 })
