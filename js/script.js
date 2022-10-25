@@ -33,7 +33,7 @@ const generateId = () => {
     } return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
-let idValue = generateId()
+
 
 // Funciones: Objeto de categorias
 
@@ -78,55 +78,67 @@ const generateCategories = (categories) => {
                     </div>
             </div>
         `
-    }) 
+    })
 
 }
 
 generateCategories(categories)
 
-if ((localStorage.getItem('datos'))) {
-    const categoriesDatosJSON = localStorage.getItem('datos')
-    const categoriesDatos = JSON.parse(categoriesDatosJSON)
-    if (categoriesDatos.datos === "") {
-        const datos = {categorias: "categories" }}
-        const categoriesDatosTwo = JSON.stringify(datos)
-        localStorage.setItem('datos', categoriesDatosTwo)
-}
+const data = { categories }
+
+if (!localStorage.getItem("datos")) {
+    localStorage.setItem("datos", JSON.stringify(data))
+} 
 
 const categoryNew = () => {
-    if ($addCategories.value !== "") {
-        const name = $addCategories.value
-        const id = generateId()
-        categories.push({ id, name })
-        return localStorage.setItem("datos", JSON.stringify(categories))
-    }
-}
-
-
-const addCategory = () => {
     if ($addCategories.value === "") {
         return alert(`Por favor ingrese el nombre de la categoría que desea agregar`)
     }
     else if ($addCategories.value.length > 20) {
         return alert(`Ingrese un nombre de categoría mas corto`)
     }
-    else ($addCategories.value !== "")
-    return $tableCategories.innerHTML += `
+    else {
+        const name = $addCategories.value
+        const id = generateId()
+        // pushear al array del localStorage
+        const categories = dataCategoriesLocalStorage()
+        categories.push({ id, name })
+        localStorage.setItem("datos", JSON.stringify({categories}))
+
+    }
+}
+
+
+
+const dataCategoriesLocalStorage = () => {return JSON.parse(localStorage.getItem("datos")).categories}
+
+
+
+const addCategory = () => {
+    $tableCategories.innerHTML = ""
+    for (const category of dataCategoriesLocalStorage()) {
+        const {id, name} = category
+            $tableCategories.innerHTML += `
             <div class="flex mt-8">
                     <div class="sm:w-4/5 w-3/5">
-                        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${$addCategories.value}</span>
+                        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${name}</span>
                     </div>
                     <div class="text-blue-800 ml-2">
-                        <a href="" class="btnEdit cursor-pointer hover:text-black text-xs">Editar</a>
-                        <a href="" class="ml-4 cursor-pointer hover:text-black text-xs">Eliminar</a>
+                        <a href="" class="btnEdit cursor-pointer hover:text-black text-xs" onlick=${id}>Editar</a>
+                        <a href="" class="ml-4 cursor-pointer hover:text-black text-xs" onlick=${id}>Eliminar</a>
                     </div>
             </div>
         `
-}
+    
+}}
+
+addCategory()
+
+console.log(dataCategoriesLocalStorage());
 
 $btnAddCategories.addEventListener("click", (e) => {
-    addCategory()
     categoryNew()
+    addCategory()
 })
 
 // Eventos de navegción interna de la página
