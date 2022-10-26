@@ -28,7 +28,8 @@ const $btnHideFilters = $(".btnHideFilters")
 const $btnOperation = $(".btnOperation")
 const $newOperation = $(".newOperation")
 const $cancelNewOperation = $(".cancelNewOperation")
-const newOperationArray = [$("#description"), $("#amount"), $("#type"), $("#category"), $("#date")]
+const $addNewOperation = $(".addNewOperation")
+const $date = $("#date")
 
 // Variables seccion reportes
 const $reports = $(".reports")
@@ -53,6 +54,44 @@ const generateId = () => {
 }
 
 let idValue = generateId()
+
+// Funciones: Objeto de nueva operación
+
+const operations = []
+
+const getValuesOfNewOperations = () => {
+    operations.push(
+        { id: generateId(),
+        descripcion: $("#description").value,
+        monto: $("#amount").value,
+        tipo: expenseOrProfit(),
+        categoria: $("#selectCategory").value,
+        fecha: formatDate()
+    })
+}
+
+const expenseOrProfit = () => {
+    if ($("#type").value === "1") {
+        return "gasto"
+    } else return "ganancia"
+}
+
+const date = () => {
+    const date = new Date()
+    $date.valueAsDate = date
+    return date
+}
+
+const formatDate = () => {
+    const date = $date.value
+    const newDate = date.split("-").reverse().join("/")
+    return newDate
+}
+
+$addNewOperation.addEventListener("click", (e) => {
+    e.preventDefault()
+    getValuesOfNewOperations()
+})
 
 // Funciones: Objeto de categorias
 
@@ -103,7 +142,7 @@ const generateCategories = (categories) => {
 
 generateCategories(categories)
 
-if ((localStorage.getItem('datos'))) {
+/* if ((localStorage.getItem('datos'))) {
     const categoriesDatosJSON = localStorage.getItem('datos')
     const categoriesDatos = JSON.parse(categoriesDatosJSON)
     if (categoriesDatos.datos === "") {
@@ -146,7 +185,7 @@ const addCategory = () => {
 $btnAddCategories.addEventListener("click", () => {
     addCategory()
     categoryNew()
-})
+}) */
 
 // Eventos de navegación interna de la página
 
@@ -195,13 +234,13 @@ for (const linkNavbar_reports of $linkNavbar_reports) {
 $btnOperation.addEventListener("click", () => {
     $mainContainer.classList.add("hidden")
     $newOperation.classList.remove("hidden")
+    date()
 })
 
 
 $cancelNewOperation.addEventListener("click", () => {
     $newOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
-
 })
 
 $btnHideFilters.addEventListener("click", () => {
