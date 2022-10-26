@@ -59,9 +59,9 @@ let idValue = generateId()
 
 const operations = []
 
-const getValuesOfNewOperations = () => {
+const saveNewOperation = () => {
     operations.push(
-        { id: generateId(),
+        { id: idValue,
         descripcion: $("#description").value,
         monto: $("#amount").value,
         tipo: expenseOrProfit(),
@@ -88,9 +88,14 @@ const formatDate = () => {
     return newDate
 }
 
+const addNewOperation = () => {
+    
+}
+
 $addNewOperation.addEventListener("click", (e) => {
-    e.preventDefault()
     getValuesOfNewOperations()
+    $newOperation.classList.add("hidden")
+    $mainContainer.classList.remove("hidden")
 })
 
 // Funciones: Objeto de categorias
