@@ -15,6 +15,7 @@ const $xmark = $(".xmark")
 // Variables seccion categorias
 const $categories = $(".categories")
 const $btnEdit = $$(".btnEdit")
+const $btnRemove = $(".btnRemove")
 const $editCategory = $(".editCategory")
 const $cancelEdit = $(".cancelEdit")
 const $tableCategories = $(".tableCategories")
