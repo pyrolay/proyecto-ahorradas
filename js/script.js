@@ -43,50 +43,70 @@ const generateId = () => {
 
 const categories = [
     {
-        id: 1,
+        id: generateId(),
         name: "Comida"
     },
     {
-        id: 2,
+        id: generateId(),
         name: "Servicios"
     },
     {
-        id: 3,
+        id: generateId(),
         name: "Salidas"
     },
     {
-        id: 4,
+        id: generateId(),
         name: "Educación"
     },
     {
-        id: 5,
+        id: generateId(),
         name: "Transporte"
     },
     {
-        id: 6,
+        id: generateId(),
         name: "Trabajo"
     }
 ]
 
 
-const generateCategories = (categories) => {
-    categories.map(({ id, name }) => {
-        $tableCategories.innerHTML += `
-            <div class="flex mt-8">
-                    <div class="sm:w-4/5 w-3/5">
-                        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${name}</span>
-                    </div>
-                    <div class="text-blue-800 ml-2">
-                        <button class="btnEdit cursor-pointer hover:text-black text-xs" onclick="categoryEdit(${id})">Editar</button>
-                        <button class="btnRemove ml-4 cursor-pointer hover:text-black text-xs" onclick="removeCategory(${id})">Eliminar</button>
-                    </div>
-            </div>
-        `
-    })
 
+const generateCategories = (categories) => {
+    for (const { id, name } of categories) {
+        const div = document.createElement("div")
+        div.classList.add("flex")
+        div.classList.add("mt-8")
+        div.innerHTML = `
+        <div class="sm:w-4/5 w-3/5">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${name}</span>
+        </div>
+        <div class="text-blue-800 ml-2">
+            <button class="btnEdit cursor-pointer hover:text-black text-xs" data-id="${id}">Editar</button>
+            <button class="btnRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+        </div>
+        `
+        $tableCategories.append(div)
+    }
+
+    const btnEdit = $$(".btnEdit")
+    const btnRemove = $$(".btnRemove")
+
+    for (const btn of btnEdit) {
+        const categoryId = btn.getAttribute("data-id")
+        btn.addEventListener("click", () => categoryEdit(categoryId))
+    }
+    for (const btn of btnRemove) {
+        const categoryId = btn.getAttribute("data-id")
+        btn.addEventListener("click", () => {
+            removeCategory(categoryId)
+            removeCategoryLocal(categoryId)
+        })
+
+    }
 }
 
 generateCategories(categories)
+
+
 
 const data = { categories }
 
@@ -104,7 +124,6 @@ const categoryNew = () => {
     else {
         const name = $addCategories.value
         const id = generateId()
-        // pushear al array del localStorage
         const categories = dataCategoriesLocalStorage()
         categories.push({ id, name })
         localStorage.setItem("datos", JSON.stringify({ categories }))
@@ -121,24 +140,11 @@ const dataCategoriesLocalStorage = () => { return JSON.parse(localStorage.getIte
 
 const addCategory = () => {
     $tableCategories.innerHTML = ""
-    for (const category of dataCategoriesLocalStorage()) {
-        const { id, name } = category
-        $tableCategories.innerHTML += `
-            <div class="flex mt-8">
-                    <div class="sm:w-4/5 w-3/5">
-                        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${name}</span>
-                    </div>
-                    <div class="text-blue-800 ml-2">
-                        <button class="btnEdit cursor-pointer hover:text-black text-xs" onclick="categoryEdit(${id})">Editar</button>
-                        <button class="btnRemove ml-4 cursor-pointer hover:text-black text-xs" onclick="removeCategory(${id})">Eliminar</button>
-                    </div>
-            </div>
-        `
-    }
+    generateCategories(dataCategoriesLocalStorage())
 }
 
-addCategory()
 
+addCategory()
 
 
 $btnAddCategories.addEventListener("click", (e) => {
@@ -148,24 +154,29 @@ $btnAddCategories.addEventListener("click", (e) => {
 
 // Eventos editar y eliminar
 
-const categoriesLocal = dataCategoriesLocalStorage()
-
-
 const findCategory = (id) => {
-    return categoriesLocal.find(category => category.id == parseInt(id))
+    return dataCategoriesLocalStorage().find(category => category.id == id)
 }
 
 const editCategoriesLocal = (id) => {
     const chosenCategory = findCategory(id)
-    for (const category of categoriesLocal) {
+    const categories = dataCategoriesLocalStorage()
+    for (const category of categories) {
         if (chosenCategory.id === category.id) {
             category.name = $inputEditCategory.value
-            
-            return categoriesLocal
-        } 
+            localStorage.setItem("datos", JSON.stringify({ categories }))
 
-    } localStorage.setItem("datos", JSON.stringify({ categoriesLocal }))
+        }
+
+    } localStorage.setItem("datos", JSON.stringify({ categories }))
 }
+
+
+const removeCategoryLocal = (id) => {
+    const categories = filterCategory(id)
+    localStorage.setItem("datos", JSON.stringify({ categories }))
+}
+
 
 const cleanCategories = () => $tableCategories.innerHTML = ""
 
@@ -183,7 +194,7 @@ const categoryEdit = (id) => {
 $cancelEditBtn.addEventListener("click", () => {
     $editCategory.classList.add("hidden")
     $categoriesContainer.classList.remove("hidden")
-    generateCategories(categoriesLocal)
+    generateCategories(dataCategoriesLocalStorage())
 
 })
 
@@ -197,8 +208,8 @@ const saveCategory = (id) => {
 
 
 const editCategory = (id) => {
-    return categoriesLocal.map(category => {
-        if (category.id === parseInt(id)) {
+    return dataCategoriesLocalStorage().map(category => {
+        if (category.id === id) {
             return saveCategory(id)
         }
         return category
@@ -210,15 +221,15 @@ $editCategoryBtn.addEventListener("click", () => {
     $editCategory.classList.add("hidden")
     $categoriesContainer.classList.remove("hidden")
     generateCategories(editCategory(categoryId))
+    editCategoriesLocal(categoryId)
 })
 
-const removeCategory2 = (id) => {
-    return categoriesLocal.filter(category => category.id !== parseInt(id))
+const filterCategory = (id) => {
+    return dataCategoriesLocalStorage().filter(category => category.id !== id)
 
 }
 
 const removeCategory = (id) => {
     cleanCategories()
-    generateCategories(removeCategory2(id))
+    generateCategories(filterCategory(id))
 }
-
