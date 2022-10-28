@@ -34,11 +34,14 @@ const $btnOperation = $(".btnOperation")
 const $newOperation = $(".newOperation")
 const $cancelNewOperation = $(".cancelNewOperation")
 const newOperationArray = [$("#description"), $("#amount"), $("#type"), $("#category"), $("#date")]
-// despues borrar esta constante
 const $categoryNewOperation = $(".categoryNewOperation")
 
 // Variables seccion reportes
 const $reports = $(".reports")
+
+//Variables sección filtros
+
+const $categoryFilter = $(".categoryFilter")
 
 // Id Random
 const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
@@ -114,13 +117,17 @@ const generateCategories = (categories) => {
 
     for (const btn of btnEdit) {
         const categoryId = btn.getAttribute("data-id")
-        btn.addEventListener("click", () => categoryEdit(categoryId))
+        btn.addEventListener("click", () => {
+            categoryEdit(categoryId)
+            selectCategoriesFilter()
+        })
     }
     for (const btn of btnRemove) {
         const categoryId = btn.getAttribute("data-id")
         btn.addEventListener("click", () => {
             removeCategory(categoryId)
             removeCategoryLocal(categoryId)
+            selectCategoriesFilter()
         })
 
     }
@@ -134,7 +141,7 @@ const data = { categories }
 
 if (!localStorage.getItem("datos")) {
     localStorage.setItem("datos", JSON.stringify(data))
-} 
+}
 
 const categoryNew = () => {
     if ($addCategories.value === "") {
@@ -172,6 +179,8 @@ addCategory()
 $btnAddCategories.addEventListener("click", (e) => {
     categoryNew()
     addCategory()
+    selectCategoriesFilter()
+    e.preventDefault()
     $formAddCategories.reset()
 })
 
@@ -222,7 +231,7 @@ for (const linkNavbar_reports of $linkNavbar_reports) {
 $btnOperation.addEventListener("click", () => {
     $mainContainer.classList.add("hidden")
     $newOperation.classList.remove("hidden")
-    $categoryNewOperation.innerHTML =""
+    $categoryNewOperation.innerHTML = ""
     selectCategoriesOperation()
 })
 
@@ -327,12 +336,25 @@ const removeCategory = (id) => {
 // Agregar categorias del LocalStorage al select de "Nueva operación"
 
 const selectCategoriesOperation = () => {
-    for(const {name} of dataCategoriesLocalStorage()){
+    for (const { name } of dataCategoriesLocalStorage()) {
         $categoryNewOperation.innerHTML +=
-        `
+            `
             <option value="${name}">${name}</option>
         `
-    } 
+    }
 }
+
+const selectCategoriesFilter = () => {
+    for (const { name } of dataCategoriesLocalStorage()) {
+        $categoryFilter.innerHTML +=
+            `
+            <option value="${name}">${name}</option>
+        `
+    }
+}
+
+
+
+
 
 
