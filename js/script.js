@@ -27,9 +27,11 @@ const $filters = $(".filters")
 const $btnHideFilters = $(".btnHideFilters")
 const $btnOperation = $(".btnOperation")
 const $newOperation = $(".newOperation")
-const $cancelNewOperation = $(".cancelNewOperation")
-const $addNewOperation = $(".addNewOperation")
-const $date = $("#date")
+const $cancelNewOperationBtn = $(".cancelNewOperationBtn")
+const $addNewOperationBtn = $(".addNewOperationBtn")
+const $editOperation = $(".editOperation")
+const $editOperationBtn = $(".editOperationBtn")
+const $cancelEditOperationBtn = $(".cancelEditOperationBtn")
 
 // Variables seccion reportes
 const $reports = $(".reports")
@@ -74,12 +76,11 @@ const saveNewOperation = () => {
 
 const date = () => {
     const date = new Date()
-    $date.valueAsDate = date
-    return date
+    $("#date").valueAsDate = date
 }
 
 const formatDate = () => {
-    const date = $date.value
+    const date = $("#date").value
     const newDate = date.split("-").reverse().join("/")
     return newDate
 }
@@ -90,41 +91,61 @@ const amountColorChange = (amount, type) => {
     } else return `<p class="text-green-500">+$${amount}</p>`
 }
 
-const addNewOperation = () => {
+const addNewOperation = (data) => {
     $(".tableBody").innerHTML = ""
-    const localOperations = dataOperationsLocalStorage()
+    const localOperations = data
     localOperations.map(({ id, description, amount, type, category, date }) => {
-        $(".tableBody").innerHTML += `
-        <tr class="w-full mt-3 flex max-h-32">
-            <th class="w-36 mr-5 overflow-x-hidden">
+        const tr = document.createElement("tr")
+        tr.classList.add("w-full")
+        tr.classList.add("mt-5")
+        tr.classList.add("flex")
+        tr.classList.add("max-h-32")
+        tr.innerHTML += `
+            <th class="w-36 mr-5 overflow-y-auto overflow-x-hidden">
                 <div class="font-medium text-start">
-                    <p class="overflow-y-auto">${description}</p>
+                    <p>${description}</p>
                 </div>
             </th>
-            <th class="w-20 ml-10">
+            <th class="w-24 ml-10">
                 <div class="text-start">
                     <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${category}</span>
                 </div>
             </th>
-            <th class="w-20 ml-10">
+            <th class="w-24 ml-10">
                 <div class="font-light text-start">
                     <p>${date}</p>
                 </div>
             </th>
             <th class="w-24 ml-10">
                 <div class="font-medium text-start">
-                    ${amountColorChange(amount, type)}
+                    <p>${amountColorChange(amount, type)}</p>
                 </div>
             </th>
             <th class="w-24 ml-10">
                 <div class="flex text-blue-800 py-1 text-start">
-                    <a href="" class="btnEdit cursor-pointer hover:text-black text-xs flex" onclick="${id}">Editar</a>
-                    <a href="" class="ml-4 cursor-pointer hover:text-black text-xs" onclick="${id}">Eliminar</a>
+                    <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
+                    <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
                 </div>
             </th>
-        </tr>
         `
+        $(".tableBody").append(tr)
     })
+    
+    const btnEdit = $$(".btnOperationEdit")
+    const btnRemove = $$(".btnOperationRemove")
+    
+    for (const btn of btnEdit) {
+        const operationId = btn.getAttribute("data-id")
+        btn.addEventListener("click", () => editOperation(operationId))
+    }
+    for (const btn of btnRemove) {
+        const operationId = btn.getAttribute("data-id")
+        btn.addEventListener("click", () => {
+            addNewOperation(filterOperation(operationId))
+            removeOperationLocal(operationId)
+            operationsEmptyOrNot(dataOperationsLocalStorage())
+        })
+    }
 }
 
 const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).operations }
@@ -141,22 +162,88 @@ const operationsEmptyOrNot = (operation) => {
 operationsEmptyOrNot(operations)
 
 if (localStorage.getItem("datos")) {
-    operationsEmptyOrNot(!operations)
-    addNewOperation()
+    operationsEmptyOrNot(operations)
+    addNewOperation(dataOperationsLocalStorage())
 }
 
-$addNewOperation.addEventListener("click", (e) => {
+
+const findOperation = (id) => {
+    return dataOperationsLocalStorage().find(operation => operation.id == id)
+}
+
+const editOperation = (id) => {
+    $editOperation.classList.remove("hidden")
+    $mainContainer.classList.add("hidden")
+    const chosenOperation = findOperation(id)
+    $("#editDescription").value = chosenOperation.description
+    $("#editAmount").value = chosenOperation.amount
+    $("#editSelectType").value = chosenOperation.type
+    $("#editSelectCategory").value = chosenOperation.category
+    const dateSplit = chosenOperation.date.split("/")
+    const dateReverse = dateSplit.reverse()
+    const dateJoin = dateReverse.join("/")
+    const newDate = new Date(dateJoin)
+    $("#editDate").valueAsDate = newDate
+
+    $editOperationBtn.setAttribute("data-id", id)
+    $cancelEditOperationBtn.setAttribute("data-id", id)
+}
+
+const editOperationLocal = (id) => {
+    const chosenOperation = findOperation(id)
+    const operations = dataOperationsLocalStorage()
+    for (const operation of operations) {
+        if (chosenOperation.id === operation.id) {
+            operation.id = id
+            operation.description = $("#editDescription").value
+            operation.amount = $("#editAmount").value
+            operation.type = $("#editSelectType").value
+            operation.category = $("#editSelectCategory").value
+            operation.date = $("#editDate").value
+            localStorage.setItem("datos", JSON.stringify({ operations }))
+        }
+    }
+    localStorage.setItem("datos", JSON.stringify({ operations }))
+}
+
+const filterOperation = (id) => {
+    return dataOperationsLocalStorage().filter(operation => operation.id !== id)
+}
+
+const removeOperationLocal = (id) => {
+    const operations = filterOperation(id)
+    localStorage.setItem("datos", JSON.stringify({ operations }))
+}
+
+
+$addNewOperationBtn.addEventListener("click", (e) => {
     e.preventDefault()
     saveNewOperation()
-    addNewOperation()
+    addNewOperation(dataOperationsLocalStorage())
     operationsEmptyOrNot(operations)
     $newOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
 
-$mainContainer.addEventListener("change", () => {
-    operationsEmptyOrNot(operations)
+$cancelEditOperationBtn.addEventListener("click", () => {
+    $editOperation.classList.add("hidden")
+    $mainContainer.classList.remove("hidden")
 })
+
+$editOperationBtn.addEventListener("click", () => {
+    const operationId = $editOperationBtn.getAttribute("data-id")
+    editOperationLocal(operationId)
+    addNewOperation(dataOperationsLocalStorage())
+    $editOperation.classList.add("hidden")
+    $mainContainer.classList.remove("hidden")
+})
+
+$mainContainer.addEventListener("change", () => {
+    const operationId = $$(".btnOperationRemove").getAttribute("data-id")
+    addNewOperation(filterOperation(operationId))
+})
+
+
 
 // Funciones: Objeto de categorias
 
@@ -303,7 +390,7 @@ $btnOperation.addEventListener("click", () => {
 })
 
 
-$cancelNewOperation.addEventListener("click", () => {
+$cancelNewOperationBtn.addEventListener("click", () => {
     $newOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
