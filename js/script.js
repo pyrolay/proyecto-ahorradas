@@ -53,27 +53,23 @@ const generateId = () => {
     } return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
-let idValue = generateId()
-
 // Funciones: Objeto de nueva operación
 
 const operations = []
 
 const saveNewOperation = () => {
-    operations.push(
-        { id: idValue,
-        descripcion: $("#description").value,
-        monto: $("#amount").value,
-        tipo: expenseOrProfit(),
-        categoria: $("#selectCategory").value,
-        fecha: formatDate()
-    })
-}
-
-const expenseOrProfit = () => {
-    if ($("#type").value === "1") {
-        return "gasto"
-    } else return "ganancia"
+    const id= generateId()
+    const description = $("#description").value
+    const amount = $("#amount").value
+    const type = $("#selectType").value
+    const category = $("#selectCategory").value
+    const date = formatDate()
+    operations.push({ id, description, amount, type, category, date })
+    if (localStorage.getItem("datos")) {
+        const operations = dataOperationsLocalStorage()
+        operations.push({ id, description, amount, type, category, date })
+        localStorage.setItem("datos", JSON.stringify({ operations }))
+    } else localStorage.setItem("datos", JSON.stringify({ operations }))
 }
 
 const date = () => {
@@ -88,14 +84,78 @@ const formatDate = () => {
     return newDate
 }
 
+const amountColorChange = (amount, type) => {
+    if (type === "gasto") {
+        return `<p class="text-red-500">-$${amount}</p>`
+    } else return `<p class="text-green-500">+$${amount}</p>`
+}
+
 const addNewOperation = () => {
-    
+    $(".tableBody").innerHTML = ""
+    const localOperations = dataOperationsLocalStorage()
+    localOperations.map(({ id, description, amount, type, category, date }) => {
+        $(".tableBody").innerHTML += `
+        <tr class="w-full mt-3 flex max-h-32">
+            <th class="w-36 mr-5 overflow-x-hidden">
+                <div class="font-medium text-start">
+                    <p class="overflow-y-auto">${description}</p>
+                </div>
+            </th>
+            <th class="w-20 ml-10">
+                <div class="text-start">
+                    <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${category}</span>
+                </div>
+            </th>
+            <th class="w-20 ml-10">
+                <div class="font-light text-start">
+                    <p>${date}</p>
+                </div>
+            </th>
+            <th class="w-24 ml-10">
+                <div class="font-medium text-start">
+                    ${amountColorChange(amount, type)}
+                </div>
+            </th>
+            <th class="w-24 ml-10">
+                <div class="flex text-blue-800 py-1 text-start">
+                    <a href="" class="btnEdit cursor-pointer hover:text-black text-xs flex" onclick="${id}">Editar</a>
+                    <a href="" class="ml-4 cursor-pointer hover:text-black text-xs" onclick="${id}">Eliminar</a>
+                </div>
+            </th>
+        </tr>
+        `
+    })
+}
+
+const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).operations }
+
+const operationsEmptyOrNot = (operation) => {
+    if (operation.length !== 0) {
+        $(".operations-empty").classList.add("hidden")
+        $(".operations-table").classList.remove("hidden")
+    } else {
+        $(".operations-empty").classList.remove("hidden")
+        $(".operations-table").classList.add("hidden")
+    }
+}
+operationsEmptyOrNot(operations)
+
+if (localStorage.getItem("datos")) {
+    operationsEmptyOrNot(!operations)
+    addNewOperation()
 }
 
 $addNewOperation.addEventListener("click", (e) => {
-    getValuesOfNewOperations()
+    e.preventDefault()
+    saveNewOperation()
+    addNewOperation()
+    operationsEmptyOrNot(operations)
     $newOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
+})
+
+$mainContainer.addEventListener("change", () => {
+    operationsEmptyOrNot(operations)
 })
 
 // Funciones: Objeto de categorias
