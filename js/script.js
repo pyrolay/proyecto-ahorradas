@@ -117,17 +117,14 @@ const generateCategories = (categories) => {
 
     for (const btn of btnEdit) {
         const categoryId = btn.getAttribute("data-id")
-        btn.addEventListener("click", () => {
-            categoryEdit(categoryId)
-            selectCategoriesFilter()
-        })
+        btn.addEventListener("click", () => categoryEdit(categoryId))
     }
+    
     for (const btn of btnRemove) {
         const categoryId = btn.getAttribute("data-id")
         btn.addEventListener("click", () => {
             removeCategory(categoryId)
             removeCategoryLocal(categoryId)
-            selectCategoriesFilter()
         })
 
     }
