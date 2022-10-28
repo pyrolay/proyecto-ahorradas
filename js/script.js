@@ -238,6 +238,11 @@ $btnHideFilters.addEventListener("click", () => {
 })
 
 // Eventos editar y eliminar
+
+const findCategory = (id) => {
+    return dataCategoriesLocalStorage().find(category => category.id == id)
+}
+
 const editCategoriesLocal = (id) => {
     const chosenCategory = findCategory(id)
     const categories = dataCategoriesLocalStorage()
