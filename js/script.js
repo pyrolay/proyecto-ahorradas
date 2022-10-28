@@ -24,6 +24,7 @@ const $addCategories = $(".addCategories")
 const $btnAddCategories = $(".btnAddCategories")
 const $inputEditCategory = $(".inputEditCategory")
 const $categoriesContainer = $(".categoriesContainer")
+const $formAddCategories = $(".formAddCategories")
 
 // Variables seccion operaciones
 const $mainContainer = $(".mainContainer")
@@ -169,6 +170,7 @@ addCategory()
 $btnAddCategories.addEventListener("click", (e) => {
     categoryNew()
     addCategory()
+    $formAddCategories.reset()
 })
 
 // Eventos de navegación interna de la página

@@ -251,17 +251,19 @@
     </div>
 
      <!-- Sección Categorías -->
-     <div class="categories lg:p-16 py-16 px-4 flex justify-center">
+     <div class="hidden categories lg:p-16 py-16 px-4 flex justify-center">
         <section
             class="categoriesContainer lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Categorías</h2>
             <div class="flex flex-col mt-8">
                 <label for="nameCategory" class="mb-1 font-bold">Nombre</label>
                 <div class="flex w-full">
+                    <form action="" class="formAddCategories flex w-full">
                     <input type="text" name="nameCategory" class="addCategories mb-2 p-2 rounded border-2 border-stone-400 w-4/5">
                     <input
                         class="btnAddCategories px-6 ml-4 h-[44px] text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 cursor-pointer"
                         type="submit" value="Agregar" />
+                    </form>
                 </div>
             </div>
             <section class="tableCategories mt-8">
