@@ -17,10 +17,13 @@ const $categories = $(".categories")
 const $btnEdit = $$(".btnEdit")
 const $btnRemove = $(".btnRemove")
 const $editCategory = $(".editCategory")
-const $cancelEdit = $(".cancelEdit")
+const $cancelEditBtn = $(".cancelEditBtn")
+const $editCategoryBtn = $(".editCategoryBtn")
 const $tableCategories = $(".tableCategories")
 const $addCategories = $(".addCategories")
 const $btnAddCategories = $(".btnAddCategories")
+const $inputEditCategory = $(".inputEditCategory")
+const $categoriesContainer = $(".categoriesContainer")
 
 // Variables seccion operaciones
 const $mainContainer = $(".mainContainer")
@@ -53,7 +56,7 @@ const generateId = () => {
     } return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
-let idValue = generateId()
+
 
 // Funciones: Objeto de categorias
 
@@ -85,68 +88,87 @@ const categories = [
 ]
 
 
-const generateCategories = (categories) => {
-    categories.map(({ id, name }) => {
-        $tableCategories.innerHTML += `
-            <div class="flex mt-8">
-                    <div class="sm:w-4/5 w-3/5">
-                        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${name}</span>
-                    </div>
-                    <div class="text-blue-800 ml-2">
-                        <a href="" class="btnEdit cursor-pointer hover:text-black text-xs" onlick=${id}>Editar</a>
-                        <a href="" class="ml-4 cursor-pointer hover:text-black text-xs" online=${id}>Eliminar</a>
-                    </div>
-            </div>
-        `
-    }) 
 
+const generateCategories = (categories) => {
+    for (const { id, name } of categories) {
+        const div = document.createElement("div")
+        div.classList.add("flex")
+        div.classList.add("mt-8")
+        div.innerHTML = `
+        <div class="sm:w-4/5 w-3/5">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${name}</span>
+        </div>
+        <div class="text-blue-800 ml-2">
+            <button class="btnEdit cursor-pointer hover:text-black text-xs" data-id="${id}">Editar</button>
+            <button class="btnRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+        </div>
+        `
+        $tableCategories.append(div)
+    }
+
+    const btnEdit = $$(".btnEdit")
+    const btnRemove = $$(".btnRemove")
+
+    for (const btn of btnEdit) {
+        const categoryId = btn.getAttribute("data-id")
+        btn.addEventListener("click", () => categoryEdit(categoryId))
+    }
+    for (const btn of btnRemove) {
+        const categoryId = btn.getAttribute("data-id")
+        btn.addEventListener("click", () => {
+            removeCategory(categoryId)
+            removeCategoryLocal(categoryId)
+        })
+
+    }
 }
 
 generateCategories(categories)
 
-if ((localStorage.getItem('datos'))) {
-    const categoriesDatosJSON = localStorage.getItem('datos')
-    const categoriesDatos = JSON.parse(categoriesDatosJSON)
-    if (categoriesDatos.datos === "") {
-        const datos = {categorias: "categories" }}
-        const categoriesDatosTwo = JSON.stringify(datos)
-        localStorage.setItem('datos', categoriesDatosTwo)
-}
+
+
+const data = { categories }
+
+if (!localStorage.getItem("datos")) {
+    localStorage.setItem("datos", JSON.stringify(data))
+} 
 
 const categoryNew = () => {
-    if ($addCategories.value !== "") {
-        const name = $addCategories.value
-        const id = generateId()
-        categories.push({ id, name })
-        return localStorage.setItem("datos", JSON.stringify(categories))
-    }
-}
-
-
-const addCategory = () => {
     if ($addCategories.value === "") {
         return alert(`Por favor ingrese el nombre de la categoría que desea agregar`)
     }
     else if ($addCategories.value.length > 20) {
         return alert(`Ingrese un nombre de categoría mas corto`)
     }
-    else ($addCategories.value !== "")
-    return $tableCategories.innerHTML += `
-            <div class="flex mt-8">
-                    <div class="sm:w-4/5 w-3/5">
-                        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${$addCategories.value}</span>
-                    </div>
-                    <div class="text-blue-800 ml-2">
-                        <a href="" class="btnEdit cursor-pointer hover:text-black text-xs">Editar</a>
-                        <a href="" class="ml-4 cursor-pointer hover:text-black text-xs">Eliminar</a>
-                    </div>
-            </div>
-        `
+    else {
+        const name = $addCategories.value
+        const id = generateId()
+        const categories = dataCategoriesLocalStorage()
+        categories.push({ id, name })
+        localStorage.setItem("datos", JSON.stringify({ categories }))
+
+    }
 }
 
-$btnAddCategories.addEventListener("click", () => {
-    addCategory()
+
+
+const dataCategoriesLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).categories }
+
+
+
+
+const addCategory = () => {
+    $tableCategories.innerHTML = ""
+    generateCategories(dataCategoriesLocalStorage())
+}
+
+
+addCategory()
+
+
+$btnAddCategories.addEventListener("click", (e) => {
     categoryNew()
+    addCategory()
 })
 
 // Eventos de navegación interna de la página
@@ -215,15 +237,79 @@ $btnHideFilters.addEventListener("click", () => {
     }
 })
 
-for (const btnEdit of $btnEdit) {
-    btnEdit.addEventListener("click", (e) => {
-        e.preventDefault()
-        $categories.classList.add("hidden")
-        $editCategory.classList.remove("hidden")
+// Eventos editar y eliminar
+const editCategoriesLocal = (id) => {
+    const chosenCategory = findCategory(id)
+    const categories = dataCategoriesLocalStorage()
+    for (const category of categories) {
+        if (chosenCategory.id === category.id) {
+            category.name = $inputEditCategory.value
+            localStorage.setItem("datos", JSON.stringify({ categories }))
+
+        }
+
+    } localStorage.setItem("datos", JSON.stringify({ categories }))
+}
+
+
+const removeCategoryLocal = (id) => {
+    const categories = filterCategory(id)
+    localStorage.setItem("datos", JSON.stringify({ categories }))
+}
+
+
+const cleanCategories = () => $tableCategories.innerHTML = ""
+
+const categoryEdit = (id) => {
+    cleanCategories()
+    $categoriesContainer.classList.add("hidden")
+    $editCategory.classList.remove("hidden")
+    const chosenCategory = findCategory(id)
+    $inputEditCategory.value = chosenCategory.name
+    $editCategoryBtn.setAttribute("data-id", id)
+    $cancelEditBtn.setAttribute("data-id", id)
+
+}
+
+$cancelEditBtn.addEventListener("click", () => {
+    $editCategory.classList.add("hidden")
+    $categoriesContainer.classList.remove("hidden")
+    generateCategories(dataCategoriesLocalStorage())
+
+})
+
+const saveCategory = (id) => {
+    return {
+        id: id,
+        name: $inputEditCategory.value
+    }
+}
+
+
+
+const editCategory = (id) => {
+    return dataCategoriesLocalStorage().map(category => {
+        if (category.id === id) {
+            return saveCategory(id)
+        }
+        return category
     })
 }
 
-$cancelEdit.addEventListener("click", () => {
-    $categories.classList.remove("hidden")
+$editCategoryBtn.addEventListener("click", () => {
+    const categoryId = $editCategoryBtn.getAttribute("data-id")
     $editCategory.classList.add("hidden")
+    $categoriesContainer.classList.remove("hidden")
+    generateCategories(editCategory(categoryId))
+    editCategoriesLocal(categoryId)
 })
+
+const filterCategory = (id) => {
+    return dataCategoriesLocalStorage().filter(category => category.id !== id)
+
+}
+
+const removeCategory = (id) => {
+    cleanCategories()
+    generateCategories(filterCategory(id))
+}
