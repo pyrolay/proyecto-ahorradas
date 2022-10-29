@@ -15,6 +15,7 @@ const $addCategories = $(".addCategories")
 const $btnAddCategories = $(".btnAddCategories")
 const $inputEditCategory = $(".inputEditCategory")
 const $categoriesContainer = $(".categoriesContainer")
+const $formAddCategories = $(".formAddCategories")
 
 
 
@@ -101,7 +102,6 @@ const generateCategories = (categories) => {
             removeCategory(categoryId)
             removeCategoryLocal(categoryId)
         })
-
     }
 }
 
@@ -113,7 +113,8 @@ const data = { categories }
 
 if (!localStorage.getItem("datos")) {
     localStorage.setItem("datos", JSON.stringify(data))
-}
+} 
+
 
 const categoryNew = () => {
     if ($addCategories.value === "") {
@@ -144,14 +145,21 @@ const addCategory = () => {
     generateCategories(dataCategoriesLocalStorage())
 }
 
-
 addCategory()
 
 
 $btnAddCategories.addEventListener("click", (e) => {
     categoryNew()
     addCategory()
+    $formAddCategories.reset()
 })
+
+
+$btnAddCategories.addEventListener("click", (e) => {
+    categoryNew()
+    addCategory()
+})
+
 
 // Eventos editar y eliminar
 
@@ -205,8 +213,6 @@ const saveCategory = (id) => {
         name: $inputEditCategory.value
     }
 }
-
-
 
 const editCategory = (id) => {
     return dataCategoriesLocalStorage().map(category => {
