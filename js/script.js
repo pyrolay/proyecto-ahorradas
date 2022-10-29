@@ -15,6 +15,7 @@ const $addCategories = $(".addCategories")
 const $btnAddCategories = $(".btnAddCategories")
 const $inputEditCategory = $(".inputEditCategory")
 const $categoriesContainer = $(".categoriesContainer")
+const $formAddCategories = $(".formAddCategories")
 
 
 
@@ -100,7 +101,6 @@ const generateCategories = (categories) => {
             removeCategory(categoryId)
             removeCategoryLocal(categoryId)
         })
-
     }
 }
 
@@ -112,7 +112,8 @@ const data = { categories }
 
 if (!localStorage.getItem("datos")) {
     localStorage.setItem("datos", JSON.stringify(data))
-}
+} 
+
 
 const categoryNew = () => {
     if ($addCategories.value === "") {
@@ -143,8 +144,14 @@ const addCategory = () => {
     generateCategories(dataCategoriesLocalStorage())
 }
 
-
 addCategory()
+
+
+$btnAddCategories.addEventListener("click", (e) => {
+    categoryNew()
+    addCategory()
+    $formAddCategories.reset()
+})
 
 
 $btnAddCategories.addEventListener("click", (e) => {
@@ -206,6 +213,58 @@ const saveCategory = (id) => {
 }
 
 
+// Eventos editar y eliminar
+
+const findCategory = (id) => {
+    return dataCategoriesLocalStorage().find(category => category.id == id)
+}
+
+const editCategoriesLocal = (id) => {
+    const chosenCategory = findCategory(id)
+    const categories = dataCategoriesLocalStorage()
+    for (const category of categories) {
+        if (chosenCategory.id === category.id) {
+            category.name = $inputEditCategory.value
+            localStorage.setItem("datos", JSON.stringify({ categories }))
+
+        }
+
+    } localStorage.setItem("datos", JSON.stringify({ categories }))
+}
+
+
+const removeCategoryLocal = (id) => {
+    const categories = filterCategory(id)
+    localStorage.setItem("datos", JSON.stringify({ categories }))
+}
+
+
+const cleanCategories = () => $tableCategories.innerHTML = ""
+
+const categoryEdit = (id) => {
+    cleanCategories()
+    $categoriesContainer.classList.add("hidden")
+    $editCategory.classList.remove("hidden")
+    const chosenCategory = findCategory(id)
+    $inputEditCategory.value = chosenCategory.name
+    $editCategoryBtn.setAttribute("data-id", id)
+    $cancelEditBtn.setAttribute("data-id", id)
+
+}
+
+$cancelEditBtn.addEventListener("click", () => {
+    $editCategory.classList.add("hidden")
+    $categoriesContainer.classList.remove("hidden")
+    generateCategories(dataCategoriesLocalStorage())
+
+})
+
+const saveCategory = (id) => {
+    return {
+        id: id,
+        name: $inputEditCategory.value
+    }
+}
 
 const editCategory = (id) => {
     return dataCategoriesLocalStorage().map(category => {
