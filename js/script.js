@@ -12,8 +12,12 @@ const $navbarBurguer = $(".navbarBurguer")
 const $navbarMenu = $(".navbarMenu")
 const $xmark = $(".xmark")
 
-// Variables seccion categorias
+// Variables secciones
+const $mainContainer = $(".mainContainer")
 const $categories = $(".categories")
+const $reports = $(".reports")
+
+// Variables seccion categorias
 const $btnEdit = $$(".btnEdit")
 const $editCategory = $(".editCategory")
 const $cancelEdit = $(".cancelEdit")
@@ -22,7 +26,6 @@ const $addCategories = $(".addCategories")
 const $btnAddCategories = $(".btnAddCategories")
 
 // Variables seccion operaciones
-const $mainContainer = $(".mainContainer")
 const $filters = $(".filters")
 const $btnHideFilters = $(".btnHideFilters")
 const $btnOperation = $(".btnOperation")
@@ -33,8 +36,6 @@ const $editOperation = $(".editOperation")
 const $editOperationBtn = $(".editOperationBtn")
 const $cancelEditOperationBtn = $(".cancelEditOperationBtn")
 
-// Variables seccion reportes
-const $reports = $(".reports")
 
 // Id Random
 const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
@@ -246,79 +247,3 @@ $mainContainer.addEventListener("change", () => {
 
 // Eventos de navegación interna de la página
 
-$navbarBurguer.addEventListener("click", () => {
-    $navbarMenu.classList.remove("hidden")
-    $xmark.classList.remove("hidden")
-    $navbarBurguer.classList.add("hidden")
-})
-
-$xmark.addEventListener("click", () => {
-    $navbarMenu.classList.add("hidden")
-    $xmark.classList.add("hidden")
-    $navbarBurguer.classList.remove("hidden")
-})
-
-for (const linkNavbar_balance of $linkNavbar_balance) {
-    linkNavbar_balance.addEventListener("click", () => {
-        $categories.classList.add("hidden")
-        $mainContainer.classList.remove("hidden")
-        $reports.classList.add("hidden")
-        $newOperation.classList.add("hidden")
-        $editCategory.classList.add("hidden")
-    })
-}
-
-for (const linkNavbar_categories of $linkNavbar_categories) {
-    linkNavbar_categories.addEventListener("click", () => {
-        $categories.classList.remove("hidden")
-        $mainContainer.classList.add("hidden")
-        $reports.classList.add("hidden")
-        $newOperation.classList.add("hidden")
-        $editCategory.classList.add("hidden")
-    })
-}
-
-for (const linkNavbar_reports of $linkNavbar_reports) {
-    linkNavbar_reports.addEventListener("click", () => {
-        $categories.classList.add("hidden")
-        $mainContainer.classList.add("hidden")
-        $reports.classList.remove("hidden")
-        $newOperation.classList.add("hidden")
-        $editCategory.classList.add("hidden")
-    })
-}
-
-$btnOperation.addEventListener("click", () => {
-    $mainContainer.classList.add("hidden")
-    $newOperation.classList.remove("hidden")
-    date()
-})
-
-
-$cancelNewOperationBtn.addEventListener("click", () => {
-    $newOperation.classList.add("hidden")
-    $mainContainer.classList.remove("hidden")
-})
-
-$btnHideFilters.addEventListener("click", () => {
-    if ($btnHideFilters.textContent === "Mostrar filtros") {
-        $filters.classList.remove("hidden")
-        $btnHideFilters.textContent = "Ocultar filtros"
-    } else {
-        $filters.classList.add("hidden")
-        $btnHideFilters.textContent = "Mostrar filtros"
-    }
-})
-
-for (const btnEdit of $btnEdit) {
-    btnEdit.addEventListener("click", (e) => {
-        e.preventDefault()
-        $categories.classList.add("hidden")
-        $editCategory.classList.remove("hidden")
-    })
-}
-
-$cancelEdit.addEventListener("click", () => {
-    $categories.classList.remove("hidden")
-    $editCategory.classList.add("hidden")
-})
