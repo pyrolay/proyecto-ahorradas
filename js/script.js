@@ -547,3 +547,13 @@ $cancelNewOperationBtn.addEventListener("click", () => {
     $newOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
+
+$btnHideFilters.addEventListener("click", () => {
+    if ($btnHideFilters.textContent === "Mostrar filtros") {
+        $filters.classList.remove("hidden")
+        $btnHideFilters.textContent = "Ocultar filtros"
+    } else {
+        $filters.classList.add("hidden")
+        $btnHideFilters.textContent = "Mostrar filtros"
+    }
+})
