@@ -57,22 +57,22 @@
         </nav>
         <div class="lg:hidden navbarMenu hidden">
             <ul class="flex flex-col bg-gray-200">
-                <li class="px-4 py-2">
-                    <a href="#" name="balance" class="linkNavbarBurger_balance group text-lg hover:text-[#D3375C] transition duration-300">
+                <li class="px-4 py-2 group text-lg hover:text-[#D3375C] transition duration-300">
+                    <a href="#" name="balance" class="linkNavbarBurger_balance">
                         <i class="mr-1 fa-solid fa-chart-line"></i>
                         Balance
                         <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
                     </a>
                 </li>
-                <li class="px-4 py-2">
-                    <a href="#" name="categories" class="linkNavbarBurger_categories group text-lg hover:text-[#D3375C] transition duration-300">
+                <li class="px-4 py-2 text-lg group hover:text-[#D3375C] transition duration-300">
+                    <a href="#" name="categories" class="linkNavbarBurger_categories max-w-full">
                         <i class="mr-1 fa-solid fa-tag"></i>
                         Categorías
                         <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
                     </a>
                 </li>
-                <li class="px-4 py-2">
-                    <a href="#" name="reports" class="linkNavbarBurger_reports group text-lg hover:text-[#D3375C] transition duration-300">
+                <li class="px-4 py-2 text-lg group hover:text-[#D3375C] transition duration-300">
+                    <a href="#" name="reports" class="linkNavbarBurger_reports max-w-full">
                         <i class="mr-1 fa-solid fa-chart-pie"></i>
                         Reportes
                         <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
@@ -122,7 +122,7 @@
                         <option value="">Todas</option>
                     </select>
                     <label for="date" class="mb-1 font-semibold">Desde</label>
-                    <input type="date" name="date" class="mb-2 p-2 rounded border-2 border-stone-400">
+                    <input type="date" name="date" class="mb-2 p-2 rounded border-2 border-stone-400 w-full">
                     <label for="order-by" class="mb-2 font-semibold">Ordenar por</label>
                     <select name="" id="order-by" class="mb-2 p-2 rounded border-2 border-stone-400">
                         <option value="">Más reciente</option>
@@ -209,7 +209,7 @@
                 <select name="category" id="selectCategory" class="categoryNewOperation mb-2 p-2 rounded border-2 border-stone-400">
                 </select>
                 <label for="date" class="mb-1 font-semibold">Fecha</label>
-                <input type="date" name="date" id="date" class="mb-2 p-2 rounded border-2 border-stone-400">
+                <input type="date" name="date" id="date" class="mb-2 p-2 rounded border-2 border-stone-400 w-full">
                 <div class="flex justify-end mt-4">
                     <input
                         class="cancelNewOperationBtn px-6 h-[44px] text-white bg-gray-400 mr-2 rounded hover:bg-gray-800 transition duration-100 cursor-pointer"
@@ -246,7 +246,7 @@
                     <option value="Trabajo">Trabajo</option>
                 </select>
                 <label for="date" class="mb-1 font-semibold">Fecha</label>
-                <input type="date" name="date" id="editDate" class="mb-2 p-2 rounded border-2 border-stone-400">
+                <input type="date" name="date" id="editDate" class="mb-2 p-2 rounded border-2 border-stone-400 w-full">
                 <div class="flex justify-end mt-4">
                     <input
                         class="cancelEditOperationBtn px-6 h-[44px] text-white bg-gray-400 mr-2 rounded hover:bg-gray-800 transition duration-100 cursor-pointer"
