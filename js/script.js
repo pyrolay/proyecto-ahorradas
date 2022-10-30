@@ -19,7 +19,7 @@ const $xmark = $(".xmark")
 // Variables secciones
 const $mainContainer = $(".mainContainer")
 const $categories = $(".categories")
-const $reports = $(".reports")
+
 
 // Variables sección categorías
 const $btnEdit = $$(".btnEdit")
