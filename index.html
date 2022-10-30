@@ -29,24 +29,24 @@
                 <i class="md:text-2xl text-xl fa-solid fa-xmark"></i>
             </div>
             <ul class="lg:flex hidden justify-end items-center">
-                <li class="linkNavbar_balance">
-                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                <li>
+                    <a href="#" name="balance" class="linkNavbar_balance group text-lg hover:text-[#D3375C] transition duration-300">
                         <i class="mr-1 fa-solid fa-chart-line"></i>
                         Balance
                         <span
                             class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
                     </a>
                 </li>
-                <li class="ml-5 linkNavbar_categories">
-                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                <li class="ml-5">
+                    <a href="#" name="categories" class="linkNavbar_categories group text-lg hover:text-[#D3375C] transition duration-300">
                         <i class="mr-1 fa-solid fa-tag"></i>
                         Categorías
                         <span
                             class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
                     </a>
                 </li>
-                <li class="ml-5 linkNavbar_reports">
-                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                <li class="ml-5">
+                    <a href="#" name="reports" class="linkNavbar_reports group text-lg hover:text-[#D3375C] transition duration-300">
                         <i class="mr-1 fa-solid fa-chart-pie"></i>
                         Reportes
                         <span
@@ -57,22 +57,22 @@
         </nav>
         <div class="lg:hidden navbarMenu hidden">
             <ul class="flex flex-col bg-gray-200">
-                <li class="linkNavbar_balance px-4 py-2">
-                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                <li class="linkNavbarBurger_balance px-4 py-2">
+                    <a href="#" name="balance" class="group text-lg hover:text-[#D3375C] transition duration-300">
                         <i class="mr-1 fa-solid fa-chart-line"></i>
                         Balance
                         <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
                     </a>
                 </li>
-                <li class="linkNavbar_categories px-4 py-2">
-                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                <li class="linkNavbarBurger_categories px-4 py-2">
+                    <a href="#" name="categories" class="group text-lg hover:text-[#D3375C] transition duration-300">
                         <i class="mr-1 fa-solid fa-tag"></i>
                         Categorías
                         <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
                     </a>
                 </li>
-                <li class="linkNavbar_reports px-4 py-2">
-                    <a href="#" class="group text-lg hover:text-[#D3375C] transition duration-300">
+                <li class="linkNavbarBurger_reports px-4 py-2">
+                    <a href="#" name="reports" class="group text-lg hover:text-[#D3375C] transition duration-300">
                         <i class="mr-1 fa-solid fa-chart-pie"></i>
                         Reportes
                         <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-[#D3375C]"></span>
@@ -83,7 +83,7 @@
     </header>
 
     <!-- Sección Balance -->
-    <div class="hidden mainContainer py-16 flex lg:flex-row flex-col justify-center lg:items-start items-center w-full">
+    <div id="balance" class="mainContainer py-16 flex lg:flex-row flex-col justify-center lg:items-start items-center w-full">
         <!--Balance y filtros -->
         <!--Balance-->
         <div class="lg:w-1/4 w-4/5">
@@ -139,7 +139,7 @@
         <section class="lg:w-2/4 w-4/5 lg:ml-6 ml-0 lg:mt-0 mt-6 p-5 h-fit rounded border-r-8 border-b-8 border-t-2 border-l-2 border-[#D3375C] shadow-xl shadow-gray-400">
             <div class="flex justify-between md:flex-row flex-col">
                 <h3 class="text-2xl font-semibold">Operaciones</h3>
-                <button class="btnOperation py-2 px-4 text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 md:mt-0 mt-4">+ Nueva operación</button>
+                <button name="newOperation" class="btnOperation py-2 px-4 text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 md:mt-0 mt-4">+ Nueva operación</button>
             </div>
         
             <div>
@@ -217,7 +217,7 @@
     </div>
 
     <!-- Sección Nueva operación -->
-    <div class="hidden newOperation lg:p-16 py-16 px-4 flex justify-center">
+    <div id="newOperation" class="hidden newOperation lg:p-16 py-16 px-4 flex justify-center">
         <section
             class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Nueva operación</h2>
@@ -251,7 +251,7 @@
     </div>
 
      <!-- Sección Categorías -->
-     <div class="hidden categories lg:p-16 py-16 px-4 flex justify-center">
+     <div id="categories" class="hidden categories lg:p-16 py-16 px-4 flex justify-center">
         <section
             class="categoriesContainer lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Categorías</h2>
@@ -273,7 +273,7 @@
         </section>
     </div>
     <!-- Sección Editar -->
-    <div class="hidden editCategory lg:p-16 py-16 px-4 flex justify-center">
+    <div id="editCategory" class="hidden editCategory lg:p-16 py-16 px-4 flex justify-center">
         <section
             class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Editar categoría</h2>
@@ -293,7 +293,7 @@
     </div>
     
     <!--Sección reportes-->
-    <div class="hidden reports lg:p-16 py-16 px-4 flex justify-center">
+    <div id="reports" class="hidden reports lg:p-16 py-16 px-4 flex justify-center">
         <section class="lg:max-w-5xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Reportes</h2>
             <section class="hidden py-5 flex flex-col items-center">
