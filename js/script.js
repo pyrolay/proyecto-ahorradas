@@ -19,7 +19,7 @@ const $xmark = $(".xmark")
 // Variables secciones
 const $mainContainer = $(".mainContainer")
 const $categories = $(".categories")
-const $reports = $(".reports")
+
 
 // Variables sección categorías
 const $btnEdit = $$(".btnEdit")
@@ -254,6 +254,7 @@ $addNewOperationBtn.addEventListener("click", (e) => {
     saveNewOperation()
     addNewOperation(dataOperationsLocalStorage())
     operationsEmptyOrNot()
+    selectCategoriesOperation()
     $newOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
@@ -331,6 +332,7 @@ const generateCategories = (categories) => {
         const categoryId = btn.getAttribute("data-id")
         btn.addEventListener("click", () => {
             categoryEdit(categoryId)
+            selectCategoriesOperation()
             selectCategoriesFilter()
         })
     }
@@ -340,6 +342,7 @@ const generateCategories = (categories) => {
         btn.addEventListener("click", () => {
             removeCategory(categoryId)
             removeCategoryLocal(categoryId)
+            selectCategoriesOperation()
             selectCategoriesFilter()
         })
     }
@@ -384,6 +387,7 @@ addCategory()
 $btnAddCategories.addEventListener("click", (e) => {
     categoryNew()
     addCategory()
+    selectCategoriesOperation()
     selectCategoriesFilter()
     e.preventDefault()
     $formAddCategories.reset()
@@ -474,6 +478,7 @@ const removeCategory = (id) => {
 // Agregar categorias del LocalStorage al select de "Nueva operación"
 
 const selectCategoriesOperation = () => {
+    $categoryNewOperation.innerHTML = ""
     for (const { name } of dataCategoriesLocalStorage()) {
         $categoryNewOperation.innerHTML +=
             `
@@ -482,7 +487,11 @@ const selectCategoriesOperation = () => {
     }
 }
 
+selectCategoriesOperation()
+
 const selectCategoriesFilter = () => {
+    $categoryFilter.innerHTML = ""
+    $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
     for (const { name } of dataCategoriesLocalStorage()) {
         $categoryFilter.innerHTML +=
             `
@@ -490,6 +499,9 @@ const selectCategoriesFilter = () => {
         `
     }
 }
+
+
+selectCategoriesFilter()
 
 
 // Funciones de navegación
