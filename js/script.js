@@ -20,6 +20,11 @@ const $xmark = $(".xmark")
 const $mainContainer = $(".mainContainer")
 const $categories = $(".categories")
 
+// Variables sección filtros
+const $type = $("#type")
+const $filters = $(".filters")
+const $categoryFilter = $(".categoryFilter")
+const $dayFilter = $(".dayFilter")
 
 // Variables sección categorías
 const $btnEdit = $$(".btnEdit")
@@ -46,13 +51,11 @@ const $addNewOperationBtn = $(".addNewOperationBtn")
 const $cancelNewOperationBtn = $(".cancelNewOperationBtn")
 const newOperationArray = [$("#description"), $("#amount"), $("#type"), $("#category"), $("#date")]
 const $categoryNewOperation = $(".categoryNewOperation")
+const $editSelectCategory = $("#editSelectCategory")
 
 // Variables seccion reportes
 const $reports = $(".reports")
 
-//Variables sección filtros
-const $filters = $(".filters")
-const $categoryFilter = $(".categoryFilter")
 
 // Id Random
 const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
@@ -86,7 +89,7 @@ const newOperationEmpty = () => {
 }
 
 const saveNewOperation = () => {
-    const id= generateId()
+    const id = generateId()
     const description = $("#description").value
     const amount = $("#amount").value
     const type = $("#selectType").value
@@ -97,7 +100,7 @@ const saveNewOperation = () => {
         const operations = dataOperationsLocalStorage()
         operations.push({ id, description, amount, type, category, date })
         const localData = JSON.parse(localStorage.getItem("datos"))
-        const datos = {...localData, operations: operations}
+        const datos = { ...localData, operations: operations }
         localStorage.setItem("datos", JSON.stringify(datos))
     }
 }
@@ -158,13 +161,17 @@ const addNewOperation = (data) => {
         `
         $(".tableBody").append(tr)
     })
-    
+
     const btnEdit = $$(".btnOperationEdit")
     const btnRemove = $$(".btnOperationRemove")
-    
+
     for (const btn of btnEdit) {
         const operationId = btn.getAttribute("data-id")
-        btn.addEventListener("click", () => editOperation(operationId))
+        btn.addEventListener("click", () => {
+            editOperation(operationId)
+            selectCategoriesOperation()
+        })
+
     }
     for (const btn of btnRemove) {
         const operationId = btn.getAttribute("data-id")
@@ -208,13 +215,13 @@ const editOperation = (id) => {
     $("#editDescription").value = chosenOperation.description
     $("#editAmount").value = chosenOperation.amount
     $("#editSelectType").value = chosenOperation.type
-    $("#editSelectCategory").value = chosenOperation.category
+    $editSelectCategory.value = chosenOperation.category
     const dateSplit = chosenOperation.date.split("/")
     const dateReverse = dateSplit.reverse()
     const dateJoin = dateReverse.join("/")
     const newDate = new Date(dateJoin)
     $("#editDate").valueAsDate = newDate
-    
+
     $editOperationBtn.setAttribute("data-id", id)
     $cancelEditOperationBtn.setAttribute("data-id", id)
 }
@@ -229,13 +236,15 @@ const editOperationLocal = (id) => {
             operation.description = $("#editDescription").value
             operation.amount = $("#editAmount").value
             operation.type = $("#editSelectType").value
-            operation.category = $("#editSelectCategory").value
-            operation.date = $("#editDate").value
-            const datos = {...localData, operations: operations}
+            operation.category = $editSelectCategory.value
+            const date = $("#editDate").value
+            const newDate = date.split("-").reverse().join("/")
+            operation.date = newDate
+            const datos = { ...localData, operations: operations }
             localStorage.setItem("datos", JSON.stringify(datos))
         }
     }
-    const datos = {...localData, operations: operations}
+    const datos = { ...localData, operations: operations }
     localStorage.setItem("datos", JSON.stringify(datos))
 }
 
@@ -245,7 +254,7 @@ const filterOperation = (id) => {
 
 const removeOperationLocal = (id) => {
     const localData = JSON.parse(localStorage.getItem("datos"))
-    const datos = {...localData, operations: filterOperation(id)}
+    const datos = { ...localData, operations: filterOperation(id) }
     localStorage.setItem("datos", JSON.stringify(datos))
 }
 
@@ -272,11 +281,145 @@ $editOperationBtn.addEventListener("click", () => {
     $mainContainer.classList.remove("hidden")
 })
 
-$mainContainer.addEventListener("change", () => {
-    const operationId = $$(".btnOperationRemove").getAttribute("data-id")
-    addNewOperation(filterOperation(operationId))
-    operationsEmptyOrNot()
+
+// Funciones para filtrar y ordenar operaciones
+
+// Filtro type
+
+const typeFilterOperation = ($type) => {
+    return dataOperationsLocalStorage().filter(operation => operation.type === $type)
+}
+
+// $type.addEventListener("change", () => {
+//     for (const operation of dataOperationsLocalStorage()) {
+//         if ($type.value === operation.type) {
+//             $(".operations-empty").classList.add("hidden")
+//             $(".operations-table").classList.remove("hidden")
+//             addNewOperation(typeFilterOperation(operation.type))
+//         } else if ($type.value === "todos") {
+//             $(".operations-empty").classList.add("hidden")
+//             $(".operations-table").classList.remove("hidden")
+//             addNewOperation(dataOperationsLocalStorage())
+//             return
+
+//         }
+
+//         if (typeFilterOperation($type.value).length === 0) {
+//             $(".operations-empty").classList.remove("hidden")
+//             $(".operations-table").classList.add("hidden")
+//         }
+//     }
+
+// })
+
+const filterType = (array) => {
+    for (const operation of array) {
+        if ($type.value === operation.type) {
+            $(".operations-empty").classList.add("hidden")
+            $(".operations-table").classList.remove("hidden")
+            array = typeFilterOperation(operation.type)
+        } else if ($type.value === "todos") {
+            $(".operations-empty").classList.add("hidden")
+            $(".operations-table").classList.remove("hidden")
+            array 
+            return
+
+        }
+
+        if (typeFilterOperation($type.value).length === 0) {
+            $(".operations-empty").classList.remove("hidden")
+            $(".operations-table").classList.add("hidden")
+        }
+    }
+}
+
+//Filtro category
+
+const categoryFilterOperation = ($categoryFilter) => {
+    return dataOperationsLocalStorage().filter(operation => operation.category === $categoryFilter)
+}
+
+// $categoryFilter.addEventListener("change", () => {
+//     for (const operation of dataOperationsLocalStorage()) {
+//         if ($categoryFilter.value === operation.category) {
+//             addNewOperation(categoryFilterOperation(operation.category))
+//             $(".operations-empty").classList.add("hidden")
+//             $(".operations-table").classList.remove("hidden")
+//             return
+//         } else if ($categoryFilter.value === "Todas") {
+//             $(".operations-empty").classList.add("hidden")
+//             $(".operations-table").classList.remove("hidden")
+//             addNewOperation(dataOperationsLocalStorage())
+//             return
+//         }
+
+//         if (categoryFilterOperation($categoryFilter.value).length === 0) {
+//             $(".operations-empty").classList.remove("hidden")
+//             $(".operations-table").classList.add("hidden")
+//         }
+
+//     }
+
+// })
+
+const categoryFilter = (array) => {
+    for (const operation of array) {
+        if ($categoryFilter.value === operation.category) {
+            array = categoryFilterOperation(operation.category)
+            $(".operations-empty").classList.add("hidden")
+            $(".operations-table").classList.remove("hidden")
+            return
+        } else if ($categoryFilter.value === "Todas") {
+            $(".operations-empty").classList.add("hidden")
+            $(".operations-table").classList.remove("hidden")
+            array 
+            return
+        }
+
+        if (categoryFilterOperation($categoryFilter.value).length === 0) {
+            $(".operations-empty").classList.remove("hidden")
+            $(".operations-table").classList.add("hidden")
+        }
+
+    }
+}
+
+// Filtro fecha
+
+const filterDefaultDate = () => {
+    const date = new Date()
+    const day = "01"
+    const month = date.getMonth() + 1
+    const year = date.getFullYear()
+    $dayFilter.value = `${year}-${month}-${day}`
+}
+
+filterDefaultDate()
+
+
+const filterDate = () => {
+    const dateInput = parseInt(($dayFilter.value).split("-").join(""))
+    return dataOperationsLocalStorage().filter(operation => {
+        const dateOperation = parseInt((operation.date).split("/").reverse().join(""))
+        if (dateOperation >= dateInput) {    
+            return operation
+        }
+    }) 
+}
+
+window.addEventListener("load", () => {
+    addNewOperation(filterDate())
 })
+
+$dayFilter.addEventListener("change", () => {
+    addNewOperation(filterDate())
+})
+
+$filters.addEventListener("change", () =>{
+    const arrFilters = dataOperationsLocalStorage()
+
+})
+
 
 // Funciones: Objeto de categorias
 
@@ -354,7 +497,7 @@ const data = { categories, operations }
 
 if (!localStorage.getItem("datos")) {
     localStorage.setItem("datos", JSON.stringify(data))
-} 
+}
 
 
 const categoryNew = () => {
@@ -370,7 +513,7 @@ const categoryNew = () => {
         const categories = dataCategoriesLocalStorage()
         categories.push({ id, name })
         const localData = JSON.parse(localStorage.getItem("datos"))
-        const datos = {...localData, categories: categories}
+        const datos = { ...localData, categories: categories }
         localStorage.setItem("datos", JSON.stringify(datos))
     }
 }
@@ -406,18 +549,18 @@ const editCategoriesLocal = (id) => {
     for (const category of categories) {
         if (chosenCategory.id === category.id) {
             category.name = $inputEditCategory.value
-            const datos = {...localData, categories: categories}
+            const datos = { ...localData, categories: categories }
             localStorage.setItem("datos", JSON.stringify(datos))
         }
-    } 
-    const datos = {...localData, categories: categories}
+    }
+    const datos = { ...localData, categories: categories }
     localStorage.setItem("datos", JSON.stringify(datos))
 }
 
 
 const removeCategoryLocal = (id) => {
     const localData = JSON.parse(localStorage.getItem("datos"))
-    const datos = {...localData, categories: filterCategory(id)}
+    const datos = { ...localData, categories: filterCategory(id) }
     localStorage.setItem("datos", JSON.stringify(datos))
 }
 
@@ -479,11 +622,10 @@ const removeCategory = (id) => {
 
 const selectCategoriesOperation = () => {
     $categoryNewOperation.innerHTML = ""
+    $editSelectCategory.innerHTML = ""
     for (const { name } of dataCategoriesLocalStorage()) {
-        $categoryNewOperation.innerHTML +=
-            `
-            <option value="${name}">${name}</option>
-        `
+        $categoryNewOperation.innerHTML += `<option value="${name}">${name}</option>`
+        $editSelectCategory.innerHTML += `<option value="${name}">${name}</option>`
     }
 }
 
