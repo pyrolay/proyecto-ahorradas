@@ -76,7 +76,7 @@ const generateId = () => {
 
 
 
-// Objeto de categorias y operaciones
+// Objetos de categorias y operaciones
 
 const categories = [
     {
@@ -106,6 +106,9 @@ const categories = [
 ]
 
 const operations = []
+
+
+// Función que genera Categorias
 
 const generateCategories = (categories) => {
     for (const { id, name } of categories) {
@@ -147,8 +150,10 @@ const generateCategories = (categories) => {
         })
     }
 }
+
 generateCategories(categories)
 
+// Se envian los objetos al Local Storage
 
 const data = { categories, operations }
 
@@ -156,6 +161,7 @@ if (!localStorage.getItem("datos")) {
     localStorage.setItem("datos", JSON.stringify(data))
 }
 
+// Funciones y eventos para agregar una categoria
 
 const categoryNew = () => {
     if ($addCategories.value === "") {
@@ -193,7 +199,7 @@ $btnAddCategories.addEventListener("click", (e) => {
     $formAddCategories.reset()
 })
 
-// Eventos editar y eliminar categorias
+// Eventos y funciones para editar categorias
 
 const findCategory = (id) => {
     return dataCategoriesLocalStorage().find(category => category.id == id)
@@ -211,13 +217,6 @@ const editCategoriesLocal = (id) => {
         }
     }
     const datos = { ...localData, categories: categories }
-    localStorage.setItem("datos", JSON.stringify(datos))
-}
-
-
-const removeCategoryLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const datos = {...localData, categories: filterCategory(id), operations: filterCategoryOperationRemove(id)}
     localStorage.setItem("datos", JSON.stringify(datos))
 }
 
@@ -267,6 +266,14 @@ $editCategoryBtn.addEventListener("click", () => {
     selectCategoriesFilter()
 })
 
+// Eventos y funciones para eliminar categorias
+
+const removeCategoryLocal = (id) => {
+    const localData = JSON.parse(localStorage.getItem("datos"))
+    const datos = { ...localData, categories: filterCategory(id), operations: filterCategoryOperationRemove(id) }
+    localStorage.setItem("datos", JSON.stringify(datos))
+}
+
 const filterCategory = (id) => {
     return dataCategoriesLocalStorage().filter(category => category.id !== id)
 
@@ -275,10 +282,11 @@ const filterCategory = (id) => {
 const filterCategoryOperationRemove = (id) => {
     const arrCatgoriesLocal = dataCategoriesLocalStorage()
     const arrOperationLocal = dataOperationsLocalStorage()
-    for(const {category} of arrOperationLocal){
-    if(!arrCatgoriesLocal.includes(id) && category === id){
-        return dataOperationsLocalStorage().filter(operation => operation.category !== category)
-    } }
+    for (const { category } of arrOperationLocal) {
+        if (!arrCatgoriesLocal.includes(id) && category === id) {
+            return dataOperationsLocalStorage().filter(operation => operation.category !== category)
+        }
+    }
 }
 
 const removeCategory = (id) => {
@@ -288,7 +296,7 @@ const removeCategory = (id) => {
 }
 
 
-// Agregar categorias del LocalStorage al select de "Nueva operación"
+// Funciones que agregan las categorias a los selects de "Nueva operación" y "Filtros"
 
 const selectCategoriesOperation = () => {
     $categoryNewOperation.innerHTML = ""
@@ -305,18 +313,13 @@ const selectCategoriesFilter = () => {
     $categoryFilter.innerHTML = ""
     $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
     for (const { name, id } of dataCategoriesLocalStorage()) {
-        $categoryFilter.innerHTML +=
-            `
-            <option value="${id}">${name}</option>
-        `
+        $categoryFilter.innerHTML += `<option value="${id}">${name}</option>`
     }
 }
 
-
 selectCategoriesFilter()
 
-// Funciones: Objeto de nueva operación
-
+// Funciones para agregar una nueva operación
 
 const newOperationEmpty = () => {
     $("#description").value = ""
@@ -450,7 +453,7 @@ if (localStorage.getItem("datos")) {
 }
 
 
-// Funciones editar operaciones
+// Funciones para editar operaciones
 
 const findOperation = (id) => {
     return dataOperationsLocalStorage().find(operation => operation.id == id)
@@ -526,26 +529,6 @@ $editOperationBtn.addEventListener("click", () => {
     $editOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
-
-// Funciones eliminar categorias de operaciones desde sección categorias
-
-const findCategoryId = (id) => {
-    return dataCategoriesLocalStorage().find(category => category.id === id)
-}
-
-
-const removeCategoryOperation = (id) => {
-    const idCategory = findCategoryId(id)
-    const arrOperationLocal = dataOperationsLocalStorage()
-    const arrCatgoriesLocal = dataCategoriesLocalStorage()
-    for (const { category } of arrOperationLocal) {
-        if (!arrCatgoriesLocal.includes(idCategory.id) && category === idCategory.id) {
-            return arrOperationLocal.filter(operation => operation.category !== category)
-        }
-    }
-}
-
-
 
 // Funciones de navegación
 
