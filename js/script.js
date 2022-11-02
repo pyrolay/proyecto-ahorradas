@@ -405,8 +405,8 @@ const addNewOperation = (data) => {
                 <div class="flex text-blue-800 py-1 text-start">
                     <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
                     <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
-                    </div>
-                    </th>
+                </div>
+            </th>
         `
         $(".tableBody").append(tr)
     })
@@ -555,7 +555,10 @@ const filterType = (array) => {
         if (typeFilterOperation(array, $type.value).length === 0) {
             $(".operations-empty").classList.remove("hidden")
             $(".operations-table").classList.add("hidden")
-            return array
+            $(".balanceProfit").innerText = `+$0`
+            $(".balanceSpent").innerText = `-$0`
+            $(".balanceTotal").innerText = `$0`
+            return array = []
         }
     }
 }
