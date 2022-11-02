@@ -123,13 +123,13 @@
                     <label for="date" class="mb-1 font-semibold">Desde</label>
                     <input type="date" name="date" class="dayFilter mb-2 p-2 rounded border-2 border-stone-400 w-full">
                     <label for="order-by" class="mb-2 font-semibold">Ordenar por</label>
-                    <select name="" id="order-by" class="mb-2 p-2 rounded border-2 border-stone-400">
-                        <option value="">Más reciente</option>
-                        <option value="">Menos reciente</option>
-                        <option value="">Mayor monto</option>
-                        <option value="">Menor monto</option>
-                        <option value="">A/Z</option>
-                        <option value="">Z/A</option>
+                    <select name="order-by" id="order-by" class="mb-2 p-2 rounded border-2 border-stone-400">
+                        <option value="1">Más reciente</option>
+                        <option value="2">Menos reciente</option>
+                        <option value="3">Mayor monto</option>
+                        <option value="4">Menor monto</option>
+                        <option value="5">A/Z</option>
+                        <option value="6">Z/A</option>
                     </select>
                 </div>
             </section>
@@ -240,9 +240,6 @@
                 </select>
                 <label for="category" class="mb-1 font-bold">Categoría</label>
                 <select name="category" id="editSelectCategory" class="mb-2 p-2 rounded border-2 border-stone-400">
-                    <option value="Comida">Comida</option>
-                    <option value="Supermercado">Supermercado</option>
-                    <option value="Trabajo">Trabajo</option>
                 </select>
                 <label for="date" class="mb-1 font-semibold">Fecha</label>
                 <input type="date" name="date" id="editDate" class="mb-2 p-2 rounded border-2 border-stone-400 w-full">

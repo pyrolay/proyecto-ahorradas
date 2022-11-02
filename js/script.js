@@ -25,6 +25,7 @@ const $type = $("#type")
 const $filters = $(".filters")
 const $categoryFilter = $(".categoryFilter")
 const $dayFilter = $(".dayFilter")
+const $orderBy = $("#order-by")
 
 // Variables sección categorías
 const $btnEdit = $$(".btnEdit")
@@ -261,9 +262,9 @@ const removeOperationLocal = (id) => {
 $addNewOperationBtn.addEventListener("click", (e) => {
     e.preventDefault()
     saveNewOperation()
-    addNewOperation(dataOperationsLocalStorage())
     operationsEmptyOrNot()
     selectCategoriesOperation()
+    filterFunction()
     $newOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
@@ -276,10 +277,11 @@ $cancelEditOperationBtn.addEventListener("click", () => {
 $editOperationBtn.addEventListener("click", () => {
     const operationId = $editOperationBtn.getAttribute("data-id")
     editOperationLocal(operationId)
-    addNewOperation(dataOperationsLocalStorage())
+    filterFunction()
     $editOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
+
 
 
 // Funciones para filtrar y ordenar operaciones
@@ -311,7 +313,7 @@ const filterType = (array) => {
     }
 }
 
-//Filtro category
+// Filtro category
 
 const categoryFilterOperation = (array, $categoryFilter) => {
     return array.filter(operation => operation.category === $categoryFilter)
@@ -350,7 +352,6 @@ const filterDefaultDate = () => {
 
 
 const filterDate = (array) => {
-    console.log(array)
     const dateInput = parseInt(($dayFilter.value).split("-").join(""))
     return array.filter(operation => {
         const dateOperation = parseInt((operation.date).split("/").reverse().join(""))
@@ -360,18 +361,46 @@ const filterDate = (array) => {
     }) 
 }
 
+// Ordenar
+
+const orderBy = (array) => {
+    const changeDate = (sort) => parseInt((sort.date).split("/").reverse().join(""))
+
+    if ($orderBy.value === "1") return array.sort((a, b) => changeDate(b) - changeDate(a))
+    if ($orderBy.value === "2") return array.sort((a, b) => changeDate(a) - changeDate(b))
+
+    if ($orderBy.value === "3") return array.sort((a, b) => b.amount - a.amount)
+    if ($orderBy.value === "4") return array.sort((a, b) => a.amount - b.amount)
+
+    if ($orderBy.value === "5") {
+        return array.sort((a, b) => {
+            if (a.description < b.description) return -1
+            if (a.description > b.description) return 1
+        })
+    }
+    if ($orderBy.value === "6") {
+        return array.sort((a, b) => {
+            if (a.description > b.description) return -1
+            if (a.description < b.description) return 1
+        })
+    }
+}
+
 // Evento filters
 
-$filters.addEventListener("change", () =>{
-    const arr = dataOperationsLocalStorage()
-    const filteredTypeArr = filterType(arr)
+const filterFunction = () => {
+    const arrOfOperations = dataOperationsLocalStorage()
+    const filteredTypeArr = filterType(arrOfOperations)
     const filteredCategoryArr = categoryFilter(filteredTypeArr)
     const filteredDateArr = filterDate(filteredCategoryArr)
-    console.log(filteredDateArr)
     if (filteredDateArr.length === 0) {
         $(".operations-empty").classList.remove("hidden")
         $(".operations-table").classList.add("hidden")
-    } else addNewOperation(filteredDateArr)
+    } else addNewOperation(orderBy(filteredDateArr))
+}
+
+$filters.addEventListener("change", () =>{
+    filterFunction()
 })
 
 
@@ -600,7 +629,8 @@ window.addEventListener("load", () => {
     selectCategoriesOperation()
     selectCategoriesFilter()
     filterDefaultDate()
-    addNewOperation(filterDate(dataOperationsLocalStorage()))
+    const filterByDate = filterDate(dataOperationsLocalStorage())
+    addNewOperation(orderBy(filterByDate))
 })
 
 
