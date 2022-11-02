@@ -286,101 +286,55 @@ $editOperationBtn.addEventListener("click", () => {
 
 // Filtro type
 
-const typeFilterOperation = ($type) => {
-    return dataOperationsLocalStorage().filter(operation => operation.type === $type)
+const typeFilterOperation = (array, $type) => {
+    return array.filter(operation => operation.type === $type)
 }
-
-// $type.addEventListener("change", () => {
-//     for (const operation of dataOperationsLocalStorage()) {
-//         if ($type.value === operation.type) {
-//             $(".operations-empty").classList.add("hidden")
-//             $(".operations-table").classList.remove("hidden")
-//             addNewOperation(typeFilterOperation(operation.type))
-//         } else if ($type.value === "todos") {
-//             $(".operations-empty").classList.add("hidden")
-//             $(".operations-table").classList.remove("hidden")
-//             addNewOperation(dataOperationsLocalStorage())
-//             return
-
-//         }
-
-//         if (typeFilterOperation($type.value).length === 0) {
-//             $(".operations-empty").classList.remove("hidden")
-//             $(".operations-table").classList.add("hidden")
-//         }
-//     }
-
-// })
 
 const filterType = (array) => {
     for (const operation of array) {
         if ($type.value === operation.type) {
             $(".operations-empty").classList.add("hidden")
             $(".operations-table").classList.remove("hidden")
-            array = typeFilterOperation(operation.type)
+            array = typeFilterOperation(array, operation.type)
+            return array
         } else if ($type.value === "todos") {
             $(".operations-empty").classList.add("hidden")
             $(".operations-table").classList.remove("hidden")
-            array 
-            return
-
+            return array 
         }
 
-        if (typeFilterOperation($type.value).length === 0) {
+        if (typeFilterOperation(array, $type.value).length === 0) {
             $(".operations-empty").classList.remove("hidden")
             $(".operations-table").classList.add("hidden")
+            return array
         }
     }
 }
 
 //Filtro category
 
-const categoryFilterOperation = ($categoryFilter) => {
-    return dataOperationsLocalStorage().filter(operation => operation.category === $categoryFilter)
+const categoryFilterOperation = (array, $categoryFilter) => {
+    return array.filter(operation => operation.category === $categoryFilter)
 }
-
-// $categoryFilter.addEventListener("change", () => {
-//     for (const operation of dataOperationsLocalStorage()) {
-//         if ($categoryFilter.value === operation.category) {
-//             addNewOperation(categoryFilterOperation(operation.category))
-//             $(".operations-empty").classList.add("hidden")
-//             $(".operations-table").classList.remove("hidden")
-//             return
-//         } else if ($categoryFilter.value === "Todas") {
-//             $(".operations-empty").classList.add("hidden")
-//             $(".operations-table").classList.remove("hidden")
-//             addNewOperation(dataOperationsLocalStorage())
-//             return
-//         }
-
-//         if (categoryFilterOperation($categoryFilter.value).length === 0) {
-//             $(".operations-empty").classList.remove("hidden")
-//             $(".operations-table").classList.add("hidden")
-//         }
-
-//     }
-
-// })
 
 const categoryFilter = (array) => {
     for (const operation of array) {
         if ($categoryFilter.value === operation.category) {
-            array = categoryFilterOperation(operation.category)
             $(".operations-empty").classList.add("hidden")
             $(".operations-table").classList.remove("hidden")
-            return
+            array = categoryFilterOperation(array, operation.category)
+            return array
         } else if ($categoryFilter.value === "Todas") {
             $(".operations-empty").classList.add("hidden")
             $(".operations-table").classList.remove("hidden")
-            array 
-            return
+            return array 
         }
 
-        if (categoryFilterOperation($categoryFilter.value).length === 0) {
+        if (categoryFilterOperation(array, $categoryFilter.value).length === 0) {
             $(".operations-empty").classList.remove("hidden")
             $(".operations-table").classList.add("hidden")
+            return array
         }
-
     }
 }
 
@@ -394,12 +348,11 @@ const filterDefaultDate = () => {
     $dayFilter.value = `${year}-${month}-${day}`
 }
 
-filterDefaultDate()
 
-
-const filterDate = () => {
+const filterDate = (array) => {
+    console.log(array)
     const dateInput = parseInt(($dayFilter.value).split("-").join(""))
-    return dataOperationsLocalStorage().filter(operation => {
+    return array.filter(operation => {
         const dateOperation = parseInt((operation.date).split("/").reverse().join(""))
         if (dateOperation >= dateInput) {    
             return operation
@@ -407,17 +360,18 @@ const filterDate = () => {
     }) 
 }
 
-window.addEventListener("load", () => {
-    addNewOperation(filterDate())
-})
-
-$dayFilter.addEventListener("change", () => {
-    addNewOperation(filterDate())
-})
+// Evento filters
 
 $filters.addEventListener("change", () =>{
-    const arrFilters = dataOperationsLocalStorage()
-
+    const arr = dataOperationsLocalStorage()
+    const filteredTypeArr = filterType(arr)
+    const filteredCategoryArr = categoryFilter(filteredTypeArr)
+    const filteredDateArr = filterDate(filteredCategoryArr)
+    console.log(filteredDateArr)
+    if (filteredDateArr.length === 0) {
+        $(".operations-empty").classList.remove("hidden")
+        $(".operations-table").classList.add("hidden")
+    } else addNewOperation(filteredDateArr)
 })
 
 
@@ -490,8 +444,6 @@ const generateCategories = (categories) => {
         })
     }
 }
-generateCategories(categories)
-
 
 const data = { categories, operations }
 
@@ -524,7 +476,6 @@ const addCategory = () => {
     $tableCategories.innerHTML = ""
     generateCategories(dataCategoriesLocalStorage())
 }
-addCategory()
 
 
 $btnAddCategories.addEventListener("click", (e) => {
@@ -629,8 +580,6 @@ const selectCategoriesOperation = () => {
     }
 }
 
-selectCategoriesOperation()
-
 const selectCategoriesFilter = () => {
     $categoryFilter.innerHTML = ""
     $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
@@ -643,7 +592,16 @@ const selectCategoriesFilter = () => {
 }
 
 
-selectCategoriesFilter()
+// Evento onload
+
+window.addEventListener("load", () => {
+    generateCategories(categories)
+    addCategory()
+    selectCategoriesOperation()
+    selectCategoriesFilter()
+    filterDefaultDate()
+    addNewOperation(filterDate(dataOperationsLocalStorage()))
+})
 
 
 // Funciones de navegación
