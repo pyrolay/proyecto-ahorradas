@@ -579,7 +579,7 @@ const categoryFilter = (array) => {
         } else if ($categoryFilter.value === "Todas") {
             $(".operations-empty").classList.add("hidden")
             $(".operations-table").classList.remove("hidden")
-            return array 
+            return array
         }
 
         if (categoryFilterOperation(array, $categoryFilter.value).length === 0) {
@@ -611,7 +611,7 @@ const filterDate = (array) => {
         if (dateOperation >= dateInput) {
             return operation
         }
-    }) 
+    })
 }
 
 // Ordenar
@@ -658,7 +658,7 @@ const filterFunction = () => {
     }
 }
 
-$filters.addEventListener("change", () =>{
+$filters.addEventListener("change", () => {
     filterFunction()
 })
 
@@ -671,7 +671,7 @@ const balanceFunction = (array) => {
         } else spent += parseInt(operation.amount)
     }
     const total = profit - spent
-    return balanceDom({spent, profit, total})
+    return balanceDom({ spent, profit, total })
 }
 
 const balanceDom = (objectBalance) => {
@@ -685,6 +685,71 @@ const balanceDom = (objectBalance) => {
         $(".balanceTotal").innerText = `$${total}`
     }
 }
+
+// Eventos y funciones sección reportes
+
+// Función resumen
+
+const categoryMax = (type, key) => {
+    let maxAmount = 0
+    let maxKey
+    const filterOperation = typeFilterOperation(dataOperationsLocalStorage(), type)
+    for (const operation of filterOperation) {
+        const { amount } = operation
+        if (parseInt(amount) > maxAmount) {
+            maxAmount = parseInt(amount)
+            maxKey = operation[key]
+        }
+    } return { maxAmount, maxKey }
+}
+
+const destructuringReports = (type, key) =>{
+    return  { maxAmount, maxKey } = categoryMax(type, key)
+}
+
+const summaryReports = () => {
+    const destructuringProfit = destructuringReports("ganancia", "category")
+        $(".categoryMaxProfit").innerHTML += `
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="category">${nameCategory(maxKey)}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="profit">${maxAmount}</span>
+        </div>`
+    const destructuringSpend = destructuringReports("gasto", "category")
+        $(".categoryMaxSpend").innerHTML += `
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="category">${nameCategory(maxKey)}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="profit">${maxAmount}</span>
+        </div>`
+    
+}
+
+summaryReports()
+
+const balanceMax = () => {
+    let maxBalance = 0
+    let maxCategory
+    for(const {id} of dataCategoriesLocalStorage()){
+        const filterCategory = categoryFilterOperation(dataOperationsLocalStorage(), id)
+        let profit = 0
+        let spent = 0
+        for (const operation of filterCategory) {
+            if (operation.type === "ganancia") {
+                profit += parseInt(operation.amount)
+            } else spent += parseInt(operation.amount)
+        }
+        const total = profit - spent
+        if (total > maxBalance) {
+            maxBalance = total
+            maxCategory = id
+        }
+    }
+    return {maxBalance, maxCategory}
+}
+
 
 // Evento onload
 
