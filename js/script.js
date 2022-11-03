@@ -533,6 +533,14 @@ $editOperationBtn.addEventListener("click", () => {
 
 // Funciones para filtrar y ordenar operaciones
 
+const emptyOperationsAndBalance = () => {
+    $(".operations-empty").classList.remove("hidden")
+    $(".operations-table").classList.add("hidden")
+    $(".balanceProfit").innerText = `+$0`
+    $(".balanceSpent").innerText = `-$0`
+    $(".balanceTotal").innerText = `$0`
+}
+
 // Filtro type
 
 const typeFilterOperation = (array, $type) => {
@@ -540,27 +548,25 @@ const typeFilterOperation = (array, $type) => {
 }
 
 const filterType = (array) => {
-    for (const operation of array) {
-        if ($type.value === operation.type) {
-            $(".operations-empty").classList.add("hidden")
-            $(".operations-table").classList.remove("hidden")
-            array = typeFilterOperation(array, operation.type)
-            return array
-        } else if ($type.value === "todos") {
-            $(".operations-empty").classList.add("hidden")
-            $(".operations-table").classList.remove("hidden")
-            return array
+    if (array.length !== 0) {
+        for (const operation of array) {
+            if ($type.value === operation.type) {
+                $(".operations-empty").classList.add("hidden")
+                $(".operations-table").classList.remove("hidden")
+                array = typeFilterOperation(array, operation.type)
+                return categoryFilter(array)
+            } else if ($type.value === "todos") {
+                $(".operations-empty").classList.add("hidden")
+                $(".operations-table").classList.remove("hidden")
+                return categoryFilter(array)
+            }
+    
+            if (typeFilterOperation(array, $type.value).length === 0) {
+                emptyOperationsAndBalance()
+                return array = []
+            }
         }
-
-        if (typeFilterOperation(array, $type.value).length === 0) {
-            $(".operations-empty").classList.remove("hidden")
-            $(".operations-table").classList.add("hidden")
-            $(".balanceProfit").innerText = `+$0`
-            $(".balanceSpent").innerText = `-$0`
-            $(".balanceTotal").innerText = `$0`
-            return array = []
-        }
-    }
+    } else emptyOperationsAndBalance()
 }
 
 // Filtro category
@@ -570,27 +576,25 @@ const categoryFilterOperation = (array, $categoryFilter) => {
 }
 
 const categoryFilter = (array) => {
-    for (const operation of array) {
-        if ($categoryFilter.value === operation.category) {
-            $(".operations-empty").classList.add("hidden")
-            $(".operations-table").classList.remove("hidden")
-            array = categoryFilterOperation(array, operation.category)
-            return array
-        } else if ($categoryFilter.value === "Todas") {
-            $(".operations-empty").classList.add("hidden")
-            $(".operations-table").classList.remove("hidden")
-            return array 
+    if (array.length !== 0) {
+        for (const operation of array) {
+            if ($categoryFilter.value === operation.category) {
+                $(".operations-empty").classList.add("hidden")
+                $(".operations-table").classList.remove("hidden")
+                array = categoryFilterOperation(array, operation.category)
+                return filterDate(array)
+            } else if ($categoryFilter.value === "Todas") {
+                $(".operations-empty").classList.add("hidden")
+                $(".operations-table").classList.remove("hidden")
+                return filterDate(array)
+            }
+    
+            if (categoryFilterOperation(array, $categoryFilter.value).length === 0) {
+                emptyOperationsAndBalance()
+                return array = []
+            }
         }
-
-        if (categoryFilterOperation(array, $categoryFilter.value).length === 0) {
-            $(".operations-empty").classList.remove("hidden")
-            $(".operations-table").classList.add("hidden")
-            $(".balanceProfit").innerText = `+$0`
-            $(".balanceSpent").innerText = `-$0`
-            $(".balanceTotal").innerText = `$0`
-            return array = []
-        }
-    }
+    } else emptyOperationsAndBalance()
 }
 
 // Filtro fecha
@@ -605,13 +609,15 @@ const filterDefaultDate = () => {
 
 
 const filterDate = (array) => {
-    const dateInput = parseInt(($dayFilter.value).split("-").join(""))
-    return array.filter(operation => {
-        const dateOperation = parseInt((operation.date).split("/").reverse().join(""))
-        if (dateOperation >= dateInput) {
-            return operation
-        }
-    }) 
+    if (array.length !== 0) {
+        const dateInput = parseInt(($dayFilter.value).split("-").join(""))
+        return array.filter(operation => {
+            const dateOperation = parseInt((operation.date).split("/").reverse().join(""))
+            if (dateOperation >= dateInput) {
+                return operation
+            }
+        }) 
+    } else emptyOperationsAndBalance()
 }
 
 // Ordenar
@@ -642,20 +648,12 @@ const orderBy = (array) => {
 // Evento filters
 
 const filterFunction = () => {
-    const arrOfOperations = dataOperationsLocalStorage()
-    const filteredTypeArr = filterType(arrOfOperations)
-    const filteredCategoryArr = categoryFilter(filteredTypeArr)
-    const filteredDateArr = filterDate(filteredCategoryArr)
-    if (filteredDateArr.length === 0) {
-        $(".operations-empty").classList.remove("hidden")
-        $(".operations-table").classList.add("hidden")
-        $(".balanceProfit").innerText = `+$0`
-        $(".balanceSpent").innerText = `-$0`
-        $(".balanceTotal").innerText = `$0`
-    } else {
-        balanceFunction(filteredDateArr)
-        addNewOperation(orderBy(filteredDateArr))
-    }
+    let arrOfOperations = dataOperationsLocalStorage()
+    const operationsFiltered = filterType(arrOfOperations)
+    if (operationsFiltered.length !== 0) {
+        balanceFunction(arrOfOperations)
+        addNewOperation(orderBy(arrOfOperations))
+    } else emptyOperationsAndBalance()
 }
 
 $filters.addEventListener("change", () =>{
