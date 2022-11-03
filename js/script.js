@@ -649,8 +649,8 @@ const orderBy = (array) => {
 
 const filterFunction = () => {
     let arrOfOperations = dataOperationsLocalStorage()
-    const operationsFiltered = filterType(arrOfOperations)
-    if (operationsFiltered.length !== 0) {
+    operationsFiltered = filterType(arrOfOperations)
+    if (arrOfOperations.length !== 0 && operationsFiltered.length !== 0) {
         balanceFunction(arrOfOperations)
         addNewOperation(orderBy(arrOfOperations))
     } else emptyOperationsAndBalance()
@@ -693,8 +693,10 @@ window.addEventListener("load", () => {
     selectCategoriesFilter()
     filterDefaultDate()
     filterFunction()
-    const filterByDate = filterDate(dataOperationsLocalStorage())
-    addNewOperation(orderBy(filterByDate))
+    if (dataOperationsLocalStorage.length !== 0) {
+        const filterByDate = filterDate(dataOperationsLocalStorage())
+        addNewOperation(orderBy(filterByDate))
+    }
 })
 
 
