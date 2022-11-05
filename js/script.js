@@ -150,6 +150,7 @@ const generateCategories = (categories) => {
             selectCategoriesOperation()
             selectCategoriesFilter()
             operationsEmptyOrNot()
+            enoughOperations()
         })
     }
 }
@@ -199,6 +200,7 @@ $btnAddCategories.addEventListener("click", (e) => {
     selectCategoriesFilter()
     e.preventDefault()
     $formAddCategories.reset()
+    enoughOperations()
 })
 
 // Eventos y funciones para editar categorias
@@ -266,6 +268,7 @@ $editCategoryBtn.addEventListener("click", () => {
     addNewOperation(dataOperationsLocalStorage())
     selectCategoriesOperation()
     selectCategoriesFilter()
+    enoughOperations()
 })
 
 // Eventos y funciones para eliminar categorias
@@ -324,7 +327,6 @@ const newOperationEmpty = () => {
     $("#amount").value = 0
     date()
 }
-
 
 const saveNewOperation = () => {
     const id = generateId()
@@ -430,6 +432,7 @@ const addNewOperation = (data) => {
             removeOperationLocal(operationId)
             operationsEmptyOrNot()
             filterFunction()
+            enoughOperations()
         })
     }
 }
@@ -517,6 +520,7 @@ $addNewOperationBtn.addEventListener("click", (e) => {
     operationsEmptyOrNot()
     selectCategoriesOperation()
     filterType(dataOperationsLocalStorage())
+    enoughOperations()
     $newOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
@@ -525,6 +529,7 @@ $editOperationBtn.addEventListener("click", () => {
     const operationId = $editOperationBtn.getAttribute("data-id")
     editOperationLocal(operationId)
     filterFunction(dataOperationsLocalStorage())
+    enoughOperations()
     $editOperation.classList.add("hidden")
     $mainContainer.classList.remove("hidden")
 })
@@ -535,8 +540,8 @@ $editOperationBtn.addEventListener("click", () => {
 
 // Filtro type
 
-const typeFilterOperation = (array, $type) => {
-    return array.filter(operation => operation.type === $type)
+const filterOperationByProp = (array, prop, input) => {
+    return array.filter(operation => operation[prop] === input)
 }
 
 const filterType = (array) => {
@@ -544,7 +549,7 @@ const filterType = (array) => {
         if ($type.value === operation.type) {
             $(".operations-empty").classList.add("hidden")
             $(".operations-table").classList.remove("hidden")
-            array = typeFilterOperation(array, operation.type)
+            array = filterOperationByProp(array, "type", $type.value)
             return array
         } else if ($type.value === "todos") {
             $(".operations-empty").classList.add("hidden")
@@ -552,7 +557,7 @@ const filterType = (array) => {
             return array
         }
 
-        if (typeFilterOperation(array, $type.value).length === 0) {
+        if (filterOperationByProp(array, "type", $type.value).length === 0) {
             $(".operations-empty").classList.remove("hidden")
             $(".operations-table").classList.add("hidden")
             $(".balanceProfit").innerText = `+$0`
@@ -565,16 +570,12 @@ const filterType = (array) => {
 
 // Filtro category
 
-const categoryFilterOperation = (array, $categoryFilter) => {
-    return array.filter(operation => operation.category === $categoryFilter)
-}
-
 const categoryFilter = (array) => {
     for (const operation of array) {
         if ($categoryFilter.value === operation.category) {
             $(".operations-empty").classList.add("hidden")
             $(".operations-table").classList.remove("hidden")
-            array = categoryFilterOperation(array, operation.category)
+            array = filterOperationByProp(array, "category", $categoryFilter.value)
             return array
         } else if ($categoryFilter.value === "Todas") {
             $(".operations-empty").classList.add("hidden")
@@ -582,7 +583,7 @@ const categoryFilter = (array) => {
             return array
         }
 
-        if (categoryFilterOperation(array, $categoryFilter.value).length === 0) {
+        if (filterOperationByProp(array, "category", $categoryFilter.value).length === 0) {
             $(".operations-empty").classList.remove("hidden")
             $(".operations-table").classList.add("hidden")
             $(".balanceProfit").innerText = `+$0`
@@ -694,7 +695,6 @@ const filterByCategory = (category) => {
     return dataOperationsLocalStorage().filter(operation => operation.category === category)
 }
 
-
 const filterByDate = (date) => {
     return dataOperationsLocalStorage().filter(operation => {
         const dateOperation = operation.date.slice(3).split("/").join("/")
@@ -702,11 +702,9 @@ const filterByDate = (date) => {
             return operation
         }
     })
-
 }
 
 const getSpent = (array) => {
-    // return el gasto total a partir de un array de operaciones
     let spent = 0
     for (const operation of array) {
         if (operation.type === "gasto") {
@@ -715,9 +713,7 @@ const getSpent = (array) => {
     } return spent
 }
 
-
 const getEarnings = (array) => {
-    // return ganancia total a partir de un array de operaciones
     let profit = 0
     for (const operation of array) {
         if (operation.type === "ganancia") {
@@ -726,37 +722,39 @@ const getEarnings = (array) => {
     } return profit
 }
 
-
 const getBalance = (array) => {
-    // return el balance total a partir de un array de operaciones
     return total = getEarnings(array) - getSpent(array)
 }
 
-
-const objetoCategories = (propiedad, callback) => {
-    const arrCategories = []
-    const objCategories = {}
+const objetCategories = (prop, callback) => {
+    const categoriesOrDates = []
+    const objCategoriesOrDates = {}
     for (const operation of dataOperationsLocalStorage()) {
-            if (!arrCategories.includes(operation[propiedad])) {
-                if(propiedad === "date"){
-                    const sliceValue = operation[propiedad].slice(3).split("/").join("/") 
-                    arrCategories.push(sliceValue) 
-                } else  arrCategories.push(operation[propiedad])
+            if (!categoriesOrDates.includes(operation[prop])) {
+                if(prop === "date"){
+                    const sliceValue = operation[prop].slice(3).split("/").join("/") 
+                    categoriesOrDates.push(sliceValue) 
+                } else  categoriesOrDates.push(operation[prop])
             }
     }
-    for (const arr of arrCategories) {
+    for (const item of categoriesOrDates) {
         const objBalance = {
-            gasto: getSpent(callback(arr)),
-            ganancia: getEarnings(callback(arr)),
-            balance: getBalance(callback(arr))
+            gasto: getSpent(callback(item)),
+            ganancia: getEarnings(callback(item)),
+            balance: getBalance(callback(item))
         }
-        objCategories[arr] = objBalance
+        objCategoriesOrDates[item] = objBalance
 
-    } return objCategories
+    } return objCategoriesOrDates
 }
 
-const categoriesTotalBalance = objetoCategories("category", filterByCategory)
-const dateTotalBalance = objetoCategories("date", filterByDate)
+let categoriesTotalBalance = objetCategories("category", filterByCategory)
+let dateTotalBalance = objetCategories("date", filterByDate)
+
+const balanceChange = () => {
+    categoriesTotalBalance = objetCategories("category", filterByCategory)
+    dateTotalBalance = objetCategories("date", filterByDate)
+}
 
 const symbolBalance = (balance) => {
     if (balance < 0) {
@@ -768,6 +766,8 @@ const symbolBalance = (balance) => {
 }
 
 const tableReports = () => {
+    $(".tableCategoriesReports").innerHTML = ""
+    $(".tableMonthReports").innerHTML = ""
     for (const obj of Object.keys(categoriesTotalBalance)) {
         const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
         $(".tableCategoriesReports").innerHTML += `
@@ -790,44 +790,19 @@ const tableReports = () => {
             </tr>
         `
     }
-
 }
-tableReports()
 
-const categoryMaxEarnings = () => {
+const categorySummary = (prop) => {
     let maxAmount = 0
     let maxCategory
     for (const obj of Object.keys(categoriesTotalBalance)) {
-        const {ganancia} = categoriesTotalBalance[obj]
-        if (ganancia > maxAmount) {
-            maxAmount = ganancia
+        const value = categoriesTotalBalance[obj][prop]
+        maxCategory = obj
+        if (value > maxAmount) {
+            maxAmount = value
             maxCategory = obj
         }
-    } return  {maxAmount, maxCategory}
-}
-
-const categoryMaxSpent = () => {
-    let maxSpentAmount = 0
-    let maxSpent
-    for (const obj of Object.keys(categoriesTotalBalance)) {
-        const {gasto} = categoriesTotalBalance[obj]
-        if (gasto > maxSpentAmount) {
-            maxSpentAmount = gasto
-            maxSpent = obj
-        }
-    } return  {maxSpentAmount, maxSpent}
-}
-
-const categoryMaxBalance = () => {
-    let maxBalanceAmount = 0
-    let maxBalance
-    for (const obj of Object.keys(categoriesTotalBalance)) {
-        const {balance} = categoriesTotalBalance[obj]
-        if (balance > maxBalanceAmount) {
-            maxBalanceAmount = balance
-            maxBalance = obj
-        }
-    } return  {maxBalanceAmount, maxBalance}
+    } return {maxAmount, maxCategory}
 }
 
 const monthMaxAndMin = () => {
@@ -837,10 +812,12 @@ const monthMaxAndMin = () => {
     let minMonth
     for (const obj of Object.keys(dateTotalBalance)) {
         const {ganancia,gasto} = dateTotalBalance[obj]
+        maxMonth = obj
         if (ganancia > maxMonthAmount) {
             maxMonthAmount = ganancia
             maxMonth = obj
         }
+        minMonth = obj
         if (gasto > maxMonthAmount) {
             minMonthAmount = gasto
             minMonth = obj
@@ -850,33 +827,53 @@ const monthMaxAndMin = () => {
 
 
 const summaryReports = () => {
-    const {maxAmount, maxCategory} = categoryMaxEarnings() 
-    $(".categoryMaxProfit").innerHTML += `
+    balanceChange()
+    tableReports()
+
+    const maxEarnings = categorySummary("ganancia")
+    $(".categoryMaxProfit").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Categoría con mayor ganancia</p>
+        </div>
         <div class="sm:w-1/3 sm:text-end">
-            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold"">${nameCategory(maxCategory)}</span>
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold"">${nameCategory(maxEarnings.maxCategory)}</span>
         </div>
         <div class="sm:w-1/3 sm:text-end font-semibold">
-            <span class="text-green-500 font-semibold">+$${maxAmount}</span>
-        </div>`
-    const {maxSpentAmount, maxSpent} = categoryMaxSpent()
-    $(".categoryMaxSpent").innerHTML += `
-        <div class="sm:w-1/3 sm:text-end">
-            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold">${nameCategory(maxSpent)}</span>
-        </div>
-        <div class="sm:w-1/3 sm:text-end font-semibold">
-            <span class="text-red-500 font-semibold">-$${maxSpentAmount}</span>
-        </div>`
-    const {maxBalanceAmount, maxBalance} = categoryMaxBalance()
-        $(".categoryMaxBalance").innerHTML += `
-        <div class="sm:w-1/3 sm:text-end">
-            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold">${nameCategory(maxBalance)}</span>
-        </div>
-        <div class="sm:w-1/3 sm:text-end font-semibold">
-            <span class="font-semibold">$${maxBalanceAmount}</span>
+            <span class="text-green-500 font-semibold">+$${maxEarnings.maxAmount}</span>
         </div>
     `
+
+    const maxSpent = categorySummary("gasto")
+    $(".categoryMaxSpent").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Categoría con mayor gasto</p>
+        </div>
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold">${nameCategory(maxSpent.maxCategory)}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="text-red-500 font-semibold">-$${maxSpent.maxAmount}</span>
+        </div>
+    `
+
+    const maxBalance = categorySummary("balance")
+    $(".categoryMaxBalance").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Categoria con mayor balance</p>
+        </div>
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold">${nameCategory(maxBalance.maxCategory)}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="font-semibold">$${maxBalance.maxAmount}</span>
+        </div>
+    `
+
     const {maxMonthAmount, maxMonth, minMonthAmount, minMonth} = monthMaxAndMin()
-    $(".maxProfitMonth").innerHTML += `
+    $(".maxProfitMonth").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Mes con mayor ganancia</p>
+        </div>
         <div class="sm:w-1/3 sm:text-end">
             <span class="category">${maxMonth}</span>
         </div>
@@ -884,7 +881,11 @@ const summaryReports = () => {
             <span class="most-month-profit text-green-500 font-semibold">+$${maxMonthAmount}</span>
         </div>
     `
-    $(".maxSpentMonth").innerHTML += `
+
+    $(".maxSpentMonth").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Mes con mayor gasto</p>
+        </div>
         <div class="sm:w-1/3 sm:text-end">
             <span class="category">${minMonth}</span>
         </div>
@@ -894,7 +895,17 @@ const summaryReports = () => {
     `
 }
 
-summaryReports()
+const enoughOperations = () => {
+    if (dataOperationsLocalStorage().length >= 2) {
+        summaryReports()
+        $(".operationsNotEnough").classList.add("hidden")
+        $(".reportsTables").classList.remove("hidden")
+    } else {
+        $(".operationsNotEnough").classList.remove("hidden")
+        $(".reportsTables").classList.add("hidden")
+    }
+}
+
 // Evento onload
 
 window.addEventListener("load", () => {
@@ -906,6 +917,7 @@ window.addEventListener("load", () => {
     filterFunction()
     const filterByDate = filterDate(dataOperationsLocalStorage())
     addNewOperation(orderBy(filterByDate))
+    enoughOperations()
 })
 
 
