@@ -749,13 +749,13 @@ const objetCategories = (prop, callback) => {
 let categoriesTotalBalance = objetCategories("category", filterByCategory)
 let dateTotalBalance = objetCategories("date", filterByDate)
 
-const balanceChange = () => {
+const totalBalanceChange = () => {
     categoriesTotalBalance = objetCategories("category", filterByCategory)
     dateTotalBalance = objetCategories("date", filterByDate)
 }
 
 const symbolBalance = (balance) => {
-    if (balance < 0) {
+    if (balance <= 0) {
         const totalSlice = balance.toString().slice(1)
         return `-$${totalSlice}`
     } else {
@@ -795,12 +795,12 @@ const categorySummary = (prop) => {
     let maxCategory
     for (const obj of Object.keys(categoriesTotalBalance)) {
         const value = categoriesTotalBalance[obj][prop]
-        maxCategory = obj
-        if (value > maxAmount) {
+        if (value >= maxAmount) {
             maxAmount = value
             maxCategory = obj
         }
-    } return {maxAmount, maxCategory}
+    } 
+    return {maxAmount, maxCategory}
 }
 
 const monthMaxAndMin = () => {
@@ -810,13 +810,11 @@ const monthMaxAndMin = () => {
     let minMonth
     for (const obj of Object.keys(dateTotalBalance)) {
         const {ganancia,gasto} = dateTotalBalance[obj]
-        maxMonth = obj
-        if (ganancia > maxMonthAmount) {
+        if (ganancia >= maxMonthAmount) {
             maxMonthAmount = ganancia
             maxMonth = obj
         }
-        minMonth = obj
-        if (gasto > maxMonthAmount) {
+        if (gasto >= minMonthAmount) {
             minMonthAmount = gasto
             minMonth = obj
         }
@@ -825,7 +823,7 @@ const monthMaxAndMin = () => {
 
 
 const summaryReports = () => {
-    balanceChange()
+    totalBalanceChange()
     tableReports()
 
     const maxEarnings = categorySummary("ganancia")
