@@ -690,67 +690,211 @@ const balanceDom = (objectBalance) => {
 
 // Función resumen
 
-const categoryMax = (type, key) => {
-    let maxAmount = 0
-    let maxKey
-    const filterOperation = typeFilterOperation(dataOperationsLocalStorage(), type)
-    for (const operation of filterOperation) {
-        const { amount } = operation
-        if (parseInt(amount) > maxAmount) {
-            maxAmount = parseInt(amount)
-            maxKey = operation[key]
-        }
-    } return { maxAmount, maxKey }
+const filterByCategory = (category) => {
+    return dataOperationsLocalStorage().filter(operation => operation.category === category)
 }
 
-const destructuringReports = (type, key) =>{
-    return  { maxAmount, maxKey } = categoryMax(type, key)
+
+const filterByDate = (date) => {
+    return dataOperationsLocalStorage().filter(operation => {
+        const dateOperation = operation.date.slice(3).split("/").join("/")
+        if (dateOperation === date) {
+            return operation
+        }
+    })
+
 }
+
+const getSpent = (array) => {
+    // return el gasto total a partir de un array de operaciones
+    let spent = 0
+    for (const operation of array) {
+        if (operation.type === "gasto") {
+            spent += parseInt(operation.amount)
+        }
+    } return spent
+}
+
+
+const getEarnings = (array) => {
+    // return ganancia total a partir de un array de operaciones
+    let profit = 0
+    for (const operation of array) {
+        if (operation.type === "ganancia") {
+            profit += parseInt(operation.amount)
+        }
+    } return profit
+}
+
+
+const getBalance = (array) => {
+    // return el balance total a partir de un array de operaciones
+    return total = getEarnings(array) - getSpent(array)
+}
+
+
+const objetoCategories = (propiedad, callback) => {
+    const arrCategories = []
+    const objCategories = {}
+    for (const operation of dataOperationsLocalStorage()) {
+            if (!arrCategories.includes(operation[propiedad])) {
+                if(propiedad === "date"){
+                    const sliceValue = operation[propiedad].slice(3).split("/").join("/") 
+                    arrCategories.push(sliceValue) 
+                } else  arrCategories.push(operation[propiedad])
+            }
+    }
+    for (const arr of arrCategories) {
+        const objBalance = {
+            gasto: getSpent(callback(arr)),
+            ganancia: getEarnings(callback(arr)),
+            balance: getBalance(callback(arr))
+        }
+        objCategories[arr] = objBalance
+
+    } return objCategories
+}
+
+const categoriesTotalBalance = objetoCategories("category", filterByCategory)
+const dateTotalBalance = objetoCategories("date", filterByDate)
+
+const symbolBalance = (balance) => {
+    if (balance < 0) {
+        const totalSlice = balance.toString().slice(1)
+        return `-$${totalSlice}`
+    } else {
+        return `$${balance}`
+    }
+}
+
+const tableReports = () => {
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
+        $(".tableCategoriesReports").innerHTML += `
+            <tr class="flex justify-between">
+                <th class="font-medium">${nameCategory(obj)}</th>
+                <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
+                <th class="ml-10 font-medium text-red-500">-$${gasto}</th>
+                <th class="ml-10 font-medium">${symbolBalance(balance)}</th>
+            </tr>
+        `
+    }
+    for(const obj of Object.keys(dateTotalBalance)){
+        const { ganancia, gasto, balance } = dateTotalBalance[obj]
+        $(".tableMonthReports").innerHTML += `
+            <tr class="flex justify-between">
+                <th class="font-medium">${obj}</th>
+                <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
+                <th class="ml-10 font-medium text-red-500">-$${gasto}</th>
+                <th class="ml-10 font-medium">${symbolBalance(balance)}</th>
+            </tr>
+        `
+    }
+
+}
+tableReports()
+
+const categoryMaxEarnings = () => {
+    let maxAmount = 0
+    let maxCategory
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const {ganancia} = categoriesTotalBalance[obj]
+        if (ganancia > maxAmount) {
+            maxAmount = ganancia
+            maxCategory = obj
+        }
+    } return  {maxAmount, maxCategory}
+}
+
+const categoryMaxSpent = () => {
+    let maxSpentAmount = 0
+    let maxSpent
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const {gasto} = categoriesTotalBalance[obj]
+        if (gasto > maxSpentAmount) {
+            maxSpentAmount = gasto
+            maxSpent = obj
+        }
+    } return  {maxSpentAmount, maxSpent}
+}
+
+const categoryMaxBalance = () => {
+    let maxBalanceAmount = 0
+    let maxBalance
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const {balance} = categoriesTotalBalance[obj]
+        if (balance > maxBalanceAmount) {
+            maxBalanceAmount = balance
+            maxBalance = obj
+        }
+    } return  {maxBalanceAmount, maxBalance}
+}
+
+const monthMaxAndMin = () => {
+    let maxMonthAmount = 0
+    let minMonthAmount = 0
+    let maxMonth
+    let minMonth
+    for (const obj of Object.keys(dateTotalBalance)) {
+        const {ganancia,gasto} = dateTotalBalance[obj]
+        if (ganancia > maxMonthAmount) {
+            maxMonthAmount = ganancia
+            maxMonth = obj
+        }
+        if (gasto > maxMonthAmount) {
+            minMonthAmount = gasto
+            minMonth = obj
+        }
+    } return  {maxMonthAmount, maxMonth, minMonthAmount, minMonth}
+}
+
 
 const summaryReports = () => {
-    const destructuringProfit = destructuringReports("ganancia", "category")
-        $(".categoryMaxProfit").innerHTML += `
+    const {maxAmount, maxCategory} = categoryMaxEarnings() 
+    $(".categoryMaxProfit").innerHTML += `
         <div class="sm:w-1/3 sm:text-end">
-            <span class="category">${nameCategory(maxKey)}</span>
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold"">${nameCategory(maxCategory)}</span>
         </div>
         <div class="sm:w-1/3 sm:text-end font-semibold">
-            <span class="profit">${maxAmount}</span>
+            <span class="text-green-500 font-semibold">+$${maxAmount}</span>
         </div>`
-    const destructuringSpend = destructuringReports("gasto", "category")
-        $(".categoryMaxSpend").innerHTML += `
+    const {maxSpentAmount, maxSpent} = categoryMaxSpent()
+    $(".categoryMaxSpent").innerHTML += `
         <div class="sm:w-1/3 sm:text-end">
-            <span class="category">${nameCategory(maxKey)}</span>
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold">${nameCategory(maxSpent)}</span>
         </div>
         <div class="sm:w-1/3 sm:text-end font-semibold">
-            <span class="profit">${maxAmount}</span>
+            <span class="text-red-500 font-semibold">-$${maxSpentAmount}</span>
         </div>`
-    
+    const {maxBalanceAmount, maxBalance} = categoryMaxBalance()
+        $(".categoryMaxBalance").innerHTML += `
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold">${nameCategory(maxBalance)}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="font-semibold">$${maxBalanceAmount}</span>
+        </div>
+    `
+    const {maxMonthAmount, maxMonth, minMonthAmount, minMonth} = monthMaxAndMin()
+    $(".maxProfitMonth").innerHTML += `
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="category">${maxMonth}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="most-month-profit text-green-500 font-semibold">+$${maxMonthAmount}</span>
+        </div>
+    `
+    $(".maxSpentMonth").innerHTML += `
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="category">${minMonth}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="most-month-profit text-red-500 font-semibold">-$${minMonthAmount}</span>
+        </div>
+    `
 }
 
 summaryReports()
-
-const balanceMax = () => {
-    let maxBalance = 0
-    let maxCategory
-    for(const {id} of dataCategoriesLocalStorage()){
-        const filterCategory = categoryFilterOperation(dataOperationsLocalStorage(), id)
-        let profit = 0
-        let spent = 0
-        for (const operation of filterCategory) {
-            if (operation.type === "ganancia") {
-                profit += parseInt(operation.amount)
-            } else spent += parseInt(operation.amount)
-        }
-        const total = profit - spent
-        if (total > maxBalance) {
-            maxBalance = total
-            maxCategory = id
-        }
-    }
-    return {maxBalance, maxCategory}
-}
-
-
 // Evento onload
 
 window.addEventListener("load", () => {
