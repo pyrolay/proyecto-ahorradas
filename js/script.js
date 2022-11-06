@@ -786,13 +786,20 @@ const categorySummary = (prop) => {
     let maxCategory
     for (const obj of Object.keys(categoriesTotalBalance)) {
         const value = categoriesTotalBalance[obj][prop]
-        if (value >= maxAmount) {
+        if(prop === "balance" && value < 0){
+            let balancePositive = parseInt(value.toString().slice(1))
+            if(balancePositive >= maxAmount){
+                maxAmount = balancePositive   
+                maxCategory = obj
+            }
+        } else if (value >= maxAmount) {
             maxAmount = value
             maxCategory = obj
         }
     } 
     return {maxAmount, maxCategory}
 }
+
 
 const monthMaxAndMin = () => {
     let maxMonthAmount = 0
