@@ -786,17 +786,11 @@ const categorySummary = (prop) => {
     let maxCategory
     for (const obj of Object.keys(categoriesTotalBalance)) {
         const value = categoriesTotalBalance[obj][prop]
-        if(prop === "balance" && value < 0){
-            let balancePositive = parseInt(value.toString().slice(1))
-            if(balancePositive >= maxAmount){
-                maxAmount = balancePositive   
-                maxCategory = obj
-            }
-        } else if (value >= maxAmount) {
+        if (value >= maxAmount) {
             maxAmount = value
             maxCategory = obj
         }
-    } 
+    }
     return {maxAmount, maxCategory}
 }
 
@@ -851,7 +845,8 @@ const summaryReports = () => {
     `
 
     const maxBalance = categorySummary("balance")
-    $(".categoryMaxBalance").innerHTML = `
+    if (maxBalance.maxAmount === 0) $(".categoryMaxBalance").classList.add("hidden")
+    else { $(".categoryMaxBalance").innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Categoria con mayor balance</p>
         </div>
@@ -862,6 +857,7 @@ const summaryReports = () => {
             <span class="font-semibold">$${maxBalance.maxAmount}</span>
         </div>
     `
+    }
 
     const {maxMonthAmount, maxMonth, minMonthAmount, minMonth} = monthMaxAndMin()
     $(".maxProfitMonth").innerHTML = `
@@ -890,7 +886,13 @@ const summaryReports = () => {
 }
 
 const enoughOperations = () => {
-    if (dataOperationsLocalStorage().length >= 2) {
+    const spentAndGain = []
+    for (const operation of dataOperationsLocalStorage()) {
+        const { type } = operation
+        spentAndGain.push(type)
+    }
+
+    if (spentAndGain.includes("ganancia") && spentAndGain.includes("gasto")) {
         summaryReports()
         $(".operationsNotEnough").classList.add("hidden")
         $(".reportsTables").classList.remove("hidden")
