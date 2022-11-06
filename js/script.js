@@ -685,8 +685,8 @@ const filterByCategory = (category) => {
 const filterByDate = (date) => {
     return dataOperationsLocalStorage().filter(operation => {
         const dateOperation = new Date (operation.date)
-        console.log(dateOperation)
-        if (dateOperation === date) {
+        const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
+        if (monthAndYear === date) {
             return operation
         }
     })
@@ -720,8 +720,9 @@ const objectCategories = (prop, callback) => {
     for (const operation of dataOperationsLocalStorage()) {
             if (!categoriesOrDates.includes(operation[prop])) {
                 if(prop === "date"){
-                    const sliceValue = new Date(operation[prop])
-                    categoriesOrDates.push(sliceValue) 
+                    const dateOperation = new Date(operation[prop])
+                    const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
+                    categoriesOrDates.push(monthAndYear) 
                 } else  categoriesOrDates.push(operation[prop])
             }
     }
