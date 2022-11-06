@@ -77,7 +77,12 @@ const generateId = () => {
     } return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
+// Add y remove hidden
 
+const addAndRemoveHidden = (add, remove) => {
+    add.classList.add("hidden")
+    remove.classList.remove("hidden")
+}
 
 // Objetos de categorias y operaciones
 
@@ -510,8 +515,7 @@ $addNewOperationBtn.addEventListener("click", (e) => {
     selectCategoriesOperation()
     filterType(dataOperationsLocalStorage())
     enoughOperations()
-    $newOperation.classList.add("hidden")
-    $mainContainer.classList.remove("hidden")
+    addAndRemoveHidden($newOperation, $mainContainer)
 })
 
 $editOperationBtn.addEventListener("click", () => {
@@ -528,8 +532,7 @@ $editOperationBtn.addEventListener("click", () => {
 // Funciones para filtrar y ordenar operaciones
 
 const emptyOperationsAndBalance = () => {
-    $(".operations-empty").classList.remove("hidden")
-    $(".operations-table").classList.add("hidden")
+    addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
     $(".balanceProfit").innerText = `+$0`
     $(".balanceSpent").innerText = `-$0`
     $(".balanceTotal").innerText = `$0`
@@ -545,13 +548,11 @@ const filterType = (array) => {
     if (array.length !== 0) {
         for (const operation of array) {
             if ($type.value === operation.type) {
-                $(".operations-empty").classList.add("hidden")
-                $(".operations-table").classList.remove("hidden")
+                addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 array = filterOperationByProp(array, "type", $type.value)
                 return categoryFilter(array)
             } else if ($type.value === "todos") {
-                $(".operations-empty").classList.add("hidden")
-                $(".operations-table").classList.remove("hidden")
+                addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 return categoryFilter(array)
             }
     
@@ -569,13 +570,11 @@ const categoryFilter = (array) => {
     if (array.length !== 0) {
         for (const operation of array) {
             if ($categoryFilter.value === operation.category) {
-                $(".operations-empty").classList.add("hidden")
-                $(".operations-table").classList.remove("hidden")
+                addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 array = filterOperationByProp(array, "category", $categoryFilter.value)
                 return filterDate(array)
             } else if ($categoryFilter.value === "Todas") {
-                $(".operations-empty").classList.add("hidden")
-                $(".operations-table").classList.remove("hidden")
+                addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 return filterDate(array)
             }
     
@@ -885,11 +884,9 @@ const summaryReports = () => {
 const enoughOperations = () => {
     if (dataOperationsLocalStorage().length >= 2) {
         summaryReports()
-        $(".operationsNotEnough").classList.add("hidden")
-        $(".reportsTables").classList.remove("hidden")
+        addAndRemoveHidden($(".operationsNotEnough"), $(".reportsTables"))
     } else {
-        $(".operationsNotEnough").classList.remove("hidden")
-        $(".reportsTables").classList.add("hidden")
+        addAndRemoveHidden($(".reportsTables"), $(".operationsNotEnough"))
     }
 }
 
@@ -914,14 +911,12 @@ window.addEventListener("load", () => {
 
 $navbarBurguer.addEventListener("click", () => {
     $navbarMenu.classList.remove("hidden")
-    $xmark.classList.remove("hidden")
-    $navbarBurguer.classList.add("hidden")
+    addAndRemoveHidden($navbarBurguer, $xmark)
 })
 
 $xmark.addEventListener("click", () => {
     $navbarMenu.classList.add("hidden")
-    $xmark.classList.add("hidden")
-    $navbarBurguer.classList.remove("hidden")
+    addAndRemoveHidden($xmark, $navbarBurguer)
 })
 
 
@@ -990,13 +985,11 @@ const changeClass = () => {
 }
 
 $cancelNewOperationBtn.addEventListener("click", () => {
-    $newOperation.classList.add("hidden")
-    $mainContainer.classList.remove("hidden")
+    addAndRemoveHidden($newOperation, $mainContainer)
 })
 
 $cancelEditOperationBtn.addEventListener("click", () => {
-    $editOperation.classList.add("hidden")
-    $mainContainer.classList.remove("hidden")
+    addAndRemoveHidden($editOperation, $mainContainer)
 })
 
 $btnHideFilters.addEventListener("click", () => {
