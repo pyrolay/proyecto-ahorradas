@@ -301,71 +301,26 @@
     <div id="reports" class="hidden reports lg:p-16 py-16 px-4 flex justify-center">
         <section class="lg:max-w-5xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Reportes</h2>
-            <section class="hidden py-5 flex flex-col items-center">
+            <section class="operationsNotEnough py-5 flex flex-col items-center">
                 <img src="assets/reports-illustration.svg" alt="" class="max-w-sm">
                 <p class="text-center mb-2 lg:text-2xl text-xl font-semibold">Operaciones insuficientes</p>
                 <p class="text-center">Prueba agregando más operaciones</p>
             </section>
 
-            <section class="sm:p-5 p-2">
+            <section class="reportsTables hidden sm:p-5 p-2">
                 <section class="mb-7">
                     <h3 class="mb-7 text-2xl font-semibold underline underline-offset-4 decoration-[#F2002c]">Resumen
                     </h3>
                     <ul class="text-slate-900">
-                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
-                            <div class="sm:w-1/3 mb-2 sm:mb-0">
-                                <p class="font-semibold">Categoría con mayor ganancia</p>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end">
-                                <span class="category">categoria</span>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end font-semibold">
-                                <span class="profit">ganancia</span>
-                            </div>
+                        <li class="categoryMaxProfit mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
-                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
-                            <div class="sm:w-1/3 mb-2 sm:mb-0">
-                                <p class="font-semibold">Categoría con mayor gasto</p>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end">
-                                <span class="category">categoria</span>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end font-semibold">
-                                <span class="most-category-spend">gasto</span>
-                            </div>
+                        <li class="categoryMaxSpent mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
-                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
-                            <div class="sm:w-1/3 mb-2 sm:mb-0">
-                                <p class="font-semibold">Categoria con mayor balance</p>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end">
-                                <span class="category">categoria</span>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end font-semibold">
-                                <span class="most-category-balance">balance</span>
-                            </div>
+                        <li class="categoryMaxBalance mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
-                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
-                            <div class="sm:w-1/3 mb-2 sm:mb-0">
-                                <p class="font-semibold">Mes con mayor ganancia</p>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end">
-                                <span class="category">fecha</span>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end font-semibold">
-                                <span class="most-month-profit">ganancia</span>
-                            </div>
+                        <li class="maxProfitMonth mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
-                        <li class="mb-5 flex justify-between flex-col sm:flex-row">
-                            <div class="sm:w-1/3 mb-2 sm:mb-0">
-                                <p class="font-semibold">Mes con mayor gasto</p>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end">
-                                <span class="category">fecha</span>
-                            </div>
-                            <div class="sm:w-1/3 sm:text-end font-semibold">
-                                <span class="most-month-spend">gasto</span>
-                            </div>
+                        <li class="maxSpentMonth mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
                     </ul>
                 </section>
@@ -383,25 +338,7 @@
                                     <th class="ml-10 sm:ml-0 font-medium">Balance</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="flex justify-between">
-                                    <th class="font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                </tr>
-                                <tr class="flex justify-between">
-                                    <th class="font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                </tr>
-                                <tr class="flex justify-between">
-                                    <th class="font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                </tr>
+                            <tbody class="tableCategoriesReports">
                             </tbody>
                         </table>
                     </div>
@@ -420,25 +357,7 @@
                                     <th class="ml-10 sm:ml-0 font-medium">Balance</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="flex justify-between">
-                                    <th class="font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                </tr>
-                                <tr class="flex justify-between">
-                                    <th class="font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                </tr>
-                                <tr class="flex justify-between">
-                                    <th class="font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalkfgfgdfsd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                    <th class="ml-10 font-medium">sldjalksd</th>
-                                </tr>
+                            <tbody class="tableMonthReports">
                             </tbody>
                         </table>
                     </div>
