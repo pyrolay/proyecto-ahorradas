@@ -322,7 +322,7 @@ const selectCategoriesFilter = () => {
 const newOperationEmpty = () => {
     $("#description").value = ""
     $("#amount").value = 0
-    date()
+    $("#date").valueAsDate = new Date()
 }
 
 
@@ -332,7 +332,7 @@ const saveNewOperation = () => {
     const amount = $("#amount").value
     const type = $("#selectType").value
     const category = $("#selectCategory").value
-    const date = formatDate()
+    const date = $("#date").value
     operations.push({ id, description, amount, type, category, date })
     if (localStorage.getItem("datos")) {
         const operations = dataOperationsLocalStorage()
@@ -343,14 +343,10 @@ const saveNewOperation = () => {
     }
 }
 
-const date = () => {
-    const date = new Date()
-    $("#date").valueAsDate = date
-}
-
-const formatDate = () => {
-    const date = $("#date").value
-    const newDate = date.split("-").reverse().join("/")
+const formatDate = (date) => {
+    date = new Date(date)
+    const getDate = [date.getUTCDate(), date.getUTCMonth() + 1, date.getUTCFullYear()]
+    const newDate = getDate.join("/")
     return newDate
 }
 
@@ -393,7 +389,7 @@ const addNewOperation = (data) => {
         </th>
             <th class="w-24 ml-10">
                 <div class="font-light text-start">
-                <p>${date}</p>
+                <p>${formatDate(date)}</p>
                 </div>
                 </th>
                 <th class="w-24 ml-10">
@@ -467,11 +463,7 @@ const editOperation = (id) => {
     $("#editAmount").value = chosenOperation.amount
     $("#editSelectType").value = chosenOperation.type
     $("#editSelectCategory").value = chosenOperation.category
-    const dateSplit = chosenOperation.date.split("/")
-    const dateReverse = dateSplit.reverse()
-    const dateJoin = dateReverse.join("/")
-    const newDate = new Date(dateJoin)
-    $("#editDate").valueAsDate = newDate
+    $("#editDate").valueAsDate = new Date(chosenOperation.date)
 
     $editOperationBtn.setAttribute("data-id", id)
     $cancelEditOperationBtn.setAttribute("data-id", id)
@@ -488,10 +480,7 @@ const editOperationLocal = (id) => {
             operation.amount = $("#editAmount").value
             operation.type = $("#editSelectType").value
             operation.category = $("#editSelectCategory").value
-            const dateSplit = $("#editDate").value.split("-")
-            const dateReverse = dateSplit.reverse()
-            const dateJoin = dateReverse.join("/")
-            operation.date = dateJoin
+            operation.date = $("#editDate").value
             const datos = { ...localData, operations: operations }
             localStorage.setItem("datos", JSON.stringify(datos))
         }
@@ -597,18 +586,18 @@ const categoryFilter = (array) => {
 
 const filterDefaultDate = () => {
     const date = new Date()
-    const day = "01"
-    const month = date.getMonth() + 1
-    const year = date.getFullYear()
-    $dayFilter.value = `${year}-${month}-${day}`
+    const day = [date.getFullYear(), date.getMonth() + 1, "01"]
+    $dayFilter.value = day.join("-")
 }
 
 
 const filterDate = (array) => {
-    const dateInput = parseInt(($dayFilter.value).split("-").join(""))
+    const value = new Date($dayFilter.value)
+    const dateInput = value.getTime()
     return array.filter(operation => {
-        const dateOperation = parseInt((operation.date).split("/").reverse().join(""))
-        if (dateOperation >= dateInput) {
+        const dateOperation = new Date(operation.date)
+        const dateTime = dateOperation.getTime()
+        if (dateTime >= dateInput) {
             return operation
         }
     }) 
