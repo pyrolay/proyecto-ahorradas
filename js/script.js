@@ -684,7 +684,8 @@ const filterByCategory = (category) => {
 
 const filterByDate = (date) => {
     return dataOperationsLocalStorage().filter(operation => {
-        const dateOperation = operation.date.slice(3).split("/").join("/")
+        const dateOperation = new Date (operation.date)
+        console.log(dateOperation)
         if (dateOperation === date) {
             return operation
         }
@@ -713,13 +714,13 @@ const getBalance = (array) => {
     return total = getEarnings(array) - getSpent(array)
 }
 
-const objetCategories = (prop, callback) => {
+const objectCategories = (prop, callback) => {
     const categoriesOrDates = []
     const objCategoriesOrDates = {}
     for (const operation of dataOperationsLocalStorage()) {
             if (!categoriesOrDates.includes(operation[prop])) {
                 if(prop === "date"){
-                    const sliceValue = operation[prop].slice(3).split("/").join("/") 
+                    const sliceValue = new Date(operation[prop])
                     categoriesOrDates.push(sliceValue) 
                 } else  categoriesOrDates.push(operation[prop])
             }
@@ -735,12 +736,12 @@ const objetCategories = (prop, callback) => {
     } return objCategoriesOrDates
 }
 
-let categoriesTotalBalance = objetCategories("category", filterByCategory)
-let dateTotalBalance = objetCategories("date", filterByDate)
+let categoriesTotalBalance = objectCategories("category", filterByCategory)
+let dateTotalBalance = objectCategories("date", filterByDate)
 
 const totalBalanceChange = () => {
-    categoriesTotalBalance = objetCategories("category", filterByCategory)
-    dateTotalBalance = objetCategories("date", filterByDate)
+    categoriesTotalBalance = objectCategories("category", filterByCategory)
+    dateTotalBalance = objectCategories("date", filterByDate)
 }
 
 const symbolBalance = (balance) => {
