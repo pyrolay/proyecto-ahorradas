@@ -291,19 +291,23 @@ const filterCategory = (id) => {
 }
 
 const filterCategoryOperationRemove = (id) => {
-    const arrCatgoriesLocal = dataCategoriesLocalStorage()
+    const arrCategoriesLocal = dataCategoriesLocalStorage()
     const arrOperationLocal = dataOperationsLocalStorage()
-    for (const { category } of arrOperationLocal) {
-        if (!arrCatgoriesLocal.includes(id) && category === id) {
-            return dataOperationsLocalStorage().filter(operation => operation.category !== category)
+    if (arrOperationLocal.length !== 0) {
+        for (const { category } of arrOperationLocal) {
+            if (!arrCategoriesLocal.includes(id) && category === id) {
+                const data = dataOperationsLocalStorage().filter(operation => operation.category !== category)
+                return data
+            }
         }
-    }
+    } else return emptyArr = []
 }
 
 const removeCategory = (id) => {
     cleanCategories()
     generateCategories(filterCategory(id))
-    addNewOperation(filterCategoryOperationRemove(id))
+    const filteredByRemovedCategory = filterCategoryOperationRemove(id)
+    if (filteredByRemovedCategory.length !== 0) addNewOperation(filteredByRemovedCategory)
 }
 
 
@@ -460,8 +464,8 @@ const addNewOperation = (data) => {
             const operationId = btn.getAttribute("data-id")
             btn.addEventListener("click", (e) => {
                 e.preventDefault()
-                addNewOperation(filterOperation(operationId))
                 removeOperationLocal(operationId)
+                addNewOperation(filterOperation(operationId))
                 operationsEmptyOrNot()
                 filterFunction()
                 enoughOperations()
