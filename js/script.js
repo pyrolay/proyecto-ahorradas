@@ -383,31 +383,31 @@ const addNewOperation = (data) => {
     if (localOperations.length !== 0) {
         localOperations.map(({ id, description, amount, type, category, date }) => {
             let tr = document.createElement("tr")
-            const cls = ["sm:inline-block", "hidden", "w-full", "mt-3", "flex", "max-h-32"]
+            const cls = ["md:inline-block", "hidden", "w-full", "mt-3", "flex", "max-h-32", "overflow-y-auto", "overflow-x-hidden"]
             tr.classList.add(...cls)
             tr.innerHTML += `
-            <th class="w-36 mr-5 overflow-y-auto overflow-x-hidden">
-            <div class="font-medium text-start">
+            <th class="overflow-y-auto overflow-x-hidden">
+            <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate">
                 <p>${description}</p>
             </div>
             </th>
-            <th class="w-24 ml-10">
-            <div class="text-start">
+            <th class="">
+            <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate">
                 <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
             </div>
             </th>
-            <th class="w-24 ml-10">
-            <div class="font-light text-start">
+            <th class="">
+            <div class="w-24 lg:min-w-[9rem] font-light text-start">
                 <p>${formatDate(date)}</p>
             </div>
             </th>
-            <th class="w-24 ml-10">
-            <div class="font-medium text-start">
+            <th class="">
+            <div class="w-20 lg:min-w-[8rem] font-medium text-start">
                 <p>${amountColorChange(amount, type)}</p>
             </div>
             </th>
-            <th class="w-24 ml-10">
-            <div class="flex text-blue-800 py-1 text-start">
+            <th class="">
+            <div class="w-30 flex text-blue-800 py-1 text-start">
                 <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
                 <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
             </div>
@@ -416,7 +416,7 @@ const addNewOperation = (data) => {
         $(".tableBody").append(tr)
 
         const trResponsive = document.createElement("tr")
-        const responsiveCls = ["sm:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-start"]
+        const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-start"]
         trResponsive.classList.add(...responsiveCls)
         trResponsive.innerHTML +=`
         <th class="w-20 sm:w-56 truncate">
