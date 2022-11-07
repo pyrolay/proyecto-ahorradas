@@ -375,7 +375,7 @@ const addNewOperation = (data) => {
     $(".tableBody").innerHTML = ""
     const localOperations = data
     localOperations.map(({ id, description, amount, type, category, date }) => {
-        const tr = document.createElement("tr")
+        let tr = document.createElement("tr")
         tr.classList.add("w-full")
         tr.classList.add("mt-5")
         tr.classList.add("flex")
@@ -383,31 +383,61 @@ const addNewOperation = (data) => {
         tr.innerHTML += `
         <th class="w-36 mr-5 overflow-y-auto overflow-x-hidden">
         <div class="font-medium text-start">
-        <p>${description}</p>
+            <p>${description}</p>
         </div>
         </th>
         <th class="w-24 ml-10">
         <div class="text-start">
-        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
         </div>
         </th>
-            <th class="w-24 ml-10">
-                <div class="font-light text-start">
-                <p>${date}</p>
-                </div>
-                </th>
-                <th class="w-24 ml-10">
-                <div class="font-medium text-start">
-                <p>${amountColorChange(amount, type)}</p>
-                </div>
-                </th>
-                <th class="w-24 ml-10">
-                <div class="flex text-blue-800 py-1 text-start">
-                    <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
-                    <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
-                </div>
-            </th>
-        `
+        <th class="w-24 ml-10">
+        <div class="font-light text-start">
+            <p>${date}</p>
+        </div>
+        </th>
+        <th class="w-24 ml-10">
+        <div class="font-medium text-start">
+            <p>${amountColorChange(amount, type)}</p>
+        </div>
+        </th>
+        <th class="w-24 ml-10">
+        <div class="flex text-blue-800 py-1 text-start">
+            <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
+            <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+        </div>
+        </th> `
+
+        $(".tableBody").append(tr)
+
+        tr.classList.add("lg:inline-block")
+        tr.classList.remove("mt-5")
+        tr.classList.add("mt-3")
+        tr.innerHTML +=`
+        <th class="w-20 sm:w-56 truncate">
+        <div class="font-medium text-start">
+            <p>${description}</p>
+        </div>
+        <div class="font-light text-start">
+            <p>${date}</p>
+        </div>
+        <div class="font-medium text-start">
+            <p>${amountColorChange(amount, type)}</p>
+        </div>
+        </th>
+        <th class="sm:ml-5 ml-3 truncate">
+        <div>
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-sm">${category}</span>
+        </div>
+        <div class="flex text-blue-800 py-1 justify-center">
+            <a href="" class="btnOperationEdit cursor-pointer hover:text-[#ab062d] text-black text-xl" data-id="${id}>
+                <i class="fa-regular fa-pen-to-square"></i>
+            </a>
+            <a href="" class="btnOperationRemove ml-4 cursor-pointer hover:text-[#ab062d] text-black text-xl" data-id="${id}>
+                <i class="fa-regular fa-trash-can"></i>
+            </a>
+        </div>
+        </th> `
         $(".tableBody").append(tr)
     })
 
