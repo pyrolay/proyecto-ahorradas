@@ -383,31 +383,31 @@ const addNewOperation = (data) => {
     if (localOperations.length !== 0) {
         localOperations.map(({ id, description, amount, type, category, date }) => {
             let tr = document.createElement("tr")
-            const cls = ["sm:inline-block", "hidden", "w-full", "mt-3", "flex", "max-h-32"]
+            const cls = ["sm:inline-block", "hidden", "w-full", "mt-3", "flex", "max-h-32", "overflow-y-auto", "overflow-x-hidden"]
             tr.classList.add(...cls)
             tr.innerHTML += `
-            <th class="w-36 mr-5 overflow-y-auto overflow-x-hidden">
-            <div class="font-medium text-start">
+            <th class="overflow-y-auto overflow-x-hidden">
+            <div class="w-36 mr-4 font-medium text-start truncate">
                 <p>${description}</p>
             </div>
             </th>
-            <th class="w-24 ml-10">
-            <div class="text-start">
+            <th class="">
+            <div class="w-24 mr-5 text-start truncate">
                 <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
             </div>
             </th>
-            <th class="w-24 ml-10">
-            <div class="font-light text-start">
+            <th class="">
+            <div class="w-24 font-light text-start">
                 <p>${formatDate(date)}</p>
             </div>
             </th>
-            <th class="w-24 ml-10">
-            <div class="font-medium text-start">
+            <th class="">
+            <div class="w-24 font-medium text-start">
                 <p>${amountColorChange(amount, type)}</p>
             </div>
             </th>
-            <th class="w-24 ml-10">
-            <div class="flex text-blue-800 py-1 text-start">
+            <th class="">
+            <div class="w-24 flex text-blue-800 py-1 text-start">
                 <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
                 <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
             </div>
