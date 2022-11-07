@@ -50,7 +50,6 @@ const $editOperationBtn = $(".editOperationBtn")
 const $cancelEditOperationBtn = $(".cancelEditOperationBtn")
 const $addNewOperationBtn = $(".addNewOperationBtn")
 const $cancelNewOperationBtn = $(".cancelNewOperationBtn")
-const newOperationArray = [$("#description"), $("#amount"), $("#type"), $("#category"), $("#date")]
 const $categoryNewOperation = $(".categoryNewOperation")
 const $editSelectCategory = $("#editSelectCategory")
 
@@ -77,7 +76,19 @@ const generateId = () => {
     } return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
+// Add y remove hidden
 
+const addAndRemoveHidden = (add, remove) => {
+    add.classList.add("hidden")
+    remove.classList.remove("hidden")
+}
+
+const emptyOperationsAndBalance = () => {
+    addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
+    $(".balanceProfit").innerText = `+$0`
+    $(".balanceSpent").innerText = `-$0`
+    $(".balanceTotal").innerText = `$0`
+}
 
 // Objetos de categorias y operaciones
 
@@ -137,8 +148,6 @@ const generateCategories = (categories) => {
         const categoryId = btn.getAttribute("data-id")
         btn.addEventListener("click", () => {
             categoryEdit(categoryId)
-            selectCategoriesOperation()
-            selectCategoriesFilter()
         })
     }
 
@@ -150,6 +159,7 @@ const generateCategories = (categories) => {
             selectCategoriesOperation()
             selectCategoriesFilter()
             operationsEmptyOrNot()
+            enoughOperations()
         })
     }
 }
@@ -199,6 +209,7 @@ $btnAddCategories.addEventListener("click", (e) => {
     selectCategoriesFilter()
     e.preventDefault()
     $formAddCategories.reset()
+    enoughOperations()
 })
 
 // Eventos y funciones para editar categorias
@@ -227,8 +238,7 @@ const cleanCategories = () => $tableCategories.innerHTML = ""
 
 const categoryEdit = (id) => {
     cleanCategories()
-    $categories.classList.add("hidden")
-    $editCategory.classList.remove("hidden")
+    addAndRemoveHidden($categories, $editCategory)
     const chosenCategory = findCategory(id)
     $inputEditCategory.value = chosenCategory.name
     $editCategoryBtn.setAttribute("data-id", id)
@@ -236,8 +246,7 @@ const categoryEdit = (id) => {
 }
 
 $cancelEditBtn.addEventListener("click", () => {
-    $editCategory.classList.add("hidden")
-    $categories.classList.remove("hidden")
+    addAndRemoveHidden($editCategory, $categories)
     generateCategories(dataCategoriesLocalStorage())
 })
 
@@ -259,13 +268,13 @@ const editCategory = (id) => {
 
 $editCategoryBtn.addEventListener("click", () => {
     const categoryId = $editCategoryBtn.getAttribute("data-id")
-    $editCategory.classList.add("hidden")
-    $categories.classList.remove("hidden")
+    addAndRemoveHidden($editCategory, $categories)
     generateCategories(editCategory(categoryId))
     editCategoriesLocal(categoryId)
     addNewOperation(dataOperationsLocalStorage())
     selectCategoriesOperation()
     selectCategoriesFilter()
+    enoughOperations()
 })
 
 // Eventos y funciones para eliminar categorias
@@ -322,9 +331,8 @@ const selectCategoriesFilter = () => {
 const newOperationEmpty = () => {
     $("#description").value = ""
     $("#amount").value = 0
-    date()
+    $("#date").valueAsDate = new Date()
 }
-
 
 const saveNewOperation = () => {
     const id = generateId()
@@ -332,7 +340,7 @@ const saveNewOperation = () => {
     const amount = $("#amount").value
     const type = $("#selectType").value
     const category = $("#selectCategory").value
-    const date = formatDate()
+    const date = $("#date").value
     operations.push({ id, description, amount, type, category, date })
     if (localStorage.getItem("datos")) {
         const operations = dataOperationsLocalStorage()
@@ -343,14 +351,10 @@ const saveNewOperation = () => {
     }
 }
 
-const date = () => {
-    const date = new Date()
-    $("#date").valueAsDate = date
-}
-
-const formatDate = () => {
-    const date = $("#date").value
-    const newDate = date.split("-").reverse().join("/")
+const formatDate = (date) => {
+    date = new Date(date)
+    const getDate = [date.getUTCDate(), date.getUTCMonth() + 1, date.getUTCFullYear()]
+    const newDate = getDate.join("/")
     return newDate
 }
 
@@ -374,77 +378,104 @@ const nameCategory = (category) => {
 const addNewOperation = (data) => {
     $(".tableBody").innerHTML = ""
     const localOperations = data
-    localOperations.map(({ id, description, amount, type, category, date }) => {
-        const tr = document.createElement("tr")
-        tr.classList.add("w-full")
-        tr.classList.add("mt-5")
-        tr.classList.add("flex")
-        tr.classList.add("max-h-32")
-        tr.innerHTML += `
-        <th class="w-36 mr-5 overflow-y-auto overflow-x-hidden">
-        <div class="font-medium text-start">
-        <p>${description}</p>
-        </div>
-        </th>
-        <th class="w-24 ml-10">
-        <div class="text-start">
-        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
-        </div>
-        </th>
-            <th class="w-24 ml-10">
-                <div class="font-light text-start">
-                <p>${date}</p>
-                </div>
-                </th>
-                <th class="w-24 ml-10">
-                <div class="font-medium text-start">
-                <p>${amountColorChange(amount, type)}</p>
-                </div>
-                </th>
-                <th class="w-24 ml-10">
-                <div class="flex text-blue-800 py-1 text-start">
-                    <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
-                    <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
-                </div>
+    if (localOperations.length !== 0) {
+        localOperations.map(({ id, description, amount, type, category, date }) => {
+            let tr = document.createElement("tr")
+            const cls = ["md:inline-block", "hidden", "w-full", "mt-3", "flex", "max-h-32", "overflow-y-auto", "overflow-x-hidden"]
+            tr.classList.add(...cls)
+            tr.innerHTML += `
+            <th class="overflow-y-auto overflow-x-hidden">
+            <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate">
+                <p>${description}</p>
+            </div>
             </th>
-        `
+            <th class="">
+            <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate">
+                <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
+            </div>
+            </th>
+            <th class="">
+            <div class="w-24 lg:min-w-[9rem] font-light text-start">
+                <p>${formatDate(date)}</p>
+            </div>
+            </th>
+            <th class="">
+            <div class="w-20 lg:min-w-[8rem] font-medium text-start">
+                <p>${amountColorChange(amount, type)}</p>
+            </div>
+            </th>
+            <th class="">
+            <div class="w-30 md:ml-4 lg:ml-0 flex text-blue-800 py-1 text-start">
+                <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
+                <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+            </div>
+        </th> `
+
         $(".tableBody").append(tr)
-    })
 
-    const btnEdit = $$(".btnOperationEdit")
-    const btnRemove = $$(".btnOperationRemove")
-
-    for (const btn of btnEdit) {
-        const operationId = btn.getAttribute("data-id")
-        btn.addEventListener("click", () => {
-            editOperation(operationId)
-            selectCategoriesOperation()
-            filterFunction()
+        const trResponsive = document.createElement("tr")
+        const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-start"]
+        trResponsive.classList.add(...responsiveCls)
+        trResponsive.innerHTML +=`
+        <th class="w-20 sm:w-56 truncate">
+            <div class="font-medium text-start">
+                <p>${description}</p>
+            </div>
+            <div class="font-light text-start">
+                <p>${formatDate(date)}</p>
+            </div>
+            <div class="font-medium text-start">
+                <p>${amountColorChange(amount, type)}</p>
+            </div>
+                </th>
+                <th class="sm:ml-5 ml-3 truncate">
+            <div>
+                <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-sm">${nameCategory(category)}</span>
+            </div>
+            <div class="flex text-blue-800 py-1 justify-center">
+                <a href="" class="btnOperationEdit cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </a>
+                <a href="" class="btnOperationRemove ml-4 cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
+                    <i class="fa-solid fa-trash-can"></i>
+                </a>
+            </div>
+        </th> `
+            $(".tableBody").append(trResponsive)
         })
-    }
-
-    for (const btn of btnRemove) {
-        const operationId = btn.getAttribute("data-id")
-        btn.addEventListener("click", () => {
-            addNewOperation(filterOperation(operationId))
-            removeOperationLocal(operationId)
-            operationsEmptyOrNot()
-            filterFunction()
-        })
-    }
+    
+        const btnEdit = $$(".btnOperationEdit")
+        const btnRemove = $$(".btnOperationRemove")
+    
+        for (const btn of btnEdit) {
+            const operationId = btn.getAttribute("data-id")
+            btn.addEventListener("click", (e) => {
+                e.preventDefault()
+                editOperation(operationId)
+                filterFunction()
+            })
+        }
+    
+        for (const btn of btnRemove) {
+            const operationId = btn.getAttribute("data-id")
+            btn.addEventListener("click", (e) => {
+                e.preventDefault()
+                addNewOperation(filterOperation(operationId))
+                removeOperationLocal(operationId)
+                operationsEmptyOrNot()
+                filterFunction()
+                enoughOperations()
+            })
+        }
+    } else emptyOperationsAndBalance()
 }
 
 const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).operations }
 
 const operationsEmptyOrNot = () => {
     const operation = dataOperationsLocalStorage()
-    if (operation.length !== 0) {
-        $(".operations-empty").classList.add("hidden")
-        $(".operations-table").classList.remove("hidden")
-    } else {
-        $(".operations-empty").classList.remove("hidden")
-        $(".operations-table").classList.add("hidden")
-    }
+    if (operation.length !== 0) addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
+    else addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
 }
 
 if (localStorage.getItem("datos")) {
@@ -460,19 +491,13 @@ const findOperation = (id) => {
 }
 
 const editOperation = (id) => {
-    $editOperation.classList.remove("hidden")
-    $mainContainer.classList.add("hidden")
+    addAndRemoveHidden($mainContainer, $editOperation)
     const chosenOperation = findOperation(id)
     $("#editDescription").value = chosenOperation.description
     $("#editAmount").value = chosenOperation.amount
     $("#editSelectType").value = chosenOperation.type
+    $("#editDate").valueAsDate = new Date(chosenOperation.date)
     $("#editSelectCategory").value = chosenOperation.category
-    const dateSplit = chosenOperation.date.split("/")
-    const dateReverse = dateSplit.reverse()
-    const dateJoin = dateReverse.join("/")
-    const newDate = new Date(dateJoin)
-    $("#editDate").valueAsDate = newDate
-
     $editOperationBtn.setAttribute("data-id", id)
     $cancelEditOperationBtn.setAttribute("data-id", id)
 }
@@ -488,10 +513,7 @@ const editOperationLocal = (id) => {
             operation.amount = $("#editAmount").value
             operation.type = $("#editSelectType").value
             operation.category = $("#editSelectCategory").value
-            const dateSplit = $("#editDate").value.split("-")
-            const dateReverse = dateSplit.reverse()
-            const dateJoin = dateReverse.join("/")
-            operation.date = dateJoin
+            operation.date = $("#editDate").value
             const datos = { ...localData, operations: operations }
             localStorage.setItem("datos", JSON.stringify(datos))
         }
@@ -517,16 +539,16 @@ $addNewOperationBtn.addEventListener("click", (e) => {
     operationsEmptyOrNot()
     selectCategoriesOperation()
     filterType(dataOperationsLocalStorage())
-    $newOperation.classList.add("hidden")
-    $mainContainer.classList.remove("hidden")
+    enoughOperations()
+    addAndRemoveHidden($newOperation, $mainContainer)
 })
 
 $editOperationBtn.addEventListener("click", () => {
     const operationId = $editOperationBtn.getAttribute("data-id")
     editOperationLocal(operationId)
     filterFunction(dataOperationsLocalStorage())
-    $editOperation.classList.add("hidden")
-    $mainContainer.classList.remove("hidden")
+    enoughOperations()
+    addAndRemoveHidden($editOperation, $mainContainer)
 })
 
 
@@ -535,83 +557,73 @@ $editOperationBtn.addEventListener("click", () => {
 
 // Filtro type
 
-const typeFilterOperation = (array, $type) => {
-    return array.filter(operation => operation.type === $type)
+const filterOperationByProp = (array, prop, input) => {
+    return array.filter(operation => operation[prop] === input)
 }
 
 const filterType = (array) => {
-    for (const operation of array) {
-        if ($type.value === operation.type) {
-            $(".operations-empty").classList.add("hidden")
-            $(".operations-table").classList.remove("hidden")
-            array = typeFilterOperation(array, operation.type)
-            return array
-        } else if ($type.value === "todos") {
-            $(".operations-empty").classList.add("hidden")
-            $(".operations-table").classList.remove("hidden")
-            return array
+    if (array.length !== 0) {
+        for (const operation of array) {
+            if ($type.value === operation.type) {
+                addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
+                array = filterOperationByProp(array, "type", $type.value)
+                return categoryFilter(array)
+            } else if ($type.value === "todos") {
+                addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
+                return categoryFilter(array)
+            }
+    
+            if (filterOperationByProp(array, "type", $type.value).length === 0) {
+                emptyOperationsAndBalance()
+                return array = []
+            }
         }
-
-        if (typeFilterOperation(array, $type.value).length === 0) {
-            $(".operations-empty").classList.remove("hidden")
-            $(".operations-table").classList.add("hidden")
-            $(".balanceProfit").innerText = `+$0`
-            $(".balanceSpent").innerText = `-$0`
-            $(".balanceTotal").innerText = `$0`
-            return array = []
-        }
-    }
+    } else emptyOperationsAndBalance()
 }
 
 // Filtro category
 
-const categoryFilterOperation = (array, $categoryFilter) => {
-    return array.filter(operation => operation.category === $categoryFilter)
-}
-
 const categoryFilter = (array) => {
-    for (const operation of array) {
-        if ($categoryFilter.value === operation.category) {
-            $(".operations-empty").classList.add("hidden")
-            $(".operations-table").classList.remove("hidden")
-            array = categoryFilterOperation(array, operation.category)
-            return array
-        } else if ($categoryFilter.value === "Todas") {
-            $(".operations-empty").classList.add("hidden")
-            $(".operations-table").classList.remove("hidden")
-            return array 
+    if (array.length !== 0) {
+        for (const operation of array) {
+            if ($categoryFilter.value === operation.category) {
+                addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
+                array = filterOperationByProp(array, "category", $categoryFilter.value)
+                return filterDate(array)
+            } else if ($categoryFilter.value === "Todas") {
+                addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
+                return filterDate(array)
+            }
+    
+            if (filterOperationByProp(array, "category", $categoryFilter.value).length === 0) {
+                emptyOperationsAndBalance()
+                return array = []
+            }
         }
-
-        if (categoryFilterOperation(array, $categoryFilter.value).length === 0) {
-            $(".operations-empty").classList.remove("hidden")
-            $(".operations-table").classList.add("hidden")
-            $(".balanceProfit").innerText = `+$0`
-            $(".balanceSpent").innerText = `-$0`
-            $(".balanceTotal").innerText = `$0`
-            return array = []
-        }
-    }
+    } else emptyOperationsAndBalance()
 }
 
 // Filtro fecha
 
 const filterDefaultDate = () => {
     const date = new Date()
-    const day = "01"
-    const month = date.getMonth() + 1
-    const year = date.getFullYear()
-    $dayFilter.value = `${year}-${month}-${day}`
+    const day = [date.getFullYear(), date.getMonth() + 1, "01"]
+    $dayFilter.value = day.join("-")
 }
 
 
 const filterDate = (array) => {
-    const dateInput = parseInt(($dayFilter.value).split("-").join(""))
-    return array.filter(operation => {
-        const dateOperation = parseInt((operation.date).split("/").reverse().join(""))
-        if (dateOperation >= dateInput) {
-            return operation
-        }
-    }) 
+    if (array.length !== 0) {
+        const value = new Date($dayFilter.value)
+        const dateInput = value.getTime()
+        return array.filter(operation => {
+            const dateOperation = new Date(operation.date)
+            const dateTime = dateOperation.getTime()
+            if (dateTime >= dateInput) {
+                return operation
+            }
+        }) 
+    } else emptyOperationsAndBalance()
 }
 
 // Ordenar
@@ -642,23 +654,15 @@ const orderBy = (array) => {
 // Evento filters
 
 const filterFunction = () => {
-    const arrOfOperations = dataOperationsLocalStorage()
-    const filteredTypeArr = filterType(arrOfOperations)
-    const filteredCategoryArr = categoryFilter(filteredTypeArr)
-    const filteredDateArr = filterDate(filteredCategoryArr)
-    if (filteredDateArr.length === 0) {
-        $(".operations-empty").classList.remove("hidden")
-        $(".operations-table").classList.add("hidden")
-        $(".balanceProfit").innerText = `+$0`
-        $(".balanceSpent").innerText = `-$0`
-        $(".balanceTotal").innerText = `$0`
-    } else {
-        balanceFunction(filteredDateArr)
-        addNewOperation(orderBy(filteredDateArr))
-    }
+    let arrOfOperations = dataOperationsLocalStorage()
+    operationsFiltered = filterType(arrOfOperations)
+    if (operationsFiltered.length !== 0) {
+        balanceFunction(operationsFiltered)
+        addNewOperation(orderBy(filterType(operationsFiltered)))
+    } else emptyOperationsAndBalance()
 }
 
-$filters.addEventListener("change", () =>{
+$filters.addEventListener("change", () => {
     filterFunction()
 })
 
@@ -671,7 +675,7 @@ const balanceFunction = (array) => {
         } else spent += parseInt(operation.amount)
     }
     const total = profit - spent
-    return balanceDom({spent, profit, total})
+    return balanceDom({ spent, profit, total })
 }
 
 const balanceDom = (objectBalance) => {
@@ -686,6 +690,236 @@ const balanceDom = (objectBalance) => {
     }
 }
 
+// Eventos y funciones sección reportes
+
+// Función resumen
+
+const filterByCategory = (category) => {
+    return dataOperationsLocalStorage().filter(operation => operation.category === category)
+}
+
+const filterByDate = (date) => {
+    return dataOperationsLocalStorage().filter(operation => {
+        const dateOperation = new Date (operation.date)
+        const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
+        if (monthAndYear === date) {
+            return operation
+        }
+    })
+}
+
+const getSpent = (array) => {
+    let spent = 0
+    for (const operation of array) {
+        if (operation.type === "gasto") {
+            spent += parseInt(operation.amount)
+        }
+    } return spent
+}
+
+const getEarnings = (array) => {
+    let profit = 0
+    for (const operation of array) {
+        if (operation.type === "ganancia") {
+            profit += parseInt(operation.amount)
+        }
+    } return profit
+}
+
+const getBalance = (array) => {
+    return total = getEarnings(array) - getSpent(array)
+}
+
+const objectCategories = (prop, callback) => {
+    const categoriesOrDates = []
+    const objCategoriesOrDates = {}
+    for (const operation of dataOperationsLocalStorage()) {
+            if (!categoriesOrDates.includes(operation[prop])) {
+                if(prop === "date"){
+                    const dateOperation = new Date(operation[prop])
+                    const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
+                    categoriesOrDates.push(monthAndYear) 
+                } else  categoriesOrDates.push(operation[prop])
+            }
+    }
+    for (const item of categoriesOrDates) {
+        const objBalance = {
+            gasto: getSpent(callback(item)),
+            ganancia: getEarnings(callback(item)),
+            balance: getBalance(callback(item))
+        }
+        objCategoriesOrDates[item] = objBalance
+
+    } return objCategoriesOrDates
+}
+
+let categoriesTotalBalance = objectCategories("category", filterByCategory)
+let dateTotalBalance = objectCategories("date", filterByDate)
+
+const totalBalanceChange = () => {
+    categoriesTotalBalance = objectCategories("category", filterByCategory)
+    dateTotalBalance = objectCategories("date", filterByDate)
+}
+
+const symbolBalance = (balance) => {
+    if (balance <= 0) {
+        const totalSlice = balance.toString().slice(1)
+        return `-$${totalSlice}`
+    } else {
+        return `$${balance}`
+    }
+}
+
+const tableReports = () => {
+    $(".tableCategoriesReports").innerHTML = ""
+    $(".tableMonthReports").innerHTML = ""
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
+        $(".tableCategoriesReports").innerHTML += `
+            <tr class="flex justify-between">
+                <th class="font-medium">${nameCategory(obj)}</th>
+                <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
+                <th class="ml-10 font-medium text-red-500">-$${gasto}</th>
+                <th class="ml-10 font-medium">${symbolBalance(balance)}</th>
+            </tr>
+        `
+    }
+    for(const obj of Object.keys(dateTotalBalance)){
+        const { ganancia, gasto, balance } = dateTotalBalance[obj]
+        $(".tableMonthReports").innerHTML += `
+            <tr class="flex justify-between">
+                <th class="font-medium">${obj}</th>
+                <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
+                <th class="ml-10 font-medium text-red-500">-$${gasto}</th>
+                <th class="ml-10 font-medium">${symbolBalance(balance)}</th>
+            </tr>
+        `
+    }
+}
+
+const categorySummary = (prop) => {
+    let maxAmount = 0
+    let maxCategory
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const value = categoriesTotalBalance[obj][prop]
+        if (value >= maxAmount) {
+            maxAmount = value
+            maxCategory = obj
+        }
+    }
+    return {maxAmount, maxCategory}
+}
+
+
+const monthMaxAndMin = () => {
+    let maxMonthAmount = 0
+    let minMonthAmount = 0
+    let maxMonth
+    let minMonth
+    for (const obj of Object.keys(dateTotalBalance)) {
+        const {ganancia,gasto} = dateTotalBalance[obj]
+        if (ganancia >= maxMonthAmount) {
+            maxMonthAmount = ganancia
+            maxMonth = obj
+        }
+        if (gasto >= minMonthAmount) {
+            minMonthAmount = gasto
+            minMonth = obj
+        }
+    } return  {maxMonthAmount, maxMonth, minMonthAmount, minMonth}
+}
+
+
+const summaryReports = () => {
+    totalBalanceChange()
+    tableReports()
+
+    const maxEarnings = categorySummary("ganancia")
+    $(".categoryMaxProfit").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Categoría con mayor ganancia</p>
+        </div>
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold"">${nameCategory(maxEarnings.maxCategory)}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="text-green-500 font-semibold">+$${maxEarnings.maxAmount}</span>
+        </div>
+    `
+
+    const maxSpent = categorySummary("gasto")
+    $(".categoryMaxSpent").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Categoría con mayor gasto</p>
+        </div>
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold">${nameCategory(maxSpent.maxCategory)}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="text-red-500 font-semibold">-$${maxSpent.maxAmount}</span>
+        </div>
+    `
+
+    const maxBalance = categorySummary("balance")
+    if (maxBalance.maxAmount === 0) $(".categoryMaxBalance").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">No hay categoría con mayor balance</p>
+        </div>
+    `
+    else { $(".categoryMaxBalance").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Categoria con mayor balance</p>
+        </div>
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs font-bold">${nameCategory(maxBalance.maxCategory)}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="font-semibold">$${maxBalance.maxAmount}</span>
+        </div>
+    `
+    }
+
+    const {maxMonthAmount, maxMonth, minMonthAmount, minMonth} = monthMaxAndMin()
+    $(".maxProfitMonth").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Mes con mayor ganancia</p>
+        </div>
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="category">${maxMonth}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="most-month-profit text-green-500 font-semibold">+$${maxMonthAmount}</span>
+        </div>
+    `
+
+    $(".maxSpentMonth").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">Mes con mayor gasto</p>
+        </div>
+        <div class="sm:w-1/3 sm:text-end">
+            <span class="category">${minMonth}</span>
+        </div>
+        <div class="sm:w-1/3 sm:text-end font-semibold">
+            <span class="most-month-profit text-red-500 font-semibold">-$${minMonthAmount}</span>
+        </div>
+    `
+}
+
+const enoughOperations = () => {
+    const spentAndGain = []
+    for (const operation of dataOperationsLocalStorage()) {
+        const { type } = operation
+        spentAndGain.push(type)
+    }
+
+    if (spentAndGain.includes("ganancia") && spentAndGain.includes("gasto")) {
+        summaryReports()
+        addAndRemoveHidden($(".operationsNotEnough"), $(".reportsTables"))
+    } else {
+        addAndRemoveHidden($(".reportsTables"), $(".operationsNotEnough"))
+    }
+}
+
 // Evento onload
 
 window.addEventListener("load", () => {
@@ -695,8 +929,11 @@ window.addEventListener("load", () => {
     selectCategoriesFilter()
     filterDefaultDate()
     filterFunction()
-    const filterByDate = filterDate(dataOperationsLocalStorage())
-    addNewOperation(orderBy(filterByDate))
+    if (dataOperationsLocalStorage.length !== 0) {
+        const filterByDate = filterDate(dataOperationsLocalStorage())
+        addNewOperation(orderBy(filterByDate))
+    }
+    enoughOperations()
 })
 
 
@@ -704,14 +941,12 @@ window.addEventListener("load", () => {
 
 $navbarBurguer.addEventListener("click", () => {
     $navbarMenu.classList.remove("hidden")
-    $xmark.classList.remove("hidden")
-    $navbarBurguer.classList.add("hidden")
+    addAndRemoveHidden($navbarBurguer, $xmark)
 })
 
 $xmark.addEventListener("click", () => {
     $navbarMenu.classList.add("hidden")
-    $xmark.classList.add("hidden")
-    $navbarBurguer.classList.remove("hidden")
+    addAndRemoveHidden($xmark, $navbarBurguer)
 })
 
 
@@ -780,8 +1015,11 @@ const changeClass = () => {
 }
 
 $cancelNewOperationBtn.addEventListener("click", () => {
-    $newOperation.classList.add("hidden")
-    $mainContainer.classList.remove("hidden")
+    addAndRemoveHidden($newOperation, $mainContainer)
+})
+
+$cancelEditOperationBtn.addEventListener("click", () => {
+    addAndRemoveHidden($editOperation, $mainContainer)
 })
 
 $btnHideFilters.addEventListener("click", () => {
