@@ -77,6 +77,13 @@ const generateId = () => {
     } return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
+const emptyOperationsAndBalance = () => {
+    $(".operations-empty").classList.remove("hidden")
+    $(".operations-table").classList.add("hidden")
+    $(".balanceProfit").innerText = `+$0`
+    $(".balanceSpent").innerText = `-$0`
+    $(".balanceTotal").innerText = `$0`
+}
 // Add y remove hidden
 
 const addAndRemoveHidden = (add, remove) => {
@@ -377,65 +384,67 @@ const nameCategory = (category) => {
 const addNewOperation = (data) => {
     $(".tableBody").innerHTML = ""
     const localOperations = data
-    localOperations.map(({ id, description, amount, type, category, date }) => {
-        const tr = document.createElement("tr")
-        tr.classList.add("w-full")
-        tr.classList.add("mt-5")
-        tr.classList.add("flex")
-        tr.classList.add("max-h-32")
-        tr.innerHTML += `
-        <th class="w-36 mr-5 overflow-y-auto overflow-x-hidden">
-        <div class="font-medium text-start">
-        <p>${description}</p>
-        </div>
-        </th>
-        <th class="w-24 ml-10">
-        <div class="text-start">
-        <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
-        </div>
-        </th>
-            <th class="w-24 ml-10">
-                <div class="font-light text-start">
-                <p>${formatDate(date)}</p>
-                </div>
-                </th>
-                <th class="w-24 ml-10">
-                <div class="font-medium text-start">
-                <p>${amountColorChange(amount, type)}</p>
-                </div>
-                </th>
-                <th class="w-24 ml-10">
-                <div class="flex text-blue-800 py-1 text-start">
-                    <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
-                    <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
-                </div>
+    if (localOperations.length !== 0) {
+        localOperations.map(({ id, description, amount, type, category, date }) => {
+            const tr = document.createElement("tr")
+            tr.classList.add("w-full")
+            tr.classList.add("mt-5")
+            tr.classList.add("flex")
+            tr.classList.add("max-h-32")
+            tr.innerHTML += `
+            <th class="w-36 mr-5 overflow-y-auto overflow-x-hidden">
+            <div class="font-medium text-start">
+            <p>${description}</p>
+            </div>
             </th>
-        `
-        $(".tableBody").append(tr)
-    })
-
-    const btnEdit = $$(".btnOperationEdit")
-    const btnRemove = $$(".btnOperationRemove")
-
-    for (const btn of btnEdit) {
-        const operationId = btn.getAttribute("data-id")
-        btn.addEventListener("click", () => {
-            editOperation(operationId)
-            selectCategoriesOperation()
-            filterFunction()
+            <th class="w-24 ml-10">
+            <div class="text-start">
+            <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
+            </div>
+            </th>
+                <th class="w-24 ml-10">
+                    <div class="font-light text-start">
+                    <p>${formatDate(date)}</p>
+                    </div>
+                    </th>
+                    <th class="w-24 ml-10">
+                    <div class="font-medium text-start">
+                    <p>${amountColorChange(amount, type)}</p>
+                    </div>
+                    </th>
+                    <th class="w-24 ml-10">
+                    <div class="flex text-blue-800 py-1 text-start">
+                        <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
+                        <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+                    </div>
+                </th>
+            `
+            $(".tableBody").append(tr)
         })
-    }
-
-    for (const btn of btnRemove) {
-        const operationId = btn.getAttribute("data-id")
-        btn.addEventListener("click", () => {
-            addNewOperation(filterOperation(operationId))
-            removeOperationLocal(operationId)
-            operationsEmptyOrNot()
-            filterFunction()
-            enoughOperations()
-        })
-    }
+    
+        const btnEdit = $$(".btnOperationEdit")
+        const btnRemove = $$(".btnOperationRemove")
+    
+        for (const btn of btnEdit) {
+            const operationId = btn.getAttribute("data-id")
+            btn.addEventListener("click", () => {
+                editOperation(operationId)
+                selectCategoriesOperation()
+                filterFunction()
+            })
+        }
+    
+        for (const btn of btnRemove) {
+            const operationId = btn.getAttribute("data-id")
+            btn.addEventListener("click", () => {
+                addNewOperation(filterOperation(operationId))
+                removeOperationLocal(operationId)
+                operationsEmptyOrNot()
+                filterFunction()
+                enoughOperations()
+            })
+        }
+    } else emptyOperationsAndBalance()
 }
 
 const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).operations }
@@ -789,9 +798,10 @@ const categorySummary = (prop) => {
             maxAmount = value
             maxCategory = obj
         }
-    } 
+    }
     return {maxAmount, maxCategory}
 }
+
 
 const monthMaxAndMin = () => {
     let maxMonthAmount = 0
@@ -843,7 +853,8 @@ const summaryReports = () => {
     `
 
     const maxBalance = categorySummary("balance")
-    $(".categoryMaxBalance").innerHTML = `
+    if (maxBalance.maxAmount === 0) $(".categoryMaxBalance").classList.add("hidden")
+    else { $(".categoryMaxBalance").innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Categoria con mayor balance</p>
         </div>
@@ -854,6 +865,7 @@ const summaryReports = () => {
             <span class="font-semibold">$${maxBalance.maxAmount}</span>
         </div>
     `
+    }
 
     const {maxMonthAmount, maxMonth, minMonthAmount, minMonth} = monthMaxAndMin()
     $(".maxProfitMonth").innerHTML = `
@@ -882,7 +894,13 @@ const summaryReports = () => {
 }
 
 const enoughOperations = () => {
-    if (dataOperationsLocalStorage().length >= 2) {
+    const spentAndGain = []
+    for (const operation of dataOperationsLocalStorage()) {
+        const { type } = operation
+        spentAndGain.push(type)
+    }
+
+    if (spentAndGain.includes("ganancia") && spentAndGain.includes("gasto")) {
         summaryReports()
         addAndRemoveHidden($(".operationsNotEnough"), $(".reportsTables"))
     } else {
