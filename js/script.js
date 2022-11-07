@@ -148,8 +148,6 @@ const generateCategories = (categories) => {
         const categoryId = btn.getAttribute("data-id")
         btn.addEventListener("click", () => {
             categoryEdit(categoryId)
-            selectCategoriesOperation()
-            selectCategoriesFilter()
         })
     }
 
@@ -316,7 +314,7 @@ const selectCategoriesOperation = () => {
     $editSelectCategory.innerHTML = ""
     for (const { name, id } of dataCategoriesLocalStorage()) {
         $categoryNewOperation.innerHTML += `<option value="${id}">${name}</option>`
-        $editSelectCategory.innerHTML += `<option class="option-category" value="${id}">${name}</option>`
+        $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
     }
 }
 
@@ -407,7 +405,7 @@ const addNewOperation = (data) => {
             </div>
             </th>
             <th class="">
-            <div class="w-30 flex text-blue-800 py-1 text-start">
+            <div class="w-30 md:ml-4 lg:ml-0 flex text-blue-800 py-1 text-start">
                 <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
                 <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
             </div>
@@ -454,7 +452,6 @@ const addNewOperation = (data) => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault()
                 editOperation(operationId)
-                selectCategoriesOperation()
                 filterFunction()
             })
         }
@@ -501,13 +498,6 @@ const editOperation = (id) => {
     $("#editSelectType").value = chosenOperation.type
     $("#editDate").valueAsDate = new Date(chosenOperation.date)
     $("#editSelectCategory").value = chosenOperation.category
-    /* const optionCategories = document.querySelectorAll(".option-category")
-    for(const option of optionCategories) {
-        if (option.value === chosenOperation.category) {
-            option.value = chosenOperation.category
-            return option.setAttribute('selected', 'selected')
-        }
-    } */
     $editOperationBtn.setAttribute("data-id", id)
     $cancelEditOperationBtn.setAttribute("data-id", id)
 }
