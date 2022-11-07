@@ -383,7 +383,7 @@ const addNewOperation = (data) => {
     if (localOperations.length !== 0) {
         localOperations.map(({ id, description, amount, type, category, date }) => {
             let tr = document.createElement("tr")
-            const cls = ["sm:inline-block", "hidden", "w-full", "mt-3", "flex", "max-h-32", "overflow-y-auto", "overflow-x-hidden"]
+            const cls = ["md:inline-block", "hidden", "w-full", "mt-3", "flex", "max-h-32", "overflow-y-auto", "overflow-x-hidden"]
             tr.classList.add(...cls)
             tr.innerHTML += `
             <th class="overflow-y-auto overflow-x-hidden">
@@ -407,7 +407,7 @@ const addNewOperation = (data) => {
             </div>
             </th>
             <th class="">
-            <div class="w-20 lg:w-0 flex text-blue-800 py-1 text-start lg:text-end">
+            <div class="w-30 flex text-blue-800 py-1 text-start">
                 <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
                 <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
             </div>
@@ -416,7 +416,7 @@ const addNewOperation = (data) => {
         $(".tableBody").append(tr)
 
         const trResponsive = document.createElement("tr")
-        const responsiveCls = ["sm:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-start"]
+        const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-start"]
         trResponsive.classList.add(...responsiveCls)
         trResponsive.innerHTML +=`
         <th class="w-20 sm:w-56 truncate">
