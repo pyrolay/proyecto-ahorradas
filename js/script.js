@@ -493,29 +493,21 @@ const findOperation = (id) => {
     return dataOperationsLocalStorage().find(operation => operation.id == id)
 }
 
-// const optionCatgories = document.querySelectorAll('.option-location')  
-// for (const option of optionCatgories) {
-//     option.value === chosenOperation.category && option.setAttribute('selected', 'selected')
-// }
-
-const optionSelectedCategories = (operation) => {
-    const optionCategories = document.querySelectorAll(".option-category") 
-    for(const option of optionCategories){
-        console.log(option);
-        option.value === operation.category && option.setAttribute('selected', 'selected')
-    }
-}
-
-
 const editOperation = (id) => {
     addAndRemoveHidden($mainContainer, $editOperation)
     const chosenOperation = findOperation(id)
-    console.log(chosenOperation);
-    optionSelectedCategories(chosenOperation)
     $("#editDescription").value = chosenOperation.description
     $("#editAmount").value = chosenOperation.amount
     $("#editSelectType").value = chosenOperation.type
     $("#editDate").valueAsDate = new Date(chosenOperation.date)
+    $("#editSelectCategory").value = chosenOperation.category
+    /* const optionCategories = document.querySelectorAll(".option-category")
+    for(const option of optionCategories) {
+        if (option.value === chosenOperation.category) {
+            option.value = chosenOperation.category
+            return option.setAttribute('selected', 'selected')
+        }
+    } */
     $editOperationBtn.setAttribute("data-id", id)
     $cancelEditOperationBtn.setAttribute("data-id", id)
 }
