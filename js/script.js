@@ -77,18 +77,18 @@ const generateId = () => {
     } return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
-const emptyOperationsAndBalance = () => {
-    $(".operations-empty").classList.remove("hidden")
-    $(".operations-table").classList.add("hidden")
-    $(".balanceProfit").innerText = `+$0`
-    $(".balanceSpent").innerText = `-$0`
-    $(".balanceTotal").innerText = `$0`
-}
 // Add y remove hidden
 
 const addAndRemoveHidden = (add, remove) => {
     add.classList.add("hidden")
     remove.classList.remove("hidden")
+}
+
+const emptyOperationsAndBalance = () => {
+    addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
+    $(".balanceProfit").innerText = `+$0`
+    $(".balanceSpent").innerText = `-$0`
+    $(".balanceTotal").innerText = `$0`
 }
 
 // Objetos de categorias y operaciones
@@ -241,8 +241,7 @@ const cleanCategories = () => $tableCategories.innerHTML = ""
 
 const categoryEdit = (id) => {
     cleanCategories()
-    $categories.classList.add("hidden")
-    $editCategory.classList.remove("hidden")
+    addAndRemoveHidden($categories, $editCategory)
     const chosenCategory = findCategory(id)
     $inputEditCategory.value = chosenCategory.name
     $editCategoryBtn.setAttribute("data-id", id)
@@ -250,8 +249,7 @@ const categoryEdit = (id) => {
 }
 
 $cancelEditBtn.addEventListener("click", () => {
-    $editCategory.classList.add("hidden")
-    $categories.classList.remove("hidden")
+    addAndRemoveHidden($editCategory, $categories)
     generateCategories(dataCategoriesLocalStorage())
 })
 
@@ -273,8 +271,7 @@ const editCategory = (id) => {
 
 $editCategoryBtn.addEventListener("click", () => {
     const categoryId = $editCategoryBtn.getAttribute("data-id")
-    $editCategory.classList.add("hidden")
-    $categories.classList.remove("hidden")
+    addAndRemoveHidden($editCategory, $categories)
     generateCategories(editCategory(categoryId))
     editCategoriesLocal(categoryId)
     addNewOperation(dataOperationsLocalStorage())
@@ -451,13 +448,8 @@ const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getIte
 
 const operationsEmptyOrNot = () => {
     const operation = dataOperationsLocalStorage()
-    if (operation.length !== 0) {
-        $(".operations-empty").classList.add("hidden")
-        $(".operations-table").classList.remove("hidden")
-    } else {
-        $(".operations-empty").classList.remove("hidden")
-        $(".operations-table").classList.add("hidden")
-    }
+    if (operation.length !== 0) addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
+    else addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
 }
 
 if (localStorage.getItem("datos")) {
@@ -473,8 +465,7 @@ const findOperation = (id) => {
 }
 
 const editOperation = (id) => {
-    $editOperation.classList.remove("hidden")
-    $mainContainer.classList.add("hidden")
+    addAndRemoveHidden($mainContainer, $editOperation)
     const chosenOperation = findOperation(id)
     $("#editDescription").value = chosenOperation.description
     $("#editAmount").value = chosenOperation.amount
@@ -532,20 +523,12 @@ $editOperationBtn.addEventListener("click", () => {
     editOperationLocal(operationId)
     filterFunction(dataOperationsLocalStorage())
     enoughOperations()
-    $editOperation.classList.add("hidden")
-    $mainContainer.classList.remove("hidden")
+    addAndRemoveHidden($editOperation, $mainContainer)
 })
 
 
 
 // Funciones para filtrar y ordenar operaciones
-
-const emptyOperationsAndBalance = () => {
-    addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
-    $(".balanceProfit").innerText = `+$0`
-    $(".balanceSpent").innerText = `-$0`
-    $(".balanceTotal").innerText = `$0`
-}
 
 // Filtro type
 
