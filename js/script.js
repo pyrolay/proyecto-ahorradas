@@ -387,27 +387,27 @@ const addNewOperation = (data) => {
             tr.classList.add(...cls)
             tr.innerHTML += `
             <th class="overflow-y-auto overflow-x-hidden">
-            <div class="w-36 mr-4 font-medium text-start truncate">
+            <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate">
                 <p>${description}</p>
             </div>
             </th>
             <th class="">
-            <div class="w-24 mr-5 text-start truncate">
+            <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate">
                 <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
             </div>
             </th>
             <th class="">
-            <div class="w-24 font-light text-start">
+            <div class="w-24 lg:min-w-[9rem] font-light text-start">
                 <p>${formatDate(date)}</p>
             </div>
             </th>
             <th class="">
-            <div class="w-24 font-medium text-start">
+            <div class="w-20 lg:min-w-[8rem] font-medium text-start">
                 <p>${amountColorChange(amount, type)}</p>
             </div>
             </th>
             <th class="">
-            <div class="w-24 flex text-blue-800 py-1 text-start">
+            <div class="w-20 lg:w-0 flex text-blue-800 py-1 text-start lg:text-end">
                 <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
                 <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
             </div>
