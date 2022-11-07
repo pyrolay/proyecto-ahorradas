@@ -316,7 +316,7 @@ const selectCategoriesOperation = () => {
     $editSelectCategory.innerHTML = ""
     for (const { name, id } of dataCategoriesLocalStorage()) {
         $categoryNewOperation.innerHTML += `<option value="${id}">${name}</option>`
-        $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
+        $editSelectCategory.innerHTML += `<option class="option-category" value="${id}">${name}</option>`
     }
 }
 
@@ -493,15 +493,29 @@ const findOperation = (id) => {
     return dataOperationsLocalStorage().find(operation => operation.id == id)
 }
 
+// const optionCatgories = document.querySelectorAll('.option-location')  
+// for (const option of optionCatgories) {
+//     option.value === chosenOperation.category && option.setAttribute('selected', 'selected')
+// }
+
+const optionSelectedCategories = (operation) => {
+    const optionCategories = document.querySelectorAll(".option-category") 
+    for(const option of optionCategories){
+        console.log(option);
+        option.value === operation.category && option.setAttribute('selected', 'selected')
+    }
+}
+
+
 const editOperation = (id) => {
     addAndRemoveHidden($mainContainer, $editOperation)
     const chosenOperation = findOperation(id)
+    console.log(chosenOperation);
+    optionSelectedCategories(chosenOperation)
     $("#editDescription").value = chosenOperation.description
     $("#editAmount").value = chosenOperation.amount
     $("#editSelectType").value = chosenOperation.type
-    $("#editSelectCategory").value = chosenOperation.category
     $("#editDate").valueAsDate = new Date(chosenOperation.date)
-
     $editOperationBtn.setAttribute("data-id", id)
     $cancelEditOperationBtn.setAttribute("data-id", id)
 }
@@ -865,7 +879,11 @@ const summaryReports = () => {
     `
 
     const maxBalance = categorySummary("balance")
-    if (maxBalance.maxAmount === 0) $(".categoryMaxBalance").classList.add("hidden")
+    if (maxBalance.maxAmount === 0) $(".categoryMaxBalance").innerHTML = `
+        <div class="sm:w-1/3 mb-2 sm:mb-0">
+            <p class="font-semibold">No hay categoría con mayor balance</p>
+        </div>
+    `
     else { $(".categoryMaxBalance").innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Categoria con mayor balance</p>
