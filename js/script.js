@@ -655,8 +655,11 @@ const orderBy = (array) => {
 
 const filterFunction = () => {
     let arrOfOperations = dataOperationsLocalStorage()
-    operationsFiltered = filterType(arrOfOperations)
-    if (operationsFiltered.length !== 0) {
+    let operationsFiltered
+    if (arrOfOperations.length !== 0) {
+        operationsFiltered = filterType(arrOfOperations)
+    }
+    if (arrOfOperations.length !== 0 && operationsFiltered.length !== 0) {
         balanceFunction(operationsFiltered)
         addNewOperation(orderBy(filterType(operationsFiltered)))
     } else emptyOperationsAndBalance()
