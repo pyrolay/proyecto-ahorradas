@@ -418,7 +418,7 @@ const addNewOperation = (data) => {
         $(".tableBody").append(tr)
 
         const trResponsive = document.createElement("tr")
-        const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-start"]
+        const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-between"]
         trResponsive.classList.add(...responsiveCls)
         trResponsive.innerHTML +=`
         <th class="w-20 sm:w-56 truncate">
@@ -431,19 +431,19 @@ const addNewOperation = (data) => {
             <div class="font-medium text-start">
                 <p>${amountColorChange(amount, type)}</p>
             </div>
-                </th>
-                <th class="sm:ml-5 ml-3 truncate">
-            <div>
-                <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-sm">${nameCategory(category)}</span>
-            </div>
-            <div class="flex text-blue-800 py-1 justify-center">
-                <a href="" class="btnOperationEdit cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
-                    <i class="fa-regular fa-pen-to-square"></i>
-                </a>
-                <a href="" class="btnOperationRemove ml-4 cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
-                    <i class="fa-solid fa-trash-can"></i>
-                </a>
-            </div>
+        </th>
+        <th class="sm:ml-5 ml-3 truncate">
+                <div>
+                    <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-sm">${nameCategory(category)}</span>
+                </div>
+                <div class="flex text-blue-800 py-1 justify-center">
+                    <a href="" class="btnOperationEdit cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </a>
+                    <a href="" class="btnOperationRemove ml-4 cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </div>
         </th> `
             $(".tableBody").append(trResponsive)
         })
