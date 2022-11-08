@@ -184,7 +184,7 @@ const categoryNew = () => {
         return alert(`Ingrese un nombre de categoría mas corto`)
     }
     else {
-        const name = $addCategories.value
+        const name = $addCategories.value.charAt(0).toUpperCase() + $addCategories.value.slice(1)
         const id = generateId()
         const categories = dataCategoriesLocalStorage()
         categories.push({ id, name })
@@ -340,7 +340,7 @@ const newOperationEmpty = () => {
 
 const saveNewOperation = () => {
     const id = generateId()
-    const description = $("#description").value
+    const description = $("#description").value.charAt(0).toUpperCase() + $("#description").value.slice(1)
     const amount = $("#amount").value
     const type = $("#selectType").value
     const category = $("#selectCategory").value
@@ -513,7 +513,7 @@ const editOperationLocal = (id) => {
     for (const operation of operations) {
         if (chosenOperation.id === operation.id) {
             operation.id = id
-            operation.description = $("#editDescription").value
+            operation.description = $("#editDescription").value.charAt(0).toUpperCase() + $("#editDescription").value.slice(1)
             operation.amount = $("#editAmount").value
             operation.type = $("#editSelectType").value
             operation.category = $("#editSelectCategory").value
