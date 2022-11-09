@@ -160,6 +160,7 @@ const generateCategories = (categories) => {
             selectCategoriesFilter()
             operationsEmptyOrNot()
             enoughOperations()
+            balanceFunction(dataOperationsLocalStorage())
         })
     }
 }
@@ -311,7 +312,7 @@ const removeCategory = (id) => {
 }
 
 
-// Funciones que agregan las categorias a los selects de "Nueva operación" y "Filtros"
+// Funciones que agregan las categorias a los selects de "Nueva operación", "Filtros" y "Formulario editar operaciones"
 
 const selectCategoriesOperation = () => {
     $categoryNewOperation.innerHTML = ""
@@ -409,9 +410,9 @@ const addNewOperation = (data) => {
             </div>
             </th>
             <th class="">
-            <div class="w-30 md:ml-4 lg:ml-0 flex text-blue-800 py-1 text-start">
+            <div class="w-30 md:ml-4 lg:ml-0 flex 2xl:flex-row lg:flex-col md:flex-row text-blue-800 py-1 text-start">
                 <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
-                <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+                <button class="btnOperationRemove 2xl:ml-4 lg:ml-0 md:ml-4 2xl:mt-0 lg:mt-2 md:mt-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
             </div>
         </th> `
 
@@ -698,8 +699,6 @@ const balanceDom = (objectBalance) => {
 }
 
 // Eventos y funciones sección reportes
-
-// Función resumen
 
 const filterByCategory = (category) => {
     return dataOperationsLocalStorage().filter(operation => operation.category === category)
