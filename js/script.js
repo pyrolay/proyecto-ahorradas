@@ -1,4 +1,4 @@
-// Funciones de selectores
+// Functions of selectors
 const $ = (selector) => document.querySelector(selector)
 const $$ = (selector) => document.querySelectorAll(selector)
 
@@ -11,50 +11,62 @@ const $linkNavBarBurger_balance = $(".linkNavbarBurger_balance")
 const $linkNavbarBurger_categories = $(".linkNavbarBurger_categories")
 const $linkNavbarBurger_reports = $(".linkNavbarBurger_reports")
 
-// Variables navbar
+// Variables navbar responsive
 const $navbarBurguer = $(".navbarBurguer")
 const $navbarMenu = $(".navbarMenu")
 const $xmark = $(".xmark")
 
-// Variables secciones
+// Variables name sections
 const $mainContainer = $(".mainContainer")
 const $categories = $(".categories")
+const $reports = $(".reports")
 
-// Variables sección filtros
-const $type = $("#type")
+// Variables section balance
+const $balanceProfit = $(".balanceProfit")
+const $balanceLoss =  $(".balanceLoss")
+const $balanceTotal = $(".balanceTotal")
+
+// Variables section filters
+const $typeFilter = $("#type")
 const $filters = $(".filters")
 const $categoryFilter = $(".categoryFilter")
 const $dayFilter = $(".dayFilter")
 const $orderBy = $("#order-by")
 
-// Variables sección categorías
-const $btnEdit = $$(".btnEdit")
-const $cancelEdit = $(".cancelEdit")
-const $btnRemove = $(".btnRemove")
-const $editCategory = $(".editCategory")
-const $cancelEditBtn = $(".cancelEditBtn")
-const $editCategoryBtn = $(".editCategoryBtn")
-const $tableCategories = $(".tableCategories")
-const $addCategories = $(".addCategories")
-const $btnAddCategories = $(".btnAddCategories")
-const $inputEditCategory = $(".inputEditCategory")
-const $categoriesContainer = $(".categoriesContainer")
-const $formAddCategories = $(".formAddCategories")
-
-// Variables sección operaciones
+// Variables section operations
 const $btnHideFilters = $(".btnHideFilters")
-const $btnOperation = $(".btnOperation")
-const $newOperation = $(".newOperation")
-const $editOperation = $(".editOperation")
+const $btnFormNewOperation = $(".btnFormNewOperation")
+const $sectionNewOperation = $(".sectionNewOperation")
+const $editOperationSection = $(".editOperationSection")
 const $editOperationBtn = $(".editOperationBtn")
 const $cancelEditOperationBtn = $(".cancelEditOperationBtn")
 const $addNewOperationBtn = $(".addNewOperationBtn")
 const $cancelNewOperationBtn = $(".cancelNewOperationBtn")
-const $categoryNewOperation = $(".categoryNewOperation")
+const $categorySelectNewOperation = $(".categorySelectNewOperation")
 const $editSelectCategory = $("#editSelectCategory")
 
-// Variables seccion reportes
-const $reports = $(".reports")
+// Variables section categories
+const $editCategory = $(".editCategory")
+const $cancelEditBtn = $(".cancelEditBtn")
+const $editCategoryBtn = $(".editCategoryBtn")
+const $tableCategories = $(".tableCategories")
+const $addCategoriesInput = $(".addCategoriesInput")
+const $btnAddCategories = $(".btnAddCategories")
+const $editCategoryInput = $(".editCategoryInput")
+const $formAddCategories = $(".formAddCategories")
+
+// Variables section reports
+const $tableCategoriesReports = $(".tableCategoriesReports")
+const $tableMonthReports = $(".tableMonthReports")
+const $categoryMaxProfit = $(".categoryMaxProfit")
+const $categoryMaxLoss = $(".categoryMaxLoss")
+const $categoryMaxBalance = $(".categoryMaxBalance")
+const $maxProfitMonth = $(".maxProfitMonth")
+const $maxLossMonth = $(".maxLossMonth")
+
+
+
+
 
 // Id Random
 const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
@@ -77,18 +89,20 @@ const generateId = () => {
     return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
-// Add y remove hidden
+// Función Add y remove hidden
 
 const addAndRemoveHidden = (add, remove) => {
     add.classList.add("hidden")
     remove.classList.remove("hidden")
 }
 
+// Funci
+
 const emptyOperationsAndBalance = () => {
     addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
-    $(".balanceProfit").innerText = `+$0`
-    $(".balanceSpent").innerText = `-$0`
-    $(".balanceTotal").innerText = `$0`
+    $balanceProfit.innerText = `+$0`
+    $balanceLoss.innerText = `-$0`
+    $balanceTotal.innerText = `$0`
 }
 
 // Objetos de categorias y operaciones
@@ -181,14 +195,14 @@ if (!localStorage.getItem("datos")) {
 // Funciones y eventos para agregar una categoria
 
 const categoryNew = () => {
-    if ($addCategories.value === "") {
+    if ($addCategoriesInput.value === "") {
         return alert(`Por favor ingrese el nombre de la categoría que desea agregar`)
     }
-    else if ($addCategories.value.length > 20) {
+    else if ($addCategoriesInput.value.length > 20) {
         return alert(`Ingrese un nombre de categoría mas corto`)
     }
     else {
-        const name = $addCategories.value.charAt(0).toUpperCase() + $addCategories.value.slice(1)
+        const name = $addCategoriesInput.value.charAt(0).toUpperCase() + $addCategoriesInput.value.slice(1)
         const id = generateId()
         const categories = dataCategoriesLocalStorage()
         categories.push({ id, name })
@@ -228,7 +242,7 @@ const editCategoriesLocal = (id) => {
     const categories = dataCategoriesLocalStorage()
     for (const category of categories) {
         if (chosenCategory.id === category.id) {
-            category.name = $inputEditCategory.value
+            category.name = $editCategoryInput.value
             const datos = { ...localData, categories: categories }
             localStorage.setItem("datos", JSON.stringify(datos))
         }
@@ -244,7 +258,7 @@ const categoryEdit = (id) => {
     cleanCategories()
     addAndRemoveHidden($categories, $editCategory)
     const chosenCategory = findCategory(id)
-    $inputEditCategory.value = chosenCategory.name
+    $editCategoryInput.value = chosenCategory.name
     $editCategoryBtn.setAttribute("data-id", id)
     $cancelEditBtn.setAttribute("data-id", id)
 }
@@ -257,7 +271,7 @@ $cancelEditBtn.addEventListener("click", () => {
 const saveCategory = (id) => {
     return {
         id: id,
-        name: $inputEditCategory.value
+        name: $editCategoryInput.value
     }
 }
 
@@ -319,10 +333,10 @@ const removeCategory = (id) => {
 // Funciones que agregan las categorias a los selects de "Nueva operación", "Filtros" y "Formulario editar operaciones"
 
 const selectCategoriesOperation = () => {
-    $categoryNewOperation.innerHTML = ""
+    $categorySelectNewOperation.innerHTML = ""
     $editSelectCategory.innerHTML = ""
     for (const { name, id } of dataCategoriesLocalStorage()) {
-        $categoryNewOperation.innerHTML += `<option value="${id}">${name}</option>`
+        $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
         $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
     }
 }
@@ -506,7 +520,7 @@ const findOperation = (id) => {
 }
 
 const editOperation = (id) => {
-    addAndRemoveHidden($mainContainer, $editOperation)
+    addAndRemoveHidden($mainContainer, $editOperationSection)
     const chosenOperation = findOperation(id)
     $("#editDescription").value = chosenOperation.description
     $("#editAmount").value = chosenOperation.amount
@@ -555,7 +569,7 @@ $addNewOperationBtn.addEventListener("click", (e) => {
     selectCategoriesOperation()
     filterType(dataOperationsLocalStorage())
     enoughOperations()
-    addAndRemoveHidden($newOperation, $mainContainer)
+    addAndRemoveHidden($sectionNewOperation, $mainContainer)
 })
 
 $editOperationBtn.addEventListener("click", () => {
@@ -563,7 +577,7 @@ $editOperationBtn.addEventListener("click", () => {
     editOperationLocal(operationId)
     filterFunction(dataOperationsLocalStorage())
     enoughOperations()
-    addAndRemoveHidden($editOperation, $mainContainer)
+    addAndRemoveHidden($editOperationSection, $mainContainer)
 })
 
 
@@ -579,17 +593,17 @@ const filterOperationByProp = (array, prop, input) => {
 const filterType = (array) => {
     if (array.length !== 0) {
         for (const operation of array) {
-            if ($type.value === operation.type) {
+            if ($typeFilter.value === operation.type) {
                 addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
-                array = filterOperationByProp(array, "type", $type.value)
+                array = filterOperationByProp(array, "type", $typeFilter.value)
                 return categoryFilter(array)
             }
-            else if ($type.value === "todos") {
+            else if ($typeFilter.value === "todos") {
                 addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 return categoryFilter(array)
             }
     
-            if (filterOperationByProp(array, "type", $type.value).length === 0) {
+            if (filterOperationByProp(array, "type", $typeFilter.value).length === 0) {
                 emptyOperationsAndBalance()
                 return array = []
             }
@@ -708,14 +722,14 @@ const balanceFunction = (array) => {
 
 const balanceDom = (objectBalance) => {
     const { spent, profit, total } = objectBalance
-    $(".balanceProfit").innerText = `+$${profit}`
-    $(".balanceSpent").innerText = `-$${spent}`
+    $balanceProfit.innerText = `+$${profit}`
+    $balanceLoss.innerText = `-$${spent}`
     if (total < 0) {
         const totalSlice = total.toString().slice(1)
-        $(".balanceTotal").innerText = `-$${totalSlice}`
+        $balanceTotal.innerText = `-$${totalSlice}`
     } 
     else {
-        $(".balanceTotal").innerText = `$${total}`
+        $balanceTotal.innerText = `$${total}`
     }
 }
 
@@ -803,11 +817,11 @@ const symbolBalance = (balance) => {
 }
 
 const tableReports = () => {
-    $(".tableCategoriesReports").innerHTML = ""
-    $(".tableMonthReports").innerHTML = ""
+    $tableCategoriesReports.innerHTML = ""
+    $tableMonthReports.innerHTML = ""
     for (const obj of Object.keys(categoriesTotalBalance)) {
         const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
-        $(".tableCategoriesReports").innerHTML += `
+        $tableCategoriesReports.innerHTML += `
             <tr class="flex justify-between">
                 <th class="font-medium">${nameCategory(obj)}</th>
                 <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
@@ -818,7 +832,7 @@ const tableReports = () => {
     }
     for (const obj of Object.keys(dateTotalBalance)){
         const { ganancia, gasto, balance } = dateTotalBalance[obj]
-        $(".tableMonthReports").innerHTML += `
+        $tableMonthReports.innerHTML += `
             <tr class="flex justify-between">
                 <th class="font-medium">${obj}</th>
                 <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
@@ -868,7 +882,7 @@ const summaryReports = () => {
     tableReports()
 
     const maxEarnings = categorySummary("ganancia")
-    $(".categoryMaxProfit").innerHTML = `
+    $categoryMaxProfit.innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Categoría con mayor ganancia</p>
         </div>
@@ -881,7 +895,7 @@ const summaryReports = () => {
     `
 
     const maxSpent = categorySummary("gasto")
-    $(".categoryMaxSpent").innerHTML = `
+    $categoryMaxLoss.innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Categoría con mayor gasto</p>
         </div>
@@ -894,12 +908,12 @@ const summaryReports = () => {
     `
 
     const maxBalance = categorySummary("balance")
-    if (maxBalance.maxAmount === 0) $(".categoryMaxBalance").innerHTML = `
+    if (maxBalance.maxAmount === 0) $categoryMaxBalance.innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">No hay categoría con mayor balance</p>
         </div>
     `
-    else { $(".categoryMaxBalance").innerHTML = `
+    else { $categoryMaxBalance.innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Categoria con mayor balance</p>
         </div>
@@ -913,7 +927,7 @@ const summaryReports = () => {
     }
 
     const {maxMonthAmount, maxMonth, minMonthAmount, minMonth} = monthMaxAndMin()
-    $(".maxProfitMonth").innerHTML = `
+    $maxProfitMonth.innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Mes con mayor ganancia</p>
         </div>
@@ -925,7 +939,7 @@ const summaryReports = () => {
         </div>
     `
 
-    $(".maxSpentMonth").innerHTML = `
+    $maxLossMonth.innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Mes con mayor gasto</p>
         </div>
@@ -1004,9 +1018,9 @@ let tabs = {
     editCategory: false
 }
 
-const arrOfTabs = [$linkNavbar_balance, $linkNavbar_categories, $linkNavbar_reports, $btnOperation]
+const arrOfTabs = [$linkNavbar_balance, $linkNavbar_categories, $linkNavbar_reports, $btnFormNewOperation]
 
-const arrOfTabsBurger = [$linkNavBarBurger_balance, $linkNavbarBurger_categories, $linkNavbarBurger_reports, $btnOperation]
+const arrOfTabsBurger = [$linkNavBarBurger_balance, $linkNavbarBurger_categories, $linkNavbarBurger_reports, $btnFormNewOperation]
 
 for (const editBtn of $$(".btnEdit")) {
     editBtn.addEventListener("click", () => {
@@ -1051,11 +1065,11 @@ const changeClass = () => {
 }
 
 $cancelNewOperationBtn.addEventListener("click", () => {
-    addAndRemoveHidden($newOperation, $mainContainer)
+    addAndRemoveHidden($sectionNewOperation, $mainContainer)
 })
 
 $cancelEditOperationBtn.addEventListener("click", () => {
-    addAndRemoveHidden($editOperation, $mainContainer)
+    addAndRemoveHidden($editOperationSection, $mainContainer)
 })
 
 $btnHideFilters.addEventListener("click", () => {
