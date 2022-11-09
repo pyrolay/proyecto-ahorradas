@@ -160,6 +160,7 @@ const generateCategories = (categories) => {
             selectCategoriesFilter()
             operationsEmptyOrNot()
             enoughOperations()
+            balanceFunction(dataOperationsLocalStorage())
         })
     }
 }
@@ -184,7 +185,7 @@ const categoryNew = () => {
         return alert(`Ingrese un nombre de categoría mas corto`)
     }
     else {
-        const name = $addCategories.value
+        const name = $addCategories.value.charAt(0).toUpperCase() + $addCategories.value.slice(1)
         const id = generateId()
         const categories = dataCategoriesLocalStorage()
         categories.push({ id, name })
@@ -311,7 +312,7 @@ const removeCategory = (id) => {
 }
 
 
-// Funciones que agregan las categorias a los selects de "Nueva operación" y "Filtros"
+// Funciones que agregan las categorias a los selects de "Nueva operación", "Filtros" y "Formulario editar operaciones"
 
 const selectCategoriesOperation = () => {
     $categoryNewOperation.innerHTML = ""
@@ -340,7 +341,7 @@ const newOperationEmpty = () => {
 
 const saveNewOperation = () => {
     const id = generateId()
-    const description = $("#description").value
+    const description = $("#description").value.charAt(0).toUpperCase() + $("#description").value.slice(1)
     const amount = $("#amount").value
     const type = $("#selectType").value
     const category = $("#selectCategory").value
@@ -409,16 +410,16 @@ const addNewOperation = (data) => {
             </div>
             </th>
             <th class="">
-            <div class="w-30 md:ml-4 lg:ml-0 flex text-blue-800 py-1 text-start">
+            <div class="w-30 md:ml-4 lg:ml-0 flex 2xl:flex-row lg:flex-col md:flex-row text-blue-800 py-1 text-start">
                 <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
-                <button class="btnOperationRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+                <button class="btnOperationRemove 2xl:ml-4 lg:ml-0 md:ml-4 2xl:mt-0 lg:mt-2 md:mt-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
             </div>
         </th> `
 
         $(".tableBody").append(tr)
 
         const trResponsive = document.createElement("tr")
-        const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-start"]
+        const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-between"]
         trResponsive.classList.add(...responsiveCls)
         trResponsive.innerHTML +=`
         <th class="w-20 sm:w-56 truncate">
@@ -431,19 +432,19 @@ const addNewOperation = (data) => {
             <div class="font-medium text-start">
                 <p>${amountColorChange(amount, type)}</p>
             </div>
-                </th>
-                <th class="sm:ml-5 ml-3 truncate">
-            <div>
-                <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-sm">${nameCategory(category)}</span>
-            </div>
-            <div class="flex text-blue-800 py-1 justify-center">
-                <a href="" class="btnOperationEdit cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
-                    <i class="fa-regular fa-pen-to-square"></i>
-                </a>
-                <a href="" class="btnOperationRemove ml-4 cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
-                    <i class="fa-solid fa-trash-can"></i>
-                </a>
-            </div>
+        </th>
+        <th class="sm:ml-5 ml-3 truncate">
+                <div>
+                    <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-sm">${nameCategory(category)}</span>
+                </div>
+                <div class="flex text-blue-800 py-1 justify-center">
+                    <a href="" class="btnOperationEdit cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </a>
+                    <a href="" class="btnOperationRemove ml-4 cursor-pointer text-[#ab062d] text-xl" data-id="${id}">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </div>
         </th> `
             $(".tableBody").append(trResponsive)
         })
@@ -513,7 +514,7 @@ const editOperationLocal = (id) => {
     for (const operation of operations) {
         if (chosenOperation.id === operation.id) {
             operation.id = id
-            operation.description = $("#editDescription").value
+            operation.description = $("#editDescription").value.charAt(0).toUpperCase() + $("#editDescription").value.slice(1)
             operation.amount = $("#editAmount").value
             operation.type = $("#editSelectType").value
             operation.category = $("#editSelectCategory").value
@@ -633,7 +634,10 @@ const filterDate = (array) => {
 // Ordenar
 
 const orderBy = (array) => {
-    const changeDate = (sort) => parseInt((sort.date).split("/").reverse().join(""))
+    const changeDate = (sort) => {
+        const date = new Date(sort.date)
+        return date.getTime()
+    }
 
     if ($orderBy.value === "1") return array.sort((a, b) => changeDate(b) - changeDate(a))
     if ($orderBy.value === "2") return array.sort((a, b) => changeDate(a) - changeDate(b))
@@ -698,8 +702,6 @@ const balanceDom = (objectBalance) => {
 }
 
 // Eventos y funciones sección reportes
-
-// Función resumen
 
 const filterByCategory = (category) => {
     return dataOperationsLocalStorage().filter(operation => operation.category === category)
