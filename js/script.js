@@ -634,7 +634,10 @@ const filterDate = (array) => {
 // Ordenar
 
 const orderBy = (array) => {
-    const changeDate = (sort) => parseInt((sort.date).split("/").reverse().join(""))
+    const changeDate = (sort) => {
+        const date = new Date(sort.date)
+        return date.getTime()
+    }
 
     if ($orderBy.value === "1") return array.sort((a, b) => changeDate(b) - changeDate(a))
     if ($orderBy.value === "2") return array.sort((a, b) => changeDate(a) - changeDate(b))
