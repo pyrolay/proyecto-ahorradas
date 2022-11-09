@@ -56,10 +56,10 @@ const $editSelectCategory = $("#editSelectCategory")
 // Variables seccion reportes
 const $reports = $(".reports")
 
-
 // Id Random
 const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
 const idStringNumber = "1234567890"
+
 
 const generateId = () => {
     const arrayOne = []
@@ -73,7 +73,8 @@ const generateId = () => {
         const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
         const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
         arrayTwo.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
-    } return `${arrayOne.join("")}-${arrayTwo.join("")}`
+    } 
+    return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
 // Add y remove hidden
@@ -171,6 +172,8 @@ generateCategories(categories)
 
 const data = { categories, operations }
 
+// LocalData
+
 if (!localStorage.getItem("datos")) {
     localStorage.setItem("datos", JSON.stringify(data))
 }
@@ -204,11 +207,11 @@ const addCategory = () => {
 
 
 $btnAddCategories.addEventListener("click", (e) => {
+    e.preventDefault()
     categoryNew()
     addCategory()
     selectCategoriesOperation()
     selectCategoriesFilter()
-    e.preventDefault()
     $formAddCategories.reset()
     enoughOperations()
 })
@@ -301,7 +304,8 @@ const filterCategoryOperationRemove = (id) => {
                 return data
             }
         }
-    } else return emptyArr = []
+    } 
+    else return emptyArr = []
 }
 
 const removeCategory = (id) => {
@@ -345,7 +349,7 @@ const saveNewOperation = () => {
     const amount = $("#amount").value
     const type = $("#selectType").value
     const category = $("#selectCategory").value
-    const date = $("#date").value
+    const date = changeFormatDateLocalStorage($("#date"))
     operations.push({ id, description, amount, type, category, date })
     if (localStorage.getItem("datos")) {
         const operations = dataOperationsLocalStorage()
@@ -356,6 +360,13 @@ const saveNewOperation = () => {
     }
 }
 
+const changeFormatDateLocalStorage = (dateInput) => {
+    const date = new Date(dateInput.value)
+    const getDate = [date.getUTCMonth() + 1, date.getUTCDate(), date.getUTCFullYear()]
+    const newDate = getDate.join("-")
+    return newDate
+}
+
 const formatDate = (date) => {
     date = new Date(date)
     const getDate = [date.getUTCDate(), date.getUTCMonth() + 1, date.getUTCFullYear()]
@@ -363,14 +374,12 @@ const formatDate = (date) => {
     return newDate
 }
 
-
-
 const amountColorChange = (amount, type) => {
     if (type === "gasto") {
         return `<p class="text-red-500">-$${amount}</p>`
-    } else return `<p class="text-green-500">+$${amount}</p>`
+    }
+    else return `<p class="text-green-500">+$${amount}</p>`
 }
-
 
 const nameCategory = (category) => {
     for (const { id, name } of dataCategoriesLocalStorage()) {
@@ -472,7 +481,8 @@ const addNewOperation = (data) => {
                 enoughOperations()
             })
         }
-    } else emptyOperationsAndBalance()
+    } 
+    else emptyOperationsAndBalance()
 }
 
 const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).operations }
@@ -518,7 +528,7 @@ const editOperationLocal = (id) => {
             operation.amount = $("#editAmount").value
             operation.type = $("#editSelectType").value
             operation.category = $("#editSelectCategory").value
-            operation.date = $("#editDate").value
+            operation.date = changeFormatDateLocalStorage($("#editDate"))
             const datos = { ...localData, operations: operations }
             localStorage.setItem("datos", JSON.stringify(datos))
         }
@@ -573,7 +583,8 @@ const filterType = (array) => {
                 addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 array = filterOperationByProp(array, "type", $type.value)
                 return categoryFilter(array)
-            } else if ($type.value === "todos") {
+            }
+            else if ($type.value === "todos") {
                 addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 return categoryFilter(array)
             }
@@ -583,7 +594,8 @@ const filterType = (array) => {
                 return array = []
             }
         }
-    } else emptyOperationsAndBalance()
+    }
+    else emptyOperationsAndBalance()
 }
 
 // Filtro category
@@ -595,7 +607,8 @@ const categoryFilter = (array) => {
                 addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 array = filterOperationByProp(array, "category", $categoryFilter.value)
                 return filterDate(array)
-            } else if ($categoryFilter.value === "Todas") {
+            }
+            else if ($categoryFilter.value === "Todas") {
                 addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 return filterDate(array)
             }
@@ -605,7 +618,8 @@ const categoryFilter = (array) => {
                 return array = []
             }
         }
-    } else emptyOperationsAndBalance()
+    } 
+    else emptyOperationsAndBalance()
 }
 
 // Filtro fecha
@@ -628,7 +642,8 @@ const filterDate = (array) => {
                 return operation
             }
         }) 
-    } else emptyOperationsAndBalance()
+    }
+    else emptyOperationsAndBalance()
 }
 
 // Ordenar
@@ -670,7 +685,8 @@ const filterFunction = () => {
     if (arrOfOperations.length !== 0 && operationsFiltered.length !== 0) {
         balanceFunction(operationsFiltered)
         addNewOperation(orderBy(filterType(operationsFiltered)))
-    } else emptyOperationsAndBalance()
+    } 
+    else emptyOperationsAndBalance()
 }
 
 $filters.addEventListener("change", () => {
@@ -683,7 +699,8 @@ const balanceFunction = (array) => {
     for (const operation of array) {
         if (operation.type === "ganancia") {
             profit += parseInt(operation.amount)
-        } else spent += parseInt(operation.amount)
+        } 
+        else spent += parseInt(operation.amount)
     }
     const total = profit - spent
     return balanceDom({ spent, profit, total })
@@ -696,7 +713,8 @@ const balanceDom = (objectBalance) => {
     if (total < 0) {
         const totalSlice = total.toString().slice(1)
         $(".balanceTotal").innerText = `-$${totalSlice}`
-    } else {
+    } 
+    else {
         $(".balanceTotal").innerText = `$${total}`
     }
 }
@@ -723,7 +741,8 @@ const getSpent = (array) => {
         if (operation.type === "gasto") {
             spent += parseInt(operation.amount)
         }
-    } return spent
+    } 
+    return spent
 }
 
 const getEarnings = (array) => {
@@ -732,7 +751,8 @@ const getEarnings = (array) => {
         if (operation.type === "ganancia") {
             profit += parseInt(operation.amount)
         }
-    } return profit
+    } 
+    return profit
 }
 
 const getBalance = (array) => {
@@ -748,7 +768,8 @@ const objectCategories = (prop, callback) => {
                     const dateOperation = new Date(operation[prop])
                     const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
                     categoriesOrDates.push(monthAndYear) 
-                } else  categoriesOrDates.push(operation[prop])
+                } 
+                else  categoriesOrDates.push(operation[prop])
             }
     }
     for (const item of categoriesOrDates) {
@@ -759,7 +780,8 @@ const objectCategories = (prop, callback) => {
         }
         objCategoriesOrDates[item] = objBalance
 
-    } return objCategoriesOrDates
+    } 
+    return objCategoriesOrDates
 }
 
 let categoriesTotalBalance = objectCategories("category", filterByCategory)
@@ -774,7 +796,8 @@ const symbolBalance = (balance) => {
     if (balance <= 0) {
         const totalSlice = balance.toString().slice(1)
         return `-$${totalSlice}`
-    } else {
+    } 
+    else {
         return `$${balance}`
     }
 }
@@ -793,7 +816,7 @@ const tableReports = () => {
             </tr>
         `
     }
-    for(const obj of Object.keys(dateTotalBalance)){
+    for (const obj of Object.keys(dateTotalBalance)){
         const { ganancia, gasto, balance } = dateTotalBalance[obj]
         $(".tableMonthReports").innerHTML += `
             <tr class="flex justify-between">
@@ -835,7 +858,8 @@ const monthMaxAndMin = () => {
             minMonthAmount = gasto
             minMonth = obj
         }
-    } return  {maxMonthAmount, maxMonth, minMonthAmount, minMonth}
+    } 
+    return  {maxMonthAmount, maxMonth, minMonthAmount, minMonth}
 }
 
 
@@ -924,7 +948,8 @@ const enoughOperations = () => {
     if (spentAndGain.includes("ganancia") && spentAndGain.includes("gasto")) {
         summaryReports()
         addAndRemoveHidden($(".operationsNotEnough"), $(".reportsTables"))
-    } else {
+    } 
+    else {
         addAndRemoveHidden($(".reportsTables"), $(".operationsNotEnough"))
     }
 }
@@ -963,7 +988,8 @@ const navigationConditional = (e) => {
     if (e.target === e.currentTarget) {
         const tabName = e.target.name
         chooseTab(tabName)
-    } else {
+    } 
+    else {
         const tabName = e.target.parentElement.name
         chooseTab(tabName)
     }
@@ -1017,7 +1043,8 @@ const changeClass = () => {
         const tabId = document.getElementById(tab)
         if (tabs[tab] !== true) {
             tabId.classList.add("hidden")
-        } else {
+        } 
+        else {
             tabId.classList.remove("hidden")
         }
     }
@@ -1035,7 +1062,8 @@ $btnHideFilters.addEventListener("click", () => {
     if ($btnHideFilters.textContent === "Mostrar filtros") {
         $filters.classList.remove("hidden")
         $btnHideFilters.textContent = "Ocultar filtros"
-    } else {
+    } 
+    else {
         $filters.classList.add("hidden")
         $btnHideFilters.textContent = "Mostrar filtros"
     }
