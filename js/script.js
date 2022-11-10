@@ -23,7 +23,7 @@ const $reports = $(".reports")
 
 // Variables section balance
 const $balanceProfit = $(".balanceProfit")
-const $balanceLoss =  $(".balanceLoss")
+const $balanceLoss = $(".balanceLoss")
 const $balanceTotal = $(".balanceTotal")
 
 // Variables section filters
@@ -64,14 +64,9 @@ const $categoryMaxBalance = $(".categoryMaxBalance")
 const $maxProfitMonth = $(".maxProfitMonth")
 const $maxLossMonth = $(".maxLossMonth")
 
-
-
-
-
 // Id Random
 const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
 const idStringNumber = "1234567890"
-
 
 const generateId = () => {
     const arrayOne = []
@@ -85,9 +80,13 @@ const generateId = () => {
         const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
         const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
         arrayTwo.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
-    } 
+    }
     return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
+
+// Global Helper Functions
+// Filters
+// LocalStorage
 
 // Función Add y remove hidden
 
@@ -180,7 +179,7 @@ const generateCategories = (categories) => {
     }
 }
 
-generateCategories(categories)
+// generateCategories(categories)
 
 // Se envian los objetos al Local Storage
 
@@ -310,16 +309,17 @@ const filterCategory = (id) => {
 
 const filterCategoryOperationRemove = (id) => {
     const arrCategoriesLocal = dataCategoriesLocalStorage()
-    const arrOperationLocal = dataOperationsLocalStorage()
+    let arrOperationLocal = dataOperationsLocalStorage()
     if (arrOperationLocal.length !== 0) {
         for (const { category } of arrOperationLocal) {
             if (!arrCategoriesLocal.includes(id) && category === id) {
-                const data = dataOperationsLocalStorage().filter(operation => operation.category !== category)
-                return data
+                arrOperationLocal = dataOperationsLocalStorage().filter(operation => operation.category !== category)
+                return arrOperationLocal
             }
         }
-    } 
-    else return emptyArr = []
+    }
+    return arrOperationLocal
+
 }
 
 const removeCategory = (id) => {
@@ -439,12 +439,12 @@ const addNewOperation = (data) => {
             </div>
         </th> `
 
-        $(".tableBody").append(tr)
+            $(".tableBody").append(tr)
 
-        const trResponsive = document.createElement("tr")
-        const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-between"]
-        trResponsive.classList.add(...responsiveCls)
-        trResponsive.innerHTML +=`
+            const trResponsive = document.createElement("tr")
+            const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-between"]
+            trResponsive.classList.add(...responsiveCls)
+            trResponsive.innerHTML += `
         <th class="w-20 sm:w-56 truncate">
             <div class="font-medium text-start">
                 <p>${description}</p>
@@ -471,10 +471,10 @@ const addNewOperation = (data) => {
         </th> `
             $(".tableBody").append(trResponsive)
         })
-    
+
         const btnEdit = $$(".btnOperationEdit")
         const btnRemove = $$(".btnOperationRemove")
-    
+
         for (const btn of btnEdit) {
             const operationId = btn.getAttribute("data-id")
             btn.addEventListener("click", (e) => {
@@ -483,7 +483,7 @@ const addNewOperation = (data) => {
                 filterFunction()
             })
         }
-    
+
         for (const btn of btnRemove) {
             const operationId = btn.getAttribute("data-id")
             btn.addEventListener("click", (e) => {
@@ -495,7 +495,7 @@ const addNewOperation = (data) => {
                 enoughOperations()
             })
         }
-    } 
+    }
     else emptyOperationsAndBalance()
 }
 
@@ -602,7 +602,7 @@ const filterType = (array) => {
                 addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 return categoryFilter(array)
             }
-    
+
             if (filterOperationByProp(array, "type", $typeFilter.value).length === 0) {
                 emptyOperationsAndBalance()
                 return array = []
@@ -626,13 +626,13 @@ const categoryFilter = (array) => {
                 addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
                 return filterDate(array)
             }
-    
+
             if (filterOperationByProp(array, "category", $categoryFilter.value).length === 0) {
                 emptyOperationsAndBalance()
                 return array = []
             }
         }
-    } 
+    }
     else emptyOperationsAndBalance()
 }
 
@@ -655,7 +655,7 @@ const filterDate = (array) => {
             if (dateTime >= dateInput) {
                 return operation
             }
-        }) 
+        })
     }
     else emptyOperationsAndBalance()
 }
@@ -699,7 +699,7 @@ const filterFunction = () => {
     if (arrOfOperations.length !== 0 && operationsFiltered.length !== 0) {
         balanceFunction(operationsFiltered)
         addNewOperation(orderBy(filterType(operationsFiltered)))
-    } 
+    }
     else emptyOperationsAndBalance()
 }
 
@@ -713,7 +713,7 @@ const balanceFunction = (array) => {
     for (const operation of array) {
         if (operation.type === "ganancia") {
             profit += parseInt(operation.amount)
-        } 
+        }
         else spent += parseInt(operation.amount)
     }
     const total = profit - spent
@@ -727,7 +727,7 @@ const balanceDom = (objectBalance) => {
     if (total < 0) {
         const totalSlice = total.toString().slice(1)
         $balanceTotal.innerText = `-$${totalSlice}`
-    } 
+    }
     else {
         $balanceTotal.innerText = `$${total}`
     }
@@ -741,7 +741,7 @@ const filterByCategory = (category) => {
 
 const filterByDate = (date) => {
     return dataOperationsLocalStorage().filter(operation => {
-        const dateOperation = new Date (operation.date)
+        const dateOperation = new Date(operation.date)
         const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
         if (monthAndYear === date) {
             return operation
@@ -755,7 +755,7 @@ const getSpent = (array) => {
         if (operation.type === "gasto") {
             spent += parseInt(operation.amount)
         }
-    } 
+    }
     return spent
 }
 
@@ -765,7 +765,7 @@ const getEarnings = (array) => {
         if (operation.type === "ganancia") {
             profit += parseInt(operation.amount)
         }
-    } 
+    }
     return profit
 }
 
@@ -777,14 +777,14 @@ const objectCategories = (prop, callback) => {
     const categoriesOrDates = []
     const objCategoriesOrDates = {}
     for (const operation of dataOperationsLocalStorage()) {
-            if (!categoriesOrDates.includes(operation[prop])) {
-                if(prop === "date"){
-                    const dateOperation = new Date(operation[prop])
-                    const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
-                    categoriesOrDates.push(monthAndYear) 
-                } 
-                else  categoriesOrDates.push(operation[prop])
+        if (!categoriesOrDates.includes(operation[prop])) {
+            if (prop === "date") {
+                const dateOperation = new Date(operation[prop])
+                const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
+                categoriesOrDates.push(monthAndYear)
             }
+            else categoriesOrDates.push(operation[prop])
+        }
     }
     for (const item of categoriesOrDates) {
         const objBalance = {
@@ -794,7 +794,7 @@ const objectCategories = (prop, callback) => {
         }
         objCategoriesOrDates[item] = objBalance
 
-    } 
+    }
     return objCategoriesOrDates
 }
 
@@ -810,7 +810,7 @@ const symbolBalance = (balance) => {
     if (balance <= 0) {
         const totalSlice = balance.toString().slice(1)
         return `-$${totalSlice}`
-    } 
+    }
     else {
         return `$${balance}`
     }
@@ -830,7 +830,7 @@ const tableReports = () => {
             </tr>
         `
     }
-    for (const obj of Object.keys(dateTotalBalance)){
+    for (const obj of Object.keys(dateTotalBalance)) {
         const { ganancia, gasto, balance } = dateTotalBalance[obj]
         $tableMonthReports.innerHTML += `
             <tr class="flex justify-between">
@@ -853,7 +853,7 @@ const categorySummary = (prop) => {
             maxCategory = obj
         }
     }
-    return {maxAmount, maxCategory}
+    return { maxAmount, maxCategory }
 }
 
 
@@ -863,7 +863,7 @@ const monthMaxAndMin = () => {
     let maxMonth
     let minMonth
     for (const obj of Object.keys(dateTotalBalance)) {
-        const {ganancia,gasto} = dateTotalBalance[obj]
+        const { ganancia, gasto } = dateTotalBalance[obj]
         if (ganancia >= maxMonthAmount) {
             maxMonthAmount = ganancia
             maxMonth = obj
@@ -872,8 +872,8 @@ const monthMaxAndMin = () => {
             minMonthAmount = gasto
             minMonth = obj
         }
-    } 
-    return  {maxMonthAmount, maxMonth, minMonthAmount, minMonth}
+    }
+    return { maxMonthAmount, maxMonth, minMonthAmount, minMonth }
 }
 
 
@@ -913,7 +913,8 @@ const summaryReports = () => {
             <p class="font-semibold">No hay categoría con mayor balance</p>
         </div>
     `
-    else { $categoryMaxBalance.innerHTML = `
+    else {
+        $categoryMaxBalance.innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Categoria con mayor balance</p>
         </div>
@@ -926,7 +927,7 @@ const summaryReports = () => {
     `
     }
 
-    const {maxMonthAmount, maxMonth, minMonthAmount, minMonth} = monthMaxAndMin()
+    const { maxMonthAmount, maxMonth, minMonthAmount, minMonth } = monthMaxAndMin()
     $maxProfitMonth.innerHTML = `
         <div class="sm:w-1/3 mb-2 sm:mb-0">
             <p class="font-semibold">Mes con mayor ganancia</p>
@@ -962,7 +963,7 @@ const enoughOperations = () => {
     if (spentAndGain.includes("ganancia") && spentAndGain.includes("gasto")) {
         summaryReports()
         addAndRemoveHidden($(".operationsNotEnough"), $(".reportsTables"))
-    } 
+    }
     else {
         addAndRemoveHidden($(".reportsTables"), $(".operationsNotEnough"))
     }
@@ -1002,7 +1003,7 @@ const navigationConditional = (e) => {
     if (e.target === e.currentTarget) {
         const tabName = e.target.name
         chooseTab(tabName)
-    } 
+    }
     else {
         const tabName = e.target.parentElement.name
         chooseTab(tabName)
@@ -1057,7 +1058,7 @@ const changeClass = () => {
         const tabId = document.getElementById(tab)
         if (tabs[tab] !== true) {
             tabId.classList.add("hidden")
-        } 
+        }
         else {
             tabId.classList.remove("hidden")
         }
@@ -1076,7 +1077,7 @@ $btnHideFilters.addEventListener("click", () => {
     if ($btnHideFilters.textContent === "Mostrar filtros") {
         $filters.classList.remove("hidden")
         $btnHideFilters.textContent = "Ocultar filtros"
-    } 
+    }
     else {
         $filters.classList.add("hidden")
         $btnHideFilters.textContent = "Mostrar filtros"
