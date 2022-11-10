@@ -95,7 +95,7 @@ const getItemLocalStorage = () => JSON.parse(localStorage.getItem("storage"))
 const cleanHTML = (document) => document.innerHTML = ""
 
 const operationsEmptyOrNot = () => {
-    const operation = dataOperationsLocalStorage()
+    const operation = dataLocalStorage("operations")
     if (operation.length !== 0) addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
     else addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
 }
@@ -153,6 +153,7 @@ if (!localStorage.getItem("storage")) {
 
 const dataCategoriesLocalStorage = () => { return JSON.parse(localStorage.getItem("storage")).categories }
 const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("storage")).operations }
+const dataLocalStorage = (key) => { return JSON.parse(localStorage.getItem("storage"))[key] }
 
 // Section Categories
 // Functions 
@@ -161,7 +162,7 @@ const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getIte
 const categoryAddLocalStorage = () => {
     const name = $addCategoriesInput.value.charAt(0).toUpperCase() + $addCategoriesInput.value.slice(1)
     const id = generateId()
-    const categories = dataCategoriesLocalStorage()
+    const categories = dataLocalStorage("categories")
     categories.push({ id, name })
     const localData = getItemLocalStorage()
     const storage = { ...localData, categories: categories }
@@ -182,15 +183,15 @@ const categoryAddAlert = () => {
 
 const addCategoryToTable = () => {
     cleanHTML($tableCategories)
-    generateCategories(dataCategoriesLocalStorage())
+    generateCategories(dataLocalStorage("categories"))
 }
 
 // Edit Categories
 
 const editCategoriesLocal = (id) => {
     const localData = getItemLocalStorage()
-    const chosenCategory = find(dataCategoriesLocalStorage(), "id", id)
-    const categories = dataCategoriesLocalStorage()
+    const chosenCategory = find(dataLocalStorage("categories"), "id", id)
+    const categories = dataLocalStorage("categories")
     for (const category of categories) {
         if (chosenCategory.id === category.id) {
             category.name = $editCategoryInput.value
@@ -206,7 +207,7 @@ const editCategoriesLocal = (id) => {
 const showFormCategoryEdit = (id) => {
     cleanHTML($tableCategories)
     addAndRemoveHidden($categories, $editCategory)
-    const chosenCategory = find(dataCategoriesLocalStorage(), "id", id)
+    const chosenCategory = find(dataLocalStorage("categories"), "id", id)
     $editCategoryInput.value = chosenCategory.name
     $editCategoryBtn.setAttribute("data-id", id)
     $cancelEditCategoryBtn.setAttribute("data-id", id)
@@ -220,7 +221,7 @@ const saveCategory = (id) => {
 }
 
 const editCategoryDom = (id) => {
-    return dataCategoriesLocalStorage().map(category => {
+    return dataLocalStorage("categories").map(category => {
         if (category.id === id) {
             return saveCategory(id)
         }
@@ -232,17 +233,17 @@ const editCategoryDom = (id) => {
 
 const removeCategoryLocal = (id) => {
     const localData = getItemLocalStorage()
-    const storage = { ...localData, categories: filter(dataCategoriesLocalStorage(), "id", id), operations: operationRemoveByFilterCategory(id) }
+    const storage = { ...localData, categories: filter(dataLocalStorage("categories"), "id", id), operations: operationRemoveByFilterCategory(id) }
     setItemLocalStorage(storage)
 }
 
 const operationRemoveByFilterCategory = (id) => {
-    const arrCategoriesLocal = dataCategoriesLocalStorage()
-    let arrOperationLocal = dataOperationsLocalStorage()
+    const arrCategoriesLocal = dataLocalStorage("categories")
+    let arrOperationLocal = dataLocalStorage("operations")
     if (arrOperationLocal.length !== 0) {
         for (const { category } of arrOperationLocal) {
             if (!arrCategoriesLocal.includes(id) && category === id) {
-                arrOperationLocal = dataOperationsLocalStorage().filter(operation => operation.category !== category)
+                arrOperationLocal = dataLocalStorage("operations").filter(operation => operation.category !== category)
                 return arrOperationLocal
             }
         }
@@ -252,7 +253,7 @@ const operationRemoveByFilterCategory = (id) => {
 
 const removeCategory = (id) => {
     cleanHTML($tableCategories)
-    generateCategories(filter(dataCategoriesLocalStorage(), "id", id))
+    generateCategories(filter(dataLocalStorage("categories"), "id", id))
     const filteredByRemovedCategory = operationRemoveByFilterCategory(id)
     if (filteredByRemovedCategory.length !== 0) addNewOperation(filteredByRemovedCategory)
 }
@@ -261,7 +262,7 @@ const removeCategory = (id) => {
 // DOM
 
 const nameCategory = (category) => {
-    for (const { id, name } of dataCategoriesLocalStorage()) {
+    for (const { id, name } of dataLocalStorage("categories")) {
         if (category === id) {
             return category = name
         }
@@ -271,7 +272,7 @@ const nameCategory = (category) => {
 const selectCategoriesOperation = () => {
     cleanHTML($categorySelectNewOperation)
     cleanHTML($editSelectCategory)
-    for (const { name, id } of dataCategoriesLocalStorage()) {
+    for (const { name, id } of dataLocalStorage("categories")) {
         $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
         $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
     }
@@ -280,7 +281,7 @@ const selectCategoriesOperation = () => {
 const selectCategoriesFilter = () => {
     cleanHTML($categoryFilter)
     $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
-    for (const { name, id } of dataCategoriesLocalStorage()) {
+    for (const { name, id } of dataLocalStorage("categories")) {
         $categoryFilter.innerHTML += `<option value="${id}">${name}</option>`
     }
 }
@@ -321,7 +322,7 @@ const generateCategories = (categories) => {
             selectCategoriesFilter()
             operationsEmptyOrNot()
             enoughOperations()
-            balanceFunction(dataOperationsLocalStorage())
+            balanceFunction(dataLocalStorage("operations"))
         })
     }
 }
@@ -340,7 +341,7 @@ $btnAddCategories.addEventListener("click", (e) => {
 
 $cancelEditCategoryBtn.addEventListener("click", () => {
     addAndRemoveHidden($editCategory, $categories)
-    generateCategories(dataCategoriesLocalStorage())
+    generateCategories(dataLocalStorage("categories"))
 })
 
 $editCategoryBtn.addEventListener("click", () => {
@@ -348,7 +349,7 @@ $editCategoryBtn.addEventListener("click", () => {
     addAndRemoveHidden($editCategory, $categories)
     generateCategories(editCategoryDom(categoryId))
     editCategoriesLocal(categoryId)
-    addNewOperation(dataOperationsLocalStorage())
+    addNewOperation(dataLocalStorage("operations"))
     selectCategoriesOperation()
     selectCategoriesFilter()
     enoughOperations()
@@ -380,7 +381,7 @@ const saveNewOperation = () => {
     const date = changeFormatDateLocalStorage($("#date"))
     operations.push({ id, description, amount, type, category, date })
     if (localStorage.getItem("storage")) {
-        const operations = dataOperationsLocalStorage()
+        const operations = dataLocalStorage("operations")
         operations.push({ id, description, amount, type, category, date })
         const localData = getItemLocalStorage()
         const storage = { ...localData, operations: operations }
@@ -399,7 +400,7 @@ const changeFormatDateLocalStorage = (dateInput) => {
 
 const editOperation = (id) => {
     addAndRemoveHidden($mainContainer, $editOperationSection)
-    const chosenOperation = find(dataOperationsLocalStorage(), "id", id)
+    const chosenOperation = find(dataLocalStorage("operations"), "id", id)
     $("#editDescription").value = chosenOperation.description
     $("#editAmount").value = chosenOperation.amount
     $("#editSelectType").value = chosenOperation.type
@@ -411,8 +412,8 @@ const editOperation = (id) => {
 
 const editOperationLocal = (id) => {
     const localData = getItemLocalStorage()
-    const chosenOperation = find(dataOperationsLocalStorage(), "id", id)
-    const operations = dataOperationsLocalStorage()
+    const chosenOperation = find(dataLocalStorage("operations"), "id", id)
+    const operations = dataLocalStorage("operations")
     for (const operation of operations) {
         if (chosenOperation.id === operation.id) {
             operation.id = id
@@ -433,7 +434,7 @@ const editOperationLocal = (id) => {
 
 const removeOperationLocal = (id) => {
     const localData = getItemLocalStorage()
-    const storage = { ...localData, operations: filter(dataOperationsLocalStorage(), "id", id) }
+    const storage = { ...localData, operations: filter(dataLocalStorage("operations"), "id", id) }
     setItemLocalStorage(storage)
 }
 
@@ -552,7 +553,7 @@ const addNewOperation = (data) => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault()
                 removeOperationLocal(operationId)
-                addNewOperation(filter(dataOperationsLocalStorage(), "id", operationId))
+                addNewOperation(filter(dataLocalStorage("operations"), "id", operationId))
                 operationsEmptyOrNot()
                 filterFunction()
                 enoughOperations()
@@ -568,10 +569,10 @@ $addNewOperationBtn.addEventListener("click", (e) => {
     e.preventDefault()
     if (operationAlert($("#description"), $("#amount"))) {
         saveNewOperation()
-        filterFunction(dataOperationsLocalStorage())
+        filterFunction(dataLocalStorage("operations"))
         operationsEmptyOrNot()
         selectCategoriesOperation()
-        filterType(dataOperationsLocalStorage())
+        filterType(dataLocalStorage("operations"))
         enoughOperations()
         addAndRemoveHidden($sectionNewOperation, $mainContainer)
     }
@@ -581,7 +582,7 @@ $editOperationBtn.addEventListener("click", () => {
     const operationId = $editOperationBtn.getAttribute("data-id")
     if(operationAlert($("#editDescription"), $("#editAmount"))){
         editOperationLocal(operationId)
-        filterFunction(dataOperationsLocalStorage())
+        filterFunction(dataLocalStorage("operations"))
         enoughOperations()
         addAndRemoveHidden($editOperationSection, $mainContainer)
     }
@@ -688,7 +689,7 @@ const orderBy = (array) => {
 }
 
 const filterFunction = () => {
-    let arrOfOperations = dataOperationsLocalStorage()
+    let arrOfOperations = dataLocalStorage("operations")
     let operationsFiltered
     if (arrOfOperations.length !== 0) {
         operationsFiltered = filterType(arrOfOperations)
@@ -738,11 +739,11 @@ $filters.addEventListener("change", () => {
 // Functions
 
 const filterByCategory = (category) => {
-    return dataOperationsLocalStorage().filter(operation => operation.category === category)
+    return dataLocalStorage("operations").filter(operation => operation.category === category)
 }
 
 const filterByDate = (date) => {
-    return dataOperationsLocalStorage().filter(operation => {
+    return dataLocalStorage("operations").filter(operation => {
         const dateOperation = new Date(operation.date)
         const monthAndYear = `${dateOperation.getMonth() + 1}/${dateOperation.getFullYear()}`
         if (monthAndYear === date) {
@@ -778,7 +779,7 @@ const getBalance = (array) => {
 const objectCategories = (prop, callback) => {
     const categoriesOrDates = []
     const objCategoriesOrDates = {}
-    for (const operation of dataOperationsLocalStorage()) {
+    for (const operation of dataLocalStorage("operations")) {
         if (!categoriesOrDates.includes(operation[prop])) {
             if (prop === "date") {
                 const dateOperation = new Date(operation[prop])
@@ -844,7 +845,7 @@ const monthMaxAndMin = () => {
 
 const enoughOperations = () => {
     const spentAndGain = []
-    for (const operation of dataOperationsLocalStorage()) {
+    for (const operation of dataLocalStorage("operations")) {
         const { type } = operation
         spentAndGain.push(type)
     }
@@ -980,8 +981,8 @@ window.addEventListener("load", () => {
     selectCategoriesFilter()
     filterDefaultDate()
     filterFunction()
-    if (dataOperationsLocalStorage.length !== 0) {
-        const filterByDate = filterDate(dataOperationsLocalStorage())
+    if (dataLocalStorage("operations").length !== 0) {
+        const filterByDate = filterDate(dataLocalStorage("operations"))
         addNewOperation(orderBy(filterByDate))
     }
     enoughOperations()
