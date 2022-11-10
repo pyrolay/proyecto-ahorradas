@@ -47,7 +47,7 @@ const $editSelectCategory = $("#editSelectCategory")
 
 // Variables section categories
 const $editCategory = $(".editCategory")
-const $cancelEditBtn = $(".cancelEditBtn")
+const $cancelEditCategoryBtn = $(".cancelEditBtn")
 const $editCategoryBtn = $(".editCategoryBtn")
 const $tableCategories = $(".tableCategories")
 const $addCategoriesInput = $(".addCategoriesInput")
@@ -85,17 +85,29 @@ const generateId = () => {
 }
 
 // Global Helper Functions
-// Filters
-// LocalStorage
 
-// Función Add y remove hidden
+const filter = (array, propiedad, valor) => {
+    return array.filter(obj => obj[propiedad] !== valor)
+}
+
+const find = (array, propiedad, valor) => {
+    return array.filter(obj => obj[propiedad] === valor)
+}
+
+const setItemLocalStorage = () => localStorage.setItem("storage", JSON.stringify(data))
+const getItemLocalStorage = () => JSON.parse(localStorage.getItem("storage"))
+const cleanHtml = (document) => document.innerHTML = ""
+
+const operationsEmptyOrNot = () => {
+    const operation = dataOperationsLocalStorage()
+    if (operation.length !== 0) addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
+    else addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
+}
 
 const addAndRemoveHidden = (add, remove) => {
     add.classList.add("hidden")
     remove.classList.remove("hidden")
 }
-
-// Funci
 
 const emptyOperationsAndBalance = () => {
     addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
@@ -104,7 +116,7 @@ const emptyOperationsAndBalance = () => {
     $balanceTotal.innerText = `$0`
 }
 
-// Objetos de categorias y operaciones
+// Objects of categories and operations
 
 const categories = [
     {
@@ -135,8 +147,149 @@ const categories = [
 
 const operations = []
 
+// LocalStorage Data
 
-// Función que genera Categorias
+const data = { categories, operations }
+
+if (!localStorage.getItem("datos")) {
+    localStorage.setItem("datos", JSON.stringify(data))
+}
+
+const dataCategoriesLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).categories }
+const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).operations }
+
+// Section Categories
+// Functions 
+
+//Add Categories
+const categoryAddLocalStorage = () => {
+    const name = $addCategoriesInput.value.charAt(0).toUpperCase() + $addCategoriesInput.value.slice(1)
+    const id = generateId()
+    const categories = dataCategoriesLocalStorage()
+    categories.push({ id, name })
+    const localData = JSON.parse(localStorage.getItem("datos"))
+    const datos = { ...localData, categories: categories }
+    localStorage.setItem("datos", JSON.stringify(datos))
+}
+
+const categoryAddAlert = () => {
+    if ($addCategoriesInput.value === "") {
+        return alert(`Por favor ingrese el nombre de la categoría que desea agregar`)
+    }
+    else if ($addCategoriesInput.value.length > 20) {
+        return alert(`Ingrese un nombre de categoría mas corto`)
+    }
+    else {
+        categoryAddLocalStorage()
+    }
+}
+
+const addCategoryToTable = () => {
+    cleanHtml($tableCategories)
+    generateCategories(dataCategoriesLocalStorage())
+}
+
+// Edit Categories
+
+const findCategory = (id) => {
+    return dataCategoriesLocalStorage().find(category => category.id == id)
+}
+
+const editCategoriesLocal = (id) => {
+    const localData = JSON.parse(localStorage.getItem("datos"))
+    const chosenCategory = findCategory(id)
+    const categories = dataCategoriesLocalStorage()
+    for (const category of categories) {
+        if (chosenCategory.id === category.id) {
+            category.name = $editCategoryInput.value
+            const datos = { ...localData, categories: categories }
+            localStorage.setItem("datos", JSON.stringify(datos))
+        }
+    }
+    const datos = { ...localData, categories: categories }
+    localStorage.setItem("datos", JSON.stringify(datos))
+}
+
+
+const showFormCategoryEdit = (id) => {
+    cleanHtml($tableCategories)
+    addAndRemoveHidden($categories, $editCategory)
+    const chosenCategory = findCategory(id)
+    $editCategoryInput.value = chosenCategory.name
+    $editCategoryBtn.setAttribute("data-id", id)
+    $cancelEditCategoryBtn.setAttribute("data-id", id)
+}
+
+const saveCategory = (id) => {
+    return {
+        id: id,
+        name: $editCategoryInput.value
+    }
+}
+
+const editCategoryDom = (id) => {
+    return dataCategoriesLocalStorage().map(category => {
+        if (category.id === id) {
+            return saveCategory(id)
+        }
+        return category
+    })
+}
+
+// Remove categories
+
+const removeCategoryLocal = (id) => {
+    const localData = JSON.parse(localStorage.getItem("datos"))
+    const datos = { ...localData, categories: filterCategory(id), operations: operationRemoveByFilterCategory(id) }
+    localStorage.setItem("datos", JSON.stringify(datos))
+}
+
+const filterCategory = (id) => {
+    return dataCategoriesLocalStorage().filter(category => category.id !== id)
+
+}
+
+const operationRemoveByFilterCategory = (id) => {
+    const arrCategoriesLocal = dataCategoriesLocalStorage()
+    let arrOperationLocal = dataOperationsLocalStorage()
+    if (arrOperationLocal.length !== 0) {
+        for (const { category } of arrOperationLocal) {
+            if (!arrCategoriesLocal.includes(id) && category === id) {
+                arrOperationLocal = dataOperationsLocalStorage().filter(operation => operation.category !== category)
+                return arrOperationLocal
+            }
+        }
+    }
+    return arrOperationLocal
+
+}
+
+const removeCategory = (id) => {
+    cleanHtml($tableCategories)
+    generateCategories(filterCategory(id))
+    const filteredByRemovedCategory = operationRemoveByFilterCategory(id)
+    if (filteredByRemovedCategory.length !== 0) addNewOperation(filteredByRemovedCategory)
+}
+
+
+// DOM
+
+const selectCategoriesOperation = () => {
+    cleanHtml($categorySelectNewOperation)
+    $editSelectCategory.innerHTML = ""
+    for (const { name, id } of dataCategoriesLocalStorage()) {
+        $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
+        $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
+    }
+}
+
+const selectCategoriesFilter = () => {
+    $categoryFilter.innerHTML = ""
+    $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
+    for (const { name, id } of dataCategoriesLocalStorage()) {
+        $categoryFilter.innerHTML += `<option value="${id}">${name}</option>`
+    }
+}
 
 const generateCategories = (categories) => {
     for (const { id, name } of categories) {
@@ -161,7 +314,7 @@ const generateCategories = (categories) => {
     for (const btn of btnEdit) {
         const categoryId = btn.getAttribute("data-id")
         btn.addEventListener("click", () => {
-            categoryEdit(categoryId)
+            showFormCategoryEdit(categoryId)
         })
     }
 
@@ -179,114 +332,27 @@ const generateCategories = (categories) => {
     }
 }
 
-// generateCategories(categories)
-
-// Se envian los objetos al Local Storage
-
-const data = { categories, operations }
-
-// LocalData
-
-if (!localStorage.getItem("datos")) {
-    localStorage.setItem("datos", JSON.stringify(data))
-}
-
-// Funciones y eventos para agregar una categoria
-
-const categoryNew = () => {
-    if ($addCategoriesInput.value === "") {
-        return alert(`Por favor ingrese el nombre de la categoría que desea agregar`)
-    }
-    else if ($addCategoriesInput.value.length > 20) {
-        return alert(`Ingrese un nombre de categoría mas corto`)
-    }
-    else {
-        const name = $addCategoriesInput.value.charAt(0).toUpperCase() + $addCategoriesInput.value.slice(1)
-        const id = generateId()
-        const categories = dataCategoriesLocalStorage()
-        categories.push({ id, name })
-        const localData = JSON.parse(localStorage.getItem("datos"))
-        const datos = { ...localData, categories: categories }
-        localStorage.setItem("datos", JSON.stringify(datos))
-    }
-}
-
-const dataCategoriesLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).categories }
-
-const addCategory = () => {
-    $tableCategories.innerHTML = ""
-    generateCategories(dataCategoriesLocalStorage())
-}
-
+// Events categories
 
 $btnAddCategories.addEventListener("click", (e) => {
     e.preventDefault()
-    categoryNew()
-    addCategory()
+    categoryAddAlert()
+    addCategoryToTable()
     selectCategoriesOperation()
     selectCategoriesFilter()
     $formAddCategories.reset()
     enoughOperations()
 })
 
-// Eventos y funciones para editar categorias
-
-const findCategory = (id) => {
-    return dataCategoriesLocalStorage().find(category => category.id == id)
-}
-
-const editCategoriesLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const chosenCategory = findCategory(id)
-    const categories = dataCategoriesLocalStorage()
-    for (const category of categories) {
-        if (chosenCategory.id === category.id) {
-            category.name = $editCategoryInput.value
-            const datos = { ...localData, categories: categories }
-            localStorage.setItem("datos", JSON.stringify(datos))
-        }
-    }
-    const datos = { ...localData, categories: categories }
-    localStorage.setItem("datos", JSON.stringify(datos))
-}
-
-
-const cleanCategories = () => $tableCategories.innerHTML = ""
-
-const categoryEdit = (id) => {
-    cleanCategories()
-    addAndRemoveHidden($categories, $editCategory)
-    const chosenCategory = findCategory(id)
-    $editCategoryInput.value = chosenCategory.name
-    $editCategoryBtn.setAttribute("data-id", id)
-    $cancelEditBtn.setAttribute("data-id", id)
-}
-
-$cancelEditBtn.addEventListener("click", () => {
+$cancelEditCategoryBtn.addEventListener("click", () => {
     addAndRemoveHidden($editCategory, $categories)
     generateCategories(dataCategoriesLocalStorage())
 })
 
-const saveCategory = (id) => {
-    return {
-        id: id,
-        name: $editCategoryInput.value
-    }
-}
-
-const editCategory = (id) => {
-    return dataCategoriesLocalStorage().map(category => {
-        if (category.id === id) {
-            return saveCategory(id)
-        }
-        return category
-    })
-}
-
 $editCategoryBtn.addEventListener("click", () => {
     const categoryId = $editCategoryBtn.getAttribute("data-id")
     addAndRemoveHidden($editCategory, $categories)
-    generateCategories(editCategory(categoryId))
+    generateCategories(editCategoryDom(categoryId))
     editCategoriesLocal(categoryId)
     addNewOperation(dataOperationsLocalStorage())
     selectCategoriesOperation()
@@ -294,66 +360,15 @@ $editCategoryBtn.addEventListener("click", () => {
     enoughOperations()
 })
 
-// Eventos y funciones para eliminar categorias
 
-const removeCategoryLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const datos = { ...localData, categories: filterCategory(id), operations: filterCategoryOperationRemove(id) }
-    localStorage.setItem("datos", JSON.stringify(datos))
-}
+// Section Operations
+// Functions
 
-const filterCategory = (id) => {
-    return dataCategoriesLocalStorage().filter(category => category.id !== id)
-
-}
-
-const filterCategoryOperationRemove = (id) => {
-    const arrCategoriesLocal = dataCategoriesLocalStorage()
-    let arrOperationLocal = dataOperationsLocalStorage()
-    if (arrOperationLocal.length !== 0) {
-        for (const { category } of arrOperationLocal) {
-            if (!arrCategoriesLocal.includes(id) && category === id) {
-                arrOperationLocal = dataOperationsLocalStorage().filter(operation => operation.category !== category)
-                return arrOperationLocal
-            }
-        }
-    }
-    return arrOperationLocal
-
-}
-
-const removeCategory = (id) => {
-    cleanCategories()
-    generateCategories(filterCategory(id))
-    const filteredByRemovedCategory = filterCategoryOperationRemove(id)
-    if (filteredByRemovedCategory.length !== 0) addNewOperation(filteredByRemovedCategory)
-}
-
-
-// Funciones que agregan las categorias a los selects de "Nueva operación", "Filtros" y "Formulario editar operaciones"
-
-const selectCategoriesOperation = () => {
-    $categorySelectNewOperation.innerHTML = ""
-    $editSelectCategory.innerHTML = ""
-    for (const { name, id } of dataCategoriesLocalStorage()) {
-        $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
-        $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
-    }
-}
-
-const selectCategoriesFilter = () => {
-    $categoryFilter.innerHTML = ""
-    $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
-    for (const { name, id } of dataCategoriesLocalStorage()) {
-        $categoryFilter.innerHTML += `<option value="${id}">${name}</option>`
-    }
-}
-
-// Funciones para agregar una nueva operación
+// New Operation
 
 const newOperationEmpty = () => {
     $("#description").value = ""
-    $("#amount").value = 0
+    $("#amount").value = ""
     $("#date").valueAsDate = new Date()
 }
 
@@ -388,12 +403,6 @@ const formatDate = (date) => {
     return newDate
 }
 
-const amountColorChange = (amount, type) => {
-    if (type === "gasto") {
-        return `<p class="text-red-500">-$${amount}</p>`
-    }
-    else return `<p class="text-green-500">+$${amount}</p>`
-}
 
 const nameCategory = (category) => {
     for (const { id, name } of dataCategoriesLocalStorage()) {
@@ -401,6 +410,84 @@ const nameCategory = (category) => {
             return category = name
         }
     }
+}
+
+
+
+// if (localStorage.getItem("datos")) {
+//     operationsEmptyOrNot()
+//     addNewOperation(dataOperationsLocalStorage())
+// }
+
+// Edit Operation
+
+const findOperation = (id) => {
+    return dataOperationsLocalStorage().find(operation => operation.id == id)
+}
+
+const editOperation = (id) => {
+    addAndRemoveHidden($mainContainer, $editOperationSection)
+    const chosenOperation = findOperation(id)
+    $("#editDescription").value = chosenOperation.description
+    $("#editAmount").value = chosenOperation.amount
+    $("#editSelectType").value = chosenOperation.type
+    $("#editDate").valueAsDate = new Date(chosenOperation.date)
+    $("#editSelectCategory").value = chosenOperation.category
+    $editOperationBtn.setAttribute("data-id", id)
+    $cancelEditOperationBtn.setAttribute("data-id", id)
+}
+
+const editOperationLocal = (id) => {
+    const localData = JSON.parse(localStorage.getItem("datos"))
+    const chosenOperation = findOperation(id)
+    const operations = dataOperationsLocalStorage()
+    for (const operation of operations) {
+        if (chosenOperation.id === operation.id) {
+            operation.id = id
+            operation.description = $("#editDescription").value.charAt(0).toUpperCase() + $("#editDescription").value.slice(1)
+            operation.amount = $("#editAmount").value
+            operation.type = $("#editSelectType").value
+            operation.category = $("#editSelectCategory").value
+            operation.date = changeFormatDateLocalStorage($("#editDate"))
+            const datos = { ...localData, operations: operations }
+            localStorage.setItem("datos", JSON.stringify(datos))
+        }
+    }
+    const datos = { ...localData, operations: operations }
+    localStorage.setItem("datos", JSON.stringify(datos))
+}
+
+// Remove operation
+
+const filterOperation = (id) => {
+    return dataOperationsLocalStorage().filter(operation => operation.id !== id)
+}
+
+const removeOperationLocal = (id) => {
+    const localData = JSON.parse(localStorage.getItem("datos"))
+    const datos = { ...localData, operations: filterOperation(id) }
+    localStorage.setItem("datos", JSON.stringify(datos))
+}
+
+// DOM
+
+const operationAlert = (description, amount) => {
+    if (description.value === "") {
+        return alert(`Por favor ingrese una descripción`)
+    }
+    else if (amount.value === "") {
+        return alert(`Ingrese un valor`)
+    }
+    else {
+        return true
+    }
+}
+
+const amountColorChange = (amount, type) => {
+    if (type === "gasto") {
+        return `<p class="text-red-500">-$${amount}</p>`
+    }
+    else return `<p class="text-green-500">+$${amount}</p>`
 }
 
 const addNewOperation = (data) => {
@@ -499,92 +586,34 @@ const addNewOperation = (data) => {
     else emptyOperationsAndBalance()
 }
 
-const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).operations }
-
-const operationsEmptyOrNot = () => {
-    const operation = dataOperationsLocalStorage()
-    if (operation.length !== 0) addAndRemoveHidden($(".operations-empty"), $(".operations-table"))
-    else addAndRemoveHidden($(".operations-table"), $(".operations-empty"))
-}
-
-if (localStorage.getItem("datos")) {
-    operationsEmptyOrNot()
-    addNewOperation(dataOperationsLocalStorage())
-}
-
-
-// Funciones para editar operaciones
-
-const findOperation = (id) => {
-    return dataOperationsLocalStorage().find(operation => operation.id == id)
-}
-
-const editOperation = (id) => {
-    addAndRemoveHidden($mainContainer, $editOperationSection)
-    const chosenOperation = findOperation(id)
-    $("#editDescription").value = chosenOperation.description
-    $("#editAmount").value = chosenOperation.amount
-    $("#editSelectType").value = chosenOperation.type
-    $("#editDate").valueAsDate = new Date(chosenOperation.date)
-    $("#editSelectCategory").value = chosenOperation.category
-    $editOperationBtn.setAttribute("data-id", id)
-    $cancelEditOperationBtn.setAttribute("data-id", id)
-}
-
-const editOperationLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const chosenOperation = findOperation(id)
-    const operations = dataOperationsLocalStorage()
-    for (const operation of operations) {
-        if (chosenOperation.id === operation.id) {
-            operation.id = id
-            operation.description = $("#editDescription").value.charAt(0).toUpperCase() + $("#editDescription").value.slice(1)
-            operation.amount = $("#editAmount").value
-            operation.type = $("#editSelectType").value
-            operation.category = $("#editSelectCategory").value
-            operation.date = changeFormatDateLocalStorage($("#editDate"))
-            const datos = { ...localData, operations: operations }
-            localStorage.setItem("datos", JSON.stringify(datos))
-        }
-    }
-    const datos = { ...localData, operations: operations }
-    localStorage.setItem("datos", JSON.stringify(datos))
-}
-
-const filterOperation = (id) => {
-    return dataOperationsLocalStorage().filter(operation => operation.id !== id)
-}
-
-const removeOperationLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const datos = { ...localData, operations: filterOperation(id) }
-    localStorage.setItem("datos", JSON.stringify(datos))
-}
+// Events operations
 
 $addNewOperationBtn.addEventListener("click", (e) => {
     e.preventDefault()
-    saveNewOperation()
-    filterFunction(dataOperationsLocalStorage())
-    operationsEmptyOrNot()
-    selectCategoriesOperation()
-    filterType(dataOperationsLocalStorage())
-    enoughOperations()
-    addAndRemoveHidden($sectionNewOperation, $mainContainer)
+    if (operationAlert($("#description"), $("#amount"))) {
+        saveNewOperation()
+        filterFunction(dataOperationsLocalStorage())
+        operationsEmptyOrNot()
+        selectCategoriesOperation()
+        filterType(dataOperationsLocalStorage())
+        enoughOperations()
+        addAndRemoveHidden($sectionNewOperation, $mainContainer)
+    }
 })
 
 $editOperationBtn.addEventListener("click", () => {
     const operationId = $editOperationBtn.getAttribute("data-id")
-    editOperationLocal(operationId)
-    filterFunction(dataOperationsLocalStorage())
-    enoughOperations()
-    addAndRemoveHidden($editOperationSection, $mainContainer)
+    if(operationAlert($("#editDescription"), $("#editAmount"))){
+        editOperationLocal(operationId)
+        filterFunction(dataOperationsLocalStorage())
+        enoughOperations()
+        addAndRemoveHidden($editOperationSection, $mainContainer)
+    }
 })
 
 
-
-// Funciones para filtrar y ordenar operaciones
-
-// Filtro type
+// Section Filters and Balance
+// Functions filters
 
 const filterOperationByProp = (array, prop, input) => {
     return array.filter(operation => operation[prop] === input)
@@ -612,8 +641,6 @@ const filterType = (array) => {
     else emptyOperationsAndBalance()
 }
 
-// Filtro category
-
 const categoryFilter = (array) => {
     if (array.length !== 0) {
         for (const operation of array) {
@@ -636,14 +663,11 @@ const categoryFilter = (array) => {
     else emptyOperationsAndBalance()
 }
 
-// Filtro fecha
-
 const filterDefaultDate = () => {
     const date = new Date()
     const day = [date.getFullYear(), date.getMonth() + 1, "01"]
     $dayFilter.value = day.join("-")
 }
-
 
 const filterDate = (array) => {
     if (array.length !== 0) {
@@ -660,7 +684,6 @@ const filterDate = (array) => {
     else emptyOperationsAndBalance()
 }
 
-// Ordenar
 
 const orderBy = (array) => {
     const changeDate = (sort) => {
@@ -688,8 +711,6 @@ const orderBy = (array) => {
     }
 }
 
-// Evento filters
-
 const filterFunction = () => {
     let arrOfOperations = dataOperationsLocalStorage()
     let operationsFiltered
@@ -703,9 +724,7 @@ const filterFunction = () => {
     else emptyOperationsAndBalance()
 }
 
-$filters.addEventListener("change", () => {
-    filterFunction()
-})
+// Functions balance
 
 const balanceFunction = (array) => {
     let spent = 0
@@ -733,7 +752,14 @@ const balanceDom = (objectBalance) => {
     }
 }
 
-// Eventos y funciones sección reportes
+// Event filter
+
+$filters.addEventListener("change", () => {
+    filterFunction()
+})
+
+// Section reports
+// Functions
 
 const filterByCategory = (category) => {
     return dataOperationsLocalStorage().filter(operation => operation.category === category)
@@ -806,6 +832,56 @@ const totalBalanceChange = () => {
     dateTotalBalance = objectCategories("date", filterByDate)
 }
 
+const categorySummary = (prop) => {
+    let maxAmount = 0
+    let maxCategory
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const value = categoriesTotalBalance[obj][prop]
+        if (value >= maxAmount) {
+            maxAmount = value
+            maxCategory = obj
+        }
+    }
+    return { maxAmount, maxCategory }
+}
+
+const monthMaxAndMin = () => {
+    let maxMonthAmount = 0
+    let minMonthAmount = 0
+    let maxMonth
+    let minMonth
+    for (const obj of Object.keys(dateTotalBalance)) {
+        const { ganancia, gasto } = dateTotalBalance[obj]
+        if (ganancia >= maxMonthAmount) {
+            maxMonthAmount = ganancia
+            maxMonth = obj
+        }
+        if (gasto >= minMonthAmount) {
+            minMonthAmount = gasto
+            minMonth = obj
+        }
+    }
+    return { maxMonthAmount, maxMonth, minMonthAmount, minMonth }
+}
+
+// DOM
+
+const enoughOperations = () => {
+    const spentAndGain = []
+    for (const operation of dataOperationsLocalStorage()) {
+        const { type } = operation
+        spentAndGain.push(type)
+    }
+
+    if (spentAndGain.includes("ganancia") && spentAndGain.includes("gasto")) {
+        summaryReports()
+        addAndRemoveHidden($(".operationsNotEnough"), $(".reportsTables"))
+    }
+    else {
+        addAndRemoveHidden($(".reportsTables"), $(".operationsNotEnough"))
+    }
+}
+
 const symbolBalance = (balance) => {
     if (balance <= 0) {
         const totalSlice = balance.toString().slice(1)
@@ -842,40 +918,6 @@ const tableReports = () => {
         `
     }
 }
-
-const categorySummary = (prop) => {
-    let maxAmount = 0
-    let maxCategory
-    for (const obj of Object.keys(categoriesTotalBalance)) {
-        const value = categoriesTotalBalance[obj][prop]
-        if (value >= maxAmount) {
-            maxAmount = value
-            maxCategory = obj
-        }
-    }
-    return { maxAmount, maxCategory }
-}
-
-
-const monthMaxAndMin = () => {
-    let maxMonthAmount = 0
-    let minMonthAmount = 0
-    let maxMonth
-    let minMonth
-    for (const obj of Object.keys(dateTotalBalance)) {
-        const { ganancia, gasto } = dateTotalBalance[obj]
-        if (ganancia >= maxMonthAmount) {
-            maxMonthAmount = ganancia
-            maxMonth = obj
-        }
-        if (gasto >= minMonthAmount) {
-            minMonthAmount = gasto
-            minMonth = obj
-        }
-    }
-    return { maxMonthAmount, maxMonth, minMonthAmount, minMonth }
-}
-
 
 const summaryReports = () => {
     totalBalanceChange()
@@ -953,27 +995,11 @@ const summaryReports = () => {
     `
 }
 
-const enoughOperations = () => {
-    const spentAndGain = []
-    for (const operation of dataOperationsLocalStorage()) {
-        const { type } = operation
-        spentAndGain.push(type)
-    }
-
-    if (spentAndGain.includes("ganancia") && spentAndGain.includes("gasto")) {
-        summaryReports()
-        addAndRemoveHidden($(".operationsNotEnough"), $(".reportsTables"))
-    }
-    else {
-        addAndRemoveHidden($(".reportsTables"), $(".operationsNotEnough"))
-    }
-}
-
-// Evento onload
+// Event OnLoad
 
 window.addEventListener("load", () => {
     generateCategories(categories)
-    addCategory()
+    addCategoryToTable()
     selectCategoriesOperation()
     selectCategoriesFilter()
     filterDefaultDate()
@@ -986,18 +1012,7 @@ window.addEventListener("load", () => {
 })
 
 
-// Funciones de navegación
-
-$navbarBurguer.addEventListener("click", () => {
-    $navbarMenu.classList.remove("hidden")
-    addAndRemoveHidden($navbarBurguer, $xmark)
-})
-
-$xmark.addEventListener("click", () => {
-    $navbarMenu.classList.add("hidden")
-    addAndRemoveHidden($xmark, $navbarBurguer)
-})
-
+// Functions navigation
 
 const navigationConditional = (e) => {
     if (e.target === e.currentTarget) {
@@ -1034,7 +1049,7 @@ for (const tab of arrOfTabs) {
         e.preventDefault()
         navigationConditional(e)
         newOperationEmpty()
-        addCategory()
+        addCategoryToTable()
     })
 }
 
@@ -1064,6 +1079,18 @@ const changeClass = () => {
         }
     }
 }
+
+// Events navigation
+
+$navbarBurguer.addEventListener("click", () => {
+    $navbarMenu.classList.remove("hidden")
+    addAndRemoveHidden($navbarBurguer, $xmark)
+})
+
+$xmark.addEventListener("click", () => {
+    $navbarMenu.classList.add("hidden")
+    addAndRemoveHidden($xmark, $navbarBurguer)
+})
 
 $cancelNewOperationBtn.addEventListener("click", () => {
     addAndRemoveHidden($sectionNewOperation, $mainContainer)
