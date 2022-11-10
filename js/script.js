@@ -86,17 +86,13 @@ const generateId = () => {
 
 // Global Helper Functions
 
-const filter = (array, propiedad, valor) => {
-    return array.filter(obj => obj[propiedad] !== valor)
-}
+const filter = (array, propiedad, valor) => { return array.filter(obj => obj[propiedad] !== valor) }
+const find = (array, propiedad, valor) => { return array.find(obj => obj[propiedad] == valor) }
 
-const find = (array, propiedad, valor) => {
-    return array.filter(obj => obj[propiedad] === valor)
-}
-
-const setItemLocalStorage = () => localStorage.setItem("storage", JSON.stringify(data))
+const setItemLocalStorage = (storage) => localStorage.setItem("storage", JSON.stringify(storage))
 const getItemLocalStorage = () => JSON.parse(localStorage.getItem("storage"))
-const cleanHtml = (document) => document.innerHTML = ""
+
+const cleanHTML = (document) => document.innerHTML = ""
 
 const operationsEmptyOrNot = () => {
     const operation = dataOperationsLocalStorage()
@@ -151,12 +147,12 @@ const operations = []
 
 const data = { categories, operations }
 
-if (!localStorage.getItem("datos")) {
-    localStorage.setItem("datos", JSON.stringify(data))
+if (!localStorage.getItem("storage")) {
+    setItemLocalStorage(data)
 }
 
-const dataCategoriesLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).categories }
-const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("datos")).operations }
+const dataCategoriesLocalStorage = () => { return JSON.parse(localStorage.getItem("storage")).categories }
+const dataOperationsLocalStorage = () => { return JSON.parse(localStorage.getItem("storage")).operations }
 
 // Section Categories
 // Functions 
@@ -167,9 +163,9 @@ const categoryAddLocalStorage = () => {
     const id = generateId()
     const categories = dataCategoriesLocalStorage()
     categories.push({ id, name })
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const datos = { ...localData, categories: categories }
-    localStorage.setItem("datos", JSON.stringify(datos))
+    const localData = getItemLocalStorage()
+    const storage = { ...localData, categories: categories }
+    setItemLocalStorage(storage)
 }
 
 const categoryAddAlert = () => {
@@ -185,36 +181,32 @@ const categoryAddAlert = () => {
 }
 
 const addCategoryToTable = () => {
-    cleanHtml($tableCategories)
+    cleanHTML($tableCategories)
     generateCategories(dataCategoriesLocalStorage())
 }
 
 // Edit Categories
 
-const findCategory = (id) => {
-    return dataCategoriesLocalStorage().find(category => category.id == id)
-}
-
 const editCategoriesLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const chosenCategory = findCategory(id)
+    const localData = getItemLocalStorage()
+    const chosenCategory = find(dataCategoriesLocalStorage(), "id", id)
     const categories = dataCategoriesLocalStorage()
     for (const category of categories) {
         if (chosenCategory.id === category.id) {
             category.name = $editCategoryInput.value
-            const datos = { ...localData, categories: categories }
-            localStorage.setItem("datos", JSON.stringify(datos))
+            const storage = { ...localData, categories: categories }
+            setItemLocalStorage(storage)
         }
     }
-    const datos = { ...localData, categories: categories }
-    localStorage.setItem("datos", JSON.stringify(datos))
+    const storage = { ...localData, categories: categories }
+    setItemLocalStorage(storage)
 }
 
 
 const showFormCategoryEdit = (id) => {
-    cleanHtml($tableCategories)
+    cleanHTML($tableCategories)
     addAndRemoveHidden($categories, $editCategory)
-    const chosenCategory = findCategory(id)
+    const chosenCategory = find(dataCategoriesLocalStorage(), "id", id)
     $editCategoryInput.value = chosenCategory.name
     $editCategoryBtn.setAttribute("data-id", id)
     $cancelEditCategoryBtn.setAttribute("data-id", id)
@@ -239,14 +231,9 @@ const editCategoryDom = (id) => {
 // Remove categories
 
 const removeCategoryLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const datos = { ...localData, categories: filterCategory(id), operations: operationRemoveByFilterCategory(id) }
-    localStorage.setItem("datos", JSON.stringify(datos))
-}
-
-const filterCategory = (id) => {
-    return dataCategoriesLocalStorage().filter(category => category.id !== id)
-
+    const localData = getItemLocalStorage()
+    const storage = { ...localData, categories: filter(dataCategoriesLocalStorage(), "id", id), operations: operationRemoveByFilterCategory(id) }
+    setItemLocalStorage(storage)
 }
 
 const operationRemoveByFilterCategory = (id) => {
@@ -261,12 +248,11 @@ const operationRemoveByFilterCategory = (id) => {
         }
     }
     return arrOperationLocal
-
 }
 
 const removeCategory = (id) => {
-    cleanHtml($tableCategories)
-    generateCategories(filterCategory(id))
+    cleanHTML($tableCategories)
+    generateCategories(filter(dataCategoriesLocalStorage(), "id", id))
     const filteredByRemovedCategory = operationRemoveByFilterCategory(id)
     if (filteredByRemovedCategory.length !== 0) addNewOperation(filteredByRemovedCategory)
 }
@@ -274,9 +260,17 @@ const removeCategory = (id) => {
 
 // DOM
 
+const nameCategory = (category) => {
+    for (const { id, name } of dataCategoriesLocalStorage()) {
+        if (category === id) {
+            return category = name
+        }
+    }
+}
+
 const selectCategoriesOperation = () => {
-    cleanHtml($categorySelectNewOperation)
-    $editSelectCategory.innerHTML = ""
+    cleanHTML($categorySelectNewOperation)
+    cleanHTML($editSelectCategory)
     for (const { name, id } of dataCategoriesLocalStorage()) {
         $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
         $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
@@ -284,7 +278,7 @@ const selectCategoriesOperation = () => {
 }
 
 const selectCategoriesFilter = () => {
-    $categoryFilter.innerHTML = ""
+    cleanHTML($categoryFilter)
     $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
     for (const { name, id } of dataCategoriesLocalStorage()) {
         $categoryFilter.innerHTML += `<option value="${id}">${name}</option>`
@@ -372,20 +366,25 @@ const newOperationEmpty = () => {
     $("#date").valueAsDate = new Date()
 }
 
+const ifAmountInputIsNegative = (amountInput) => {
+    if (amountInput.value < 0) return Math.abs(amountInput.value)
+    else return amountInput.value
+}
+
 const saveNewOperation = () => {
     const id = generateId()
     const description = $("#description").value.charAt(0).toUpperCase() + $("#description").value.slice(1)
-    const amount = $("#amount").value
+    const amount = ifAmountInputIsNegative($("#amount"))
     const type = $("#selectType").value
     const category = $("#selectCategory").value
     const date = changeFormatDateLocalStorage($("#date"))
     operations.push({ id, description, amount, type, category, date })
-    if (localStorage.getItem("datos")) {
+    if (localStorage.getItem("storage")) {
         const operations = dataOperationsLocalStorage()
         operations.push({ id, description, amount, type, category, date })
-        const localData = JSON.parse(localStorage.getItem("datos"))
-        const datos = { ...localData, operations: operations }
-        localStorage.setItem("datos", JSON.stringify(datos))
+        const localData = getItemLocalStorage()
+        const storage = { ...localData, operations: operations }
+        setItemLocalStorage(storage)
     }
 }
 
@@ -396,38 +395,11 @@ const changeFormatDateLocalStorage = (dateInput) => {
     return newDate
 }
 
-const formatDate = (date) => {
-    date = new Date(date)
-    const getDate = [date.getUTCDate(), date.getUTCMonth() + 1, date.getUTCFullYear()]
-    const newDate = getDate.join("/")
-    return newDate
-}
-
-
-const nameCategory = (category) => {
-    for (const { id, name } of dataCategoriesLocalStorage()) {
-        if (category === id) {
-            return category = name
-        }
-    }
-}
-
-
-
-// if (localStorage.getItem("datos")) {
-//     operationsEmptyOrNot()
-//     addNewOperation(dataOperationsLocalStorage())
-// }
-
 // Edit Operation
-
-const findOperation = (id) => {
-    return dataOperationsLocalStorage().find(operation => operation.id == id)
-}
 
 const editOperation = (id) => {
     addAndRemoveHidden($mainContainer, $editOperationSection)
-    const chosenOperation = findOperation(id)
+    const chosenOperation = find(dataOperationsLocalStorage(), "id", id)
     $("#editDescription").value = chosenOperation.description
     $("#editAmount").value = chosenOperation.amount
     $("#editSelectType").value = chosenOperation.type
@@ -438,38 +410,35 @@ const editOperation = (id) => {
 }
 
 const editOperationLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const chosenOperation = findOperation(id)
+    const localData = getItemLocalStorage()
+    const chosenOperation = find(dataOperationsLocalStorage(), "id", id)
     const operations = dataOperationsLocalStorage()
     for (const operation of operations) {
         if (chosenOperation.id === operation.id) {
             operation.id = id
             operation.description = $("#editDescription").value.charAt(0).toUpperCase() + $("#editDescription").value.slice(1)
-            operation.amount = $("#editAmount").value
+            operation.amount = ifAmountInputIsNegative($("#editAmount"))
             operation.type = $("#editSelectType").value
             operation.category = $("#editSelectCategory").value
             operation.date = changeFormatDateLocalStorage($("#editDate"))
-            const datos = { ...localData, operations: operations }
-            localStorage.setItem("datos", JSON.stringify(datos))
+            const storage = { ...localData, operations: operations }
+            setItemLocalStorage(storage)
         }
     }
-    const datos = { ...localData, operations: operations }
-    localStorage.setItem("datos", JSON.stringify(datos))
+    const storage = { ...localData, operations: operations }
+    setItemLocalStorage(storage)
 }
 
 // Remove operation
 
-const filterOperation = (id) => {
-    return dataOperationsLocalStorage().filter(operation => operation.id !== id)
-}
-
 const removeOperationLocal = (id) => {
-    const localData = JSON.parse(localStorage.getItem("datos"))
-    const datos = { ...localData, operations: filterOperation(id) }
-    localStorage.setItem("datos", JSON.stringify(datos))
+    const localData = getItemLocalStorage()
+    const storage = { ...localData, operations: filter(dataOperationsLocalStorage(), "id", id) }
+    setItemLocalStorage(storage)
 }
 
 // DOM
+
 
 const operationAlert = (description, amount) => {
     if (description.value === "") {
@@ -483,6 +452,13 @@ const operationAlert = (description, amount) => {
     }
 }
 
+const formatDate = (date) => {
+    date = new Date(date)
+    const getDate = [date.getUTCDate(), date.getUTCMonth() + 1, date.getUTCFullYear()]
+    const newDate = getDate.join("/")
+    return newDate
+}
+
 const amountColorChange = (amount, type) => {
     if (type === "gasto") {
         return `<p class="text-red-500">-$${amount}</p>`
@@ -491,7 +467,7 @@ const amountColorChange = (amount, type) => {
 }
 
 const addNewOperation = (data) => {
-    $(".tableBody").innerHTML = ""
+    cleanHTML($(".tableBody"))
     const localOperations = data
     if (localOperations.length !== 0) {
         localOperations.map(({ id, description, amount, type, category, date }) => {
@@ -576,7 +552,7 @@ const addNewOperation = (data) => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault()
                 removeOperationLocal(operationId)
-                addNewOperation(filterOperation(operationId))
+                addNewOperation(filter(dataOperationsLocalStorage(), "id", operationId))
                 operationsEmptyOrNot()
                 filterFunction()
                 enoughOperations()
@@ -893,8 +869,8 @@ const symbolBalance = (balance) => {
 }
 
 const tableReports = () => {
-    $tableCategoriesReports.innerHTML = ""
-    $tableMonthReports.innerHTML = ""
+    cleanHTML($tableCategoriesReports)
+    cleanHTML($tableMonthReports)
     for (const obj of Object.keys(categoriesTotalBalance)) {
         const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
         $tableCategoriesReports.innerHTML += `
