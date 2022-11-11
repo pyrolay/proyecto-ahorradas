@@ -355,12 +355,14 @@ $addCategoriesInput.addEventListener("keypress", (e) => {
     }
 })
 
-$cancelEditCategoryBtn.addEventListener("click", () => {
+$cancelEditCategoryBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     addAndRemoveHidden($editCategory, $categories)
     generateCategories(dataLocalStorage("categories"))
 })
 
-$editCategoryBtn.addEventListener("click", () => {
+$editCategoryBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     functionsEventsEditCategories()
 })
 
@@ -381,6 +383,7 @@ const newOperationEmpty = () => {
     $("#description").value = ""
     $("#amount").value = ""
     $("#date").valueAsDate = new Date()
+    $("#selectType").value = "gasto"
 }
 
 const ifAmountInputIsNegative = (amountInput) => {
@@ -593,7 +596,8 @@ $addNewOperationBtn.addEventListener("click", (e) => {
     }
 })
 
-$editOperationBtn.addEventListener("click", () => {
+$editOperationBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     const operationId = $editOperationBtn.getAttribute("data-id")
     if (operationAlert($("#editDescription"), $("#editAmount"))) {
         editOperationLocal(operationId)
@@ -601,6 +605,7 @@ $editOperationBtn.addEventListener("click", () => {
         enoughOperations()
         addAndRemoveHidden($editOperationSection, $mainContainer)
     }
+    
 })
 
 
@@ -1105,11 +1110,13 @@ $xmark.addEventListener("click", () => {
     addAndRemoveHidden($xmark, $navbarBurguer)
 })
 
-$cancelNewOperationBtn.addEventListener("click", () => {
+$cancelNewOperationBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     addAndRemoveHidden($sectionNewOperation, $mainContainer)
 })
 
-$cancelEditOperationBtn.addEventListener("click", () => {
+$cancelEditOperationBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     addAndRemoveHidden($editOperationSection, $mainContainer)
 })
 
