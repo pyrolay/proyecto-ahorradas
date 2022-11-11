@@ -1075,6 +1075,8 @@ for (const tab of arrOfTabs) {
 for (const tab of arrOfTabsBurger) {
     tab.addEventListener("click", (e) => {
         e.preventDefault()
+        $navbarMenu.classList.add("hidden")
+        addAndRemoveHidden($xmark, $navbarBurguer)
         navigationConditional(e)
     })
 }
