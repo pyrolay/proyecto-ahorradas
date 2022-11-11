@@ -97,7 +97,7 @@
                     </li>
                     <li class="mb-4 flex justify-between">
                         <p>Gastos</p>
-                        <p class="balanceSpent text-red-500 font-semibold">-$0</p>
+                        <p class="balanceLoss text-red-500 font-semibold">-$0</p>
                     </li>
                     <li class="flex justify-between">
                         <p>Total</p>
@@ -139,7 +139,7 @@
         <section class="2xl:w-2/4 xl:w-[750px] lg:w-[720px] w-4/5 lg:ml-6 ml-0 lg:mt-0 mt-6 p-5 h-fit rounded border-r-8 border-b-8 border-t-2 border-l-2 border-[#D3375C] shadow-xl shadow-gray-400">
             <div class="flex justify-between md:flex-row flex-col">
                 <h3 class="text-2xl font-semibold">Operaciones</h3>
-                <button name="newOperation" class="btnOperation py-2 px-4 text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 md:mt-0 mt-4">+ Nueva operación</button>
+                <button name="newOperation" class="btnFormNewOperation py-2 px-4 text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 md:mt-0 mt-4">+ Nueva operación</button>
             </div>
         
             <div class="operations-empty">
@@ -189,7 +189,7 @@
     </div>
 
     <!-- Sección Nueva operación -->
-    <div id="newOperation" class="hidden newOperation lg:p-16 py-16 px-4 flex justify-center">
+    <div id="newOperation" class="hidden sectionNewOperation lg:p-16 py-16 px-4 flex justify-center">
         <section
             class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Nueva operación</h2>
@@ -206,7 +206,7 @@
                     <option value="ganancia">Ganancia</option>
                 </select>
                 <label for="category" class="mb-1 font-bold">Categoría</label>
-                <select name="category" id="selectCategory" class="categoryNewOperation mb-2 p-2 rounded border-2 border-stone-400">
+                <select name="category" id="selectCategory" class="categorySelectNewOperation mb-2 p-2 rounded border-2 border-stone-400">
                 </select>
                 <label for="date" class="mb-1 font-semibold">Fecha</label>
                 <input type="date" name="date" id="date" class="mb-2 p-2 rounded border-2 border-stone-400 w-full">
@@ -223,7 +223,7 @@
     </div>
 
     <!-- Sección editar operación -->
-    <div id="editOperation" class="hidden editOperation lg:p-16 py-16 px-4 flex justify-center">
+    <div id="editOperation" class="hidden editOperationSection lg:p-16 py-16 px-4 flex justify-center">
         <section
             class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Editar Operación</h2>
@@ -259,13 +259,13 @@
      <!-- Sección Categorías -->
      <div id="categories" class="hidden categories lg:p-16 py-16 px-4 flex justify-center">
         <section
-            class="categoriesContainer lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
+            class="lg:max-w-2xl p-5 max-w-none w-full rounded border-2 border-t-8 border-[#D3375C] shadow-lg shadow-gray-400">
             <h2 class="lg:text-4xl text-3xl font-bold">Categorías</h2>
             <div class="flex flex-col mt-8">
                 <label for="nameCategory" class="mb-1 font-bold">Nombre</label>
                 <div class="flex w-full">
                     <form action="" class="formAddCategories flex w-full">
-                    <input type="text" name="nameCategory" class="addCategories mb-2 p-2 rounded border-2 border-stone-400 w-4/5">
+                    <input type="text" name="nameCategory" class="addCategoriesInput mb-2 p-2 rounded border-2 border-stone-400 w-4/5">
                     <input
                         class="btnAddCategories px-6 ml-4 h-[44px] text-white bg-[#D3375C] rounded hover:bg-[#ab062d] transition duration-100 cursor-pointer"
                         type="submit" value="Agregar" />
@@ -285,7 +285,7 @@
             <h2 class="lg:text-4xl text-3xl font-bold">Editar categoría</h2>
             <div class="flex flex-col mt-8">
                 <label for="nameCategory" class="mb-1 font-bold">Nombre</label>
-                <input type="text" name="nameCategory" class="inputEditCategory mb-2 p-2 rounded border-2 border-stone-400">
+                <input type="text" name="nameCategory" class="editCategoryInput mb-2 p-2 rounded border-2 border-stone-400">
                 <div class="flex justify-end mt-4">
                     <input
                         class="cancelEditBtn px-6 h-[44px] text-white bg-gray-400 mr-2 rounded hover:bg-gray-800 transition duration-100 cursor-pointer"
@@ -315,13 +315,13 @@
                     <ul class="text-slate-900">
                         <li class="categoryMaxProfit mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
-                        <li class="categoryMaxSpent mb-5 flex justify-between flex-col sm:flex-row">
+                        <li class="categoryMaxLoss mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
                         <li class="categoryMaxBalance mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
                         <li class="maxProfitMonth mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
-                        <li class="maxSpentMonth mb-5 flex justify-between flex-col sm:flex-row">
+                        <li class="maxLossMonth mb-5 flex justify-between flex-col sm:flex-row">
                         </li>
                     </ul>
                 </section>
