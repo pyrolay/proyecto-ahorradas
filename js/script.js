@@ -382,8 +382,9 @@ $editCategoryInput.addEventListener("keypress", (e) => {
 const newOperationEmpty = () => {
     $("#description").value = ""
     $("#amount").value = ""
-    $("#date").valueAsDate = new Date()
     $("#selectType").value = "gasto"
+    $("#selectCategory").selectedIndex = 0;
+    $("#date").valueAsDate = new Date()
 }
 
 const ifAmountInputIsNegative = (amountInput) => {
