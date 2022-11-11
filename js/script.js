@@ -269,23 +269,17 @@ const nameCategory = (category) => {
     }
 }
 
-const selectCategoriesOperation = () => {
+const selectCategories = () => {
     cleanHTML($categorySelectNewOperation)
     cleanHTML($editSelectCategory)
-    for (const { name, id } of dataLocalStorage("categories")) {
-        $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
-        $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
-    }
-}
-
-const selectCategoriesFilter = () => {
     cleanHTML($categoryFilter)
     $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
     for (const { name, id } of dataLocalStorage("categories")) {
+        $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
+        $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
         $categoryFilter.innerHTML += `<option value="${id}">${name}</option>`
     }
 }
-
 const generateCategories = (categories) => {
     for (const { id, name } of categories) {
         const div = document.createElement("div")
@@ -318,8 +312,7 @@ const generateCategories = (categories) => {
         btn.addEventListener("click", () => {
             removeCategory(categoryId)
             removeCategoryLocal(categoryId)
-            selectCategoriesOperation()
-            selectCategoriesFilter()
+            selectCategories()
             operationsEmptyOrNot()
             enoughOperations()
             balanceFunction(dataLocalStorage("operations"))
@@ -327,16 +320,26 @@ const generateCategories = (categories) => {
     }
 }
 
+const functionsEventsAddCategories = () => {
+    categoryAddAlert()
+    addCategoryToTable()
+    selectCategories()
+    $formAddCategories.reset()
+    enoughOperations()
+}
+
 // Events categories
 
 $btnAddCategories.addEventListener("click", (e) => {
     e.preventDefault()
-    categoryAddAlert()
-    addCategoryToTable()
-    selectCategoriesOperation()
-    selectCategoriesFilter()
-    $formAddCategories.reset()
-    enoughOperations()
+    functionsEventsAddCategories()
+})
+
+$addCategoriesInput.addEventListener("keypress", (e) => {
+    if (e.keyCode == "13") {
+        e.preventDefault()
+       functionsEventsAddCategories()
+    }
 })
 
 $cancelEditCategoryBtn.addEventListener("click", () => {
@@ -350,8 +353,7 @@ $editCategoryBtn.addEventListener("click", () => {
     generateCategories(editCategoryDom(categoryId))
     editCategoriesLocal(categoryId)
     addNewOperation(dataLocalStorage("operations"))
-    selectCategoriesOperation()
-    selectCategoriesFilter()
+    selectCategories()
     enoughOperations()
 })
 
@@ -571,7 +573,6 @@ $addNewOperationBtn.addEventListener("click", (e) => {
         saveNewOperation()
         filterFunction(dataLocalStorage("operations"))
         operationsEmptyOrNot()
-        selectCategoriesOperation()
         filterType(dataLocalStorage("operations"))
         enoughOperations()
         addAndRemoveHidden($sectionNewOperation, $mainContainer)
@@ -580,7 +581,7 @@ $addNewOperationBtn.addEventListener("click", (e) => {
 
 $editOperationBtn.addEventListener("click", () => {
     const operationId = $editOperationBtn.getAttribute("data-id")
-    if(operationAlert($("#editDescription"), $("#editAmount"))){
+    if (operationAlert($("#editDescription"), $("#editAmount"))) {
         editOperationLocal(operationId)
         filterFunction(dataLocalStorage("operations"))
         enoughOperations()
@@ -972,13 +973,34 @@ const summaryReports = () => {
     `
 }
 
+const restartWebAlert = () => {
+    return confirm(`Está por eliminar todas las operaciones ingresadas hasta el momento ¿Desea continuar?`)
+
+}
+
+// Event
+
+$(".restartWeb").addEventListener("click", (e) => {
+    if (restartWebAlert()) {
+        const operations = []
+        const data = { categories, operations }
+        if (localStorage.getItem("storage")) {
+            setItemLocalStorage(data)
+        }
+        const arrayEmpty = []
+        addNewOperation(arrayEmpty)
+        generateCategories(categories)
+        selectCategories()
+        enoughOperations()
+    }
+})
+
 // Event OnLoad
 
 window.addEventListener("load", () => {
     generateCategories(categories)
     addCategoryToTable()
-    selectCategoriesOperation()
-    selectCategoriesFilter()
+    selectCategories()
     filterDefaultDate()
     filterFunction()
     if (dataLocalStorage("operations").length !== 0) {
