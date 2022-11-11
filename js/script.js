@@ -258,6 +258,26 @@ const removeCategory = (id) => {
     if (filteredByRemovedCategory.length !== 0) addNewOperation(filteredByRemovedCategory)
 }
 
+// Functions for events
+
+const functionsEventsAddCategories = () => {
+    categoryAddAlert()
+    addCategoryToTable()
+    selectCategories()
+    $formAddCategories.reset()
+    enoughOperations()
+}
+
+const functionsEventsEditCategories = () => {
+    const categoryId = $editCategoryBtn.getAttribute("data-id")
+    addAndRemoveHidden($editCategory, $categories)
+    generateCategories(editCategoryDom(categoryId))
+    editCategoriesLocal(categoryId)
+    addNewOperation(dataLocalStorage("operations"))
+    selectCategories()
+    enoughOperations()
+}
+
 
 // DOM
 
@@ -320,13 +340,6 @@ const generateCategories = (categories) => {
     }
 }
 
-const functionsEventsAddCategories = () => {
-    categoryAddAlert()
-    addCategoryToTable()
-    selectCategories()
-    $formAddCategories.reset()
-    enoughOperations()
-}
 
 // Events categories
 
@@ -336,9 +349,9 @@ $btnAddCategories.addEventListener("click", (e) => {
 })
 
 $addCategoriesInput.addEventListener("keypress", (e) => {
+    e.preventDefault()
     if (e.keyCode == "13") {
-        e.preventDefault()
-       functionsEventsAddCategories()
+        functionsEventsAddCategories()
     }
 })
 
@@ -348,13 +361,14 @@ $cancelEditCategoryBtn.addEventListener("click", () => {
 })
 
 $editCategoryBtn.addEventListener("click", () => {
-    const categoryId = $editCategoryBtn.getAttribute("data-id")
-    addAndRemoveHidden($editCategory, $categories)
-    generateCategories(editCategoryDom(categoryId))
-    editCategoriesLocal(categoryId)
-    addNewOperation(dataLocalStorage("operations"))
-    selectCategories()
-    enoughOperations()
+    functionsEventsEditCategories()
+})
+
+$editCategoryInput.addEventListener("keypress", (e) => {
+    e.preventDefault()
+    if (e.keyCode == "13") {
+        functionsEventsEditCategories()
+    }
 })
 
 
