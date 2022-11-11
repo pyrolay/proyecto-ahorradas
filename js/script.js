@@ -1039,8 +1039,14 @@ const navigationConditional = (e) => {
         chooseTab(tabName)
     }
     else {
-        const tabName = e.target.parentElement.name
-        chooseTab(tabName)
+        if (e.target.parentElement.name) {
+            const tabName = e.target.parentElement.name
+            chooseTab(tabName)
+        } 
+        else if (e.target.parentElement.parentElement.name) {
+            const tabName = e.target.parentElement.parentElement.name
+            chooseTab(tabName)
+        }
     }
 }
 
