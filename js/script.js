@@ -890,65 +890,6 @@ const symbolBalance = (balance) => {
     }
 }
 
-const tableReports = () => {
-    cleanHTML($tableCategoriesReports)
-    cleanHTML($tableMonthReports)
-    for (const obj of Object.keys(categoriesTotalBalance)) {
-        const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
-        $tableCategoriesReports.innerHTML += `
-            <tr class="w:full flex justify-between">
-                <th class="font-medium">
-                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-start">
-                        <p class="sm:text-base text-sm">${nameCategory(obj)}</p>
-                    </div>
-                </th>
-                <th class="text-green-500">
-                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
-                        <p class="sm:text-base text-sm">+$${ganancia}</p>
-                    </div>
-                </th>
-                <th class="text-red-500">
-                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
-                        <p class="sm:text-base text-sm">-$${gasto}</p>
-                    </div>
-                </th>
-                <th class="font-medium">
-                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
-                        <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
-                    </div>
-                </th>
-            </tr>
-        `
-    }
-    for (const obj of Object.keys(dateTotalBalance)) {
-        const { ganancia, gasto, balance } = dateTotalBalance[obj]
-        $tableMonthReports.innerHTML += `
-        <tr class="w:full flex justify-between">
-            <th class="font-medium">
-                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-start">
-                    <p class="sm:text-base text-sm">${obj}</p>
-                </div>
-            </th>
-            <th class="text-green-500">
-                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
-                    <p class="sm:text-base text-sm">+$${ganancia}</p>
-                </div>
-            </th>
-            <th class="text-red-500">
-                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
-                    <p class="sm:text-base text-sm">-$${gasto}</p>
-                </div>
-            </th>
-            <th class="font-medium">
-                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
-                    <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
-                </div>
-            </th>
-        </tr>
-        `
-    }
-}
-
 const summaryReports = () => {
     totalBalanceChange()
     tableReports()
@@ -1025,6 +966,67 @@ const summaryReports = () => {
     `
 }
 
+const tableReports = () => {
+    cleanHTML($tableCategoriesReports)
+    cleanHTML($tableMonthReports)
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
+        $tableCategoriesReports.innerHTML += `
+            <tr class="w:full flex justify-between">
+                <th class="font-medium">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-start">
+                        <p class="sm:text-base text-sm">${nameCategory(obj)}</p>
+                    </div>
+                </th>
+                <th class="text-green-500">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">+$${ganancia}</p>
+                    </div>
+                </th>
+                <th class="text-red-500">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">-$${gasto}</p>
+                    </div>
+                </th>
+                <th class="font-medium">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
+                    </div>
+                </th>
+            </tr>
+        `
+    }
+    for (const obj of Object.keys(dateTotalBalance)) {
+        const { ganancia, gasto, balance } = dateTotalBalance[obj]
+        $tableMonthReports.innerHTML += `
+        <tr class="w:full flex justify-between">
+            <th class="font-medium">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-start">
+                    <p class="sm:text-base text-sm">${obj}</p>
+                </div>
+            </th>
+            <th class="text-green-500">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">+$${ganancia}</p>
+                </div>
+            </th>
+            <th class="text-red-500">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">-$${gasto}</p>
+                </div>
+            </th>
+            <th class="font-medium">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
+                </div>
+            </th>
+        </tr>
+        `
+    }
+}
+
+
+
 const restartWebAlert = () => {
     return confirm(`Está por eliminar todas las operaciones ingresadas hasta el momento ¿Desea continuar?`)
 
@@ -1041,6 +1043,7 @@ $(".restartWeb").addEventListener("click", (e) => {
         }
         const arrayEmpty = []
         addNewOperation(arrayEmpty)
+        cleanHTML($tableCategories)
         generateCategories(categories)
         selectCategories()
         enoughOperations()
