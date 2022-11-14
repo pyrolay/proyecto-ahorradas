@@ -38,7 +38,7 @@ El controlador de gastos, es una aplicación que le permite al usuario/a adminis
 
 ## Construido con 🛠
 - HTML
-- CSS
+- Tailwind CSS
 - JAVASCRIPT    
 
 ## Vínculo 🌎
