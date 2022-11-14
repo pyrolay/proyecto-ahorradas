@@ -92,7 +92,7 @@ const find = (array, propiedad, valor) => { return array.find(obj => obj[propied
 const setItemLocalStorage = (storage) => localStorage.setItem("storage", JSON.stringify(storage))
 const getItemLocalStorage = () => JSON.parse(localStorage.getItem("storage"))
 
-const cleanHTML = (document) => document.innerHTML = ""
+const cleanContainer = (selector) => selector.innerHTML = ""
 
 const operationsEmptyOrNot = () => {
     const operation = dataLocalStorage("operations")
@@ -182,7 +182,7 @@ const categoryAddAlert = () => {
 }
 
 const addCategoryToTable = () => {
-    cleanHTML($tableCategories)
+    cleanContainer($tableCategories)
     generateCategories(dataLocalStorage("categories"))
 }
 
@@ -205,7 +205,7 @@ const editCategoriesLocal = (id) => {
 
 
 const showFormCategoryEdit = (id) => {
-    cleanHTML($tableCategories)
+    cleanContainer($tableCategories)
     addAndRemoveHidden($categories, $editCategory)
     const chosenCategory = find(dataLocalStorage("categories"), "id", id)
     $editCategoryInput.value = chosenCategory.name
@@ -252,7 +252,7 @@ const operationRemoveByFilterCategory = (id) => {
 }
 
 const removeCategory = (id) => {
-    cleanHTML($tableCategories)
+    cleanContainer($tableCategories)
     generateCategories(filter(dataLocalStorage("categories"), "id", id))
     const filteredByRemovedCategory = operationRemoveByFilterCategory(id)
     if (filteredByRemovedCategory.length !== 0) addNewOperation(filteredByRemovedCategory)
@@ -290,9 +290,9 @@ const nameCategory = (category) => {
 }
 
 const selectCategories = () => {
-    cleanHTML($categorySelectNewOperation)
-    cleanHTML($editSelectCategory)
-    cleanHTML($categoryFilter)
+    cleanContainer($categorySelectNewOperation)
+    cleanContainer($editSelectCategory)
+    cleanContainer($categoryFilter)
     $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
     for (const { name, id } of dataLocalStorage("categories")) {
         $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
@@ -488,7 +488,7 @@ const amountColorChange = (amount, type) => {
 }
 
 const addNewOperation = (data) => {
-    cleanHTML($(".tableBody"))
+    cleanContainer($(".tableBody"))
     const localOperations = data
     if (localOperations.length !== 0) {
         localOperations.map(({ id, description, amount, type, category, date }) => {
@@ -967,8 +967,8 @@ const summaryReports = () => {
 }
 
 const tableReports = () => {
-    cleanHTML($tableCategoriesReports)
-    cleanHTML($tableMonthReports)
+    cleanContainer($tableCategoriesReports)
+    cleanContainer($tableMonthReports)
     for (const obj of Object.keys(categoriesTotalBalance)) {
         const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
         $tableCategoriesReports.innerHTML += `
@@ -1043,7 +1043,7 @@ $(".restartWeb").addEventListener("click", (e) => {
         }
         const arrayEmpty = []
         addNewOperation(arrayEmpty)
-        cleanHTML($tableCategories)
+        cleanContainer($tableCategories)
         generateCategories(categories)
         selectCategories()
         enoughOperations()
