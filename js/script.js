@@ -311,7 +311,7 @@ const generateCategories = (categories) => {
         </div>
         <div class="text-blue-800 ml-2">
             <button class="btnEdit cursor-pointer hover:text-black text-xs" data-id="${id}">Editar</button>
-            <button class="btnRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+            <button class="btnRemove ml-4 max-[300px]:ml-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
         </div>
         `
         $tableCategories.append(div)
@@ -898,22 +898,22 @@ const tableReports = () => {
         $tableCategoriesReports.innerHTML += `
             <tr class="w:full flex justify-between">
                 <th class="font-medium">
-                    <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-start">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-start">
                         <p class="sm:text-base text-sm">${nameCategory(obj)}</p>
                     </div>
                 </th>
                 <th class="text-green-500">
-                    <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
                         <p class="sm:text-base text-sm">+$${ganancia}</p>
                     </div>
                 </th>
                 <th class="text-red-500">
-                    <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
                         <p class="sm:text-base text-sm">-$${gasto}</p>
                     </div>
                 </th>
                 <th class="font-medium">
-                    <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
                         <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
                     </div>
                 </th>
@@ -925,22 +925,22 @@ const tableReports = () => {
         $tableMonthReports.innerHTML += `
         <tr class="w:full flex justify-between">
             <th class="font-medium">
-                <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-start">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-start">
                     <p class="sm:text-base text-sm">${obj}</p>
                 </div>
             </th>
             <th class="text-green-500">
-                <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
                     <p class="sm:text-base text-sm">+$${ganancia}</p>
                 </div>
             </th>
             <th class="text-red-500">
-                <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
                     <p class="sm:text-base text-sm">-$${gasto}</p>
                 </div>
             </th>
             <th class="font-medium">
-                <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
                     <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
                 </div>
             </th>
