@@ -18,7 +18,7 @@
 
 <body class="leading-normal">
     <header>
-        <nav class="lg:px-40 lg:h-24 h-20 border-b-2 border-[#f8b6ce] flex justify-between items-center">
+        <nav class="lg:px-32 sm:px-6 lg:h-24 h-20 border-b-2 border-[#f8b6ce] flex justify-between items-center">
             <a href="" class="logo font-['Noto_Sans'] font-semibold flex px-2">
                 <i class="text-[#D3375C] text-4xl mr-2 fa-solid fa-dollar-sign"></i>
                 <h1 class="text-4xl text-center flex">Ahorr<span class="text-[#D3375C]">ADA</span>s</h1>
@@ -151,7 +151,7 @@
         </div>
         <!--Operaciones -->
         <section
-            class="2xl:w-2/4 xl:w-[750px] lg:w-[720px] w-4/5 lg:ml-6 ml-0 lg:mt-0 mt-6 p-5 h-fit rounded border-r-8 border-b-8 border-t-2 border-l-2 border-[#D3375C] shadow-xl shadow-gray-400">
+            class="2xl:w-2/4 xl:w-[750px] lg:w-[720px] w-4/5 lg:ml-5 ml-0 lg:mt-0 mt-6 xl:p-5 p-4 h-fit rounded border-r-8 border-b-8 border-t-2 border-l-2 border-[#D3375C] shadow-xl shadow-gray-400">
             <div class="flex justify-between md:flex-row flex-col">
                 <h3 class="text-2xl font-semibold">Operaciones</h3>
                 <button name="newOperation"
@@ -355,13 +355,29 @@
                     <h3 class="mb-7 text-2xl font-semibold underline underline-offset-4 decoration-[#F2002c]">Totales
                         por categorías</h3>
                     <div class="overflow-auto">
-                        <table class="sm:w-full text-slate-800">
+                        <table class="w-full text-slate-800">
                             <thead>
-                                <tr class="flex justify-between">
-                                    <th class="font-medium">Categoria</th>
-                                    <th class="ml-10 sm:ml-0 font-medium">Ganancias</th>
-                                    <th class="ml-10 sm:ml-0 font-medium">Gastos</th>
-                                    <th class="ml-10 sm:ml-0 font-medium">Balance</th>
+                                <tr class="w:full flex justify-between">
+                                    <th class="">
+                                        <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-start">
+                                            <p class="sm:text-base text-sm">Categoria</p> 
+                                        </div>
+                                    </th>
+                                    <th class="font-medium">
+                                        <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                                            <p class="sm:text-base text-sm">Ganancias</p> 
+                                        </div>
+                                    </th>
+                                    <th class="font-medium">
+                                        <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                                            <p class="sm:text-base text-sm">Gastos</p> 
+                                        </div>
+                                    </th>
+                                    <th class="font-medium">
+                                        <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                                            <p class="sm:text-base text-sm">Balance</p> 
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="tableCategoriesReports">
@@ -374,13 +390,29 @@
                     <h3 class="mb-7 text-2xl font-semibold underline underline-offset-4 decoration-[#F2002c]">Totales
                         por mes</h3>
                     <div class="overflow-auto">
-                        <table class="sm:w-full text-slate-800">
+                        <table class="w-full text-slate-800">
                             <thead>
-                                <tr class="flex justify-between">
-                                    <th class="font-medium">Mes</th>
-                                    <th class="ml-20 sm:ml-10 font-medium">Ganancias</th>
-                                    <th class="ml-10 sm:ml-0 font-medium">Gastos</th>
-                                    <th class="ml-10 sm:ml-0 font-medium">Balance</th>
+                                <tr class="w:full flex justify-between">
+                                    <th class="">
+                                        <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-start">
+                                            <p class="sm:text-base text-sm">Mes</p> 
+                                        </div>
+                                    </th>
+                                    <th class="font-medium">
+                                        <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                                            <p class="sm:text-base text-sm">Ganancias</p> 
+                                        </div>
+                                    </th>
+                                    <th class="font-medium">
+                                        <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                                            <p class="sm:text-base text-sm">Gastos</p> 
+                                        </div>
+                                    </th>
+                                    <th class="font-medium">
+                                        <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                                            <p class="sm:text-base text-sm">Balance</p> 
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="tableMonthReports">

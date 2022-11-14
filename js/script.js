@@ -497,31 +497,31 @@ const addNewOperation = (data) => {
             tr.classList.add(...cls)
             tr.innerHTML += `
             <th class="overflow-y-auto overflow-x-hidden">
-            <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate">
-                <p>${description}</p>
-            </div>
+                <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate">
+                    <p>${description}</p>
+                </div>
             </th>
             <th class="">
-            <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate">
-                <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
-            </div>
+                <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate">
+                    <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
+                </div>
             </th>
             <th class="">
-            <div class="w-24 lg:min-w-[9rem] font-light text-start">
-                <p>${formatDate(date)}</p>
-            </div>
+                <div class="w-24 lg:min-w-[9rem] font-light text-start">
+                    <p>${formatDate(date)}</p>
+                </div>
             </th>
             <th class="">
-            <div class="w-20 lg:min-w-[8rem] font-medium text-start">
-                <p>${amountColorChange(amount, type)}</p>
-            </div>
+                <div class="w-20 lg:min-w-[8rem] font-medium text-start">
+                    <p>${amountColorChange(amount, type)}</p>
+                </div>
             </th>
             <th class="">
-            <div class="w-30 md:ml-4 lg:ml-0 flex 2xl:flex-row lg:flex-col md:flex-row text-blue-800 py-1 text-start">
-                <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
-                <button class="btnOperationRemove 2xl:ml-4 lg:ml-0 md:ml-4 2xl:mt-0 lg:mt-2 md:mt-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
-            </div>
-        </th> `
+                <div class="w-30 md:ml-4 lg:ml-0 flex 2xl:flex-row lg:flex-col md:flex-row text-blue-800 py-1 text-start">
+                    <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
+                    <button class="btnOperationRemove 2xl:ml-4 lg:ml-0 md:ml-4 2xl:mt-0 lg:mt-2 md:mt-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+                </div>
+            </th> `
 
             $(".tableBody").append(tr)
 
@@ -529,18 +529,18 @@ const addNewOperation = (data) => {
             const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-between"]
             trResponsive.classList.add(...responsiveCls)
             trResponsive.innerHTML += `
-        <th class="w-20 sm:w-56 truncate">
-            <div class="font-medium text-start">
-                <p>${description}</p>
-            </div>
-            <div class="font-light text-start">
-                <p>${formatDate(date)}</p>
-            </div>
-            <div class="font-medium text-start">
-                <p>${amountColorChange(amount, type)}</p>
-            </div>
-        </th>
-        <th class="sm:ml-5 ml-3 truncate">
+            <th class="w-20 sm:w-56  max-[300px]:text-sm">
+                <div class="font-medium text-start">
+                    <p>${description}</p>
+                </div>
+                <div class="font-light text-start">
+                    <p>${formatDate(date)}</p>
+                </div>
+                <div class="font-medium text-start">
+                    <p>${amountColorChange(amount, type)}</p>
+                </div>
+            </th>
+            <th class="sm:ml-5 ml-4 mt-1 truncate">
                 <div>
                     <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-sm">${nameCategory(category)}</span>
                 </div>
@@ -552,7 +552,7 @@ const addNewOperation = (data) => {
                         <i class="fa-solid fa-trash-can"></i>
                     </a>
                 </div>
-        </th> `
+            </th> `
             $(".tableBody").append(trResponsive)
         })
 
@@ -606,7 +606,7 @@ $editOperationBtn.addEventListener("click", (e) => {
         enoughOperations()
         addAndRemoveHidden($editOperationSection, $mainContainer)
     }
-    
+
 })
 
 
@@ -896,23 +896,55 @@ const tableReports = () => {
     for (const obj of Object.keys(categoriesTotalBalance)) {
         const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
         $tableCategoriesReports.innerHTML += `
-            <tr class="flex justify-between">
-                <th class="font-medium">${nameCategory(obj)}</th>
-                <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
-                <th class="ml-10 font-medium text-red-500">-$${gasto}</th>
-                <th class="ml-10 font-medium">${symbolBalance(balance)}</th>
+            <tr class="w:full flex justify-between">
+                <th class="font-medium">
+                    <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-start">
+                        <p class="sm:text-base text-sm">${nameCategory(obj)}</p>
+                    </div>
+                </th>
+                <th class="text-green-500">
+                    <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">+$${ganancia}</p>
+                    </div>
+                </th>
+                <th class="text-red-500">
+                    <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">-$${gasto}</p>
+                    </div>
+                </th>
+                <th class="font-medium">
+                    <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
+                    </div>
+                </th>
             </tr>
         `
     }
     for (const obj of Object.keys(dateTotalBalance)) {
         const { ganancia, gasto, balance } = dateTotalBalance[obj]
         $tableMonthReports.innerHTML += `
-            <tr class="flex justify-between">
-                <th class="font-medium">${obj}</th>
-                <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
-                <th class="ml-10 font-medium text-red-500">-$${gasto}</th>
-                <th class="ml-10 font-medium">${symbolBalance(balance)}</th>
-            </tr>
+        <tr class="w:full flex justify-between">
+            <th class="font-medium">
+                <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-start">
+                    <p class="sm:text-base text-sm">${obj}</p>
+                </div>
+            </th>
+            <th class="text-green-500">
+                <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">+$${ganancia}</p>
+                </div>
+            </th>
+            <th class="text-red-500">
+                <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">-$${gasto}</p>
+                </div>
+            </th>
+            <th class="font-medium">
+                <div class="w-30 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
+                </div>
+            </th>
+        </tr>
         `
     }
 }
@@ -1042,7 +1074,7 @@ const navigationConditional = (e) => {
         if (e.target.parentElement.name) {
             const tabName = e.target.parentElement.name
             chooseTab(tabName)
-        } 
+        }
         else if (e.target.parentElement.parentElement.name) {
             const tabName = e.target.parentElement.parentElement.name
             chooseTab(tabName)
