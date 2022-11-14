@@ -64,26 +64,6 @@ const $categoryMaxBalance = $(".categoryMaxBalance")
 const $maxProfitMonth = $(".maxProfitMonth")
 const $maxLossMonth = $(".maxLossMonth")
 
-// Id Random
-const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
-const idStringNumber = "1234567890"
-
-const generateId = () => {
-    const arrayOne = []
-    const arrayTwo = []
-    for (let i = 0; i < 3; i++) {
-        const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
-        const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
-        arrayOne.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
-    }
-    for (let i = 0; i < 3; i++) {
-        const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
-        const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
-        arrayTwo.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
-    }
-    return `${arrayOne.join("")}-${arrayTwo.join("")}`
-}
-
 // Global Helper Functions
 
 const filter = (array, propiedad, valor) => { return array.filter(obj => obj[propiedad] !== valor) }
@@ -110,6 +90,26 @@ const emptyOperationsAndBalance = () => {
     $balanceProfit.innerText = `+$0`
     $balanceLoss.innerText = `-$0`
     $balanceTotal.innerText = `$0`
+}
+
+// Id Random
+const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
+const idStringNumber = "1234567890"
+
+const generateId = () => {
+    const arrayOne = []
+    const arrayTwo = []
+    for (let i = 0; i < 3; i++) {
+        const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
+        const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
+        arrayOne.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
+    }
+    for (let i = 0; i < 3; i++) {
+        const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
+        const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
+        arrayTwo.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
+    }
+    return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
 // Objects of categories and operations
