@@ -348,7 +348,7 @@ $btnAddCategories.addEventListener("click", (e) => {
     functionsEventsAddCategories()
 })
 
-$addCategoriesInput.addEventListener("keypress", (e) => {
+$addCategoriesInput.addEventListener("keydown", (e) => {
     if (e.keyCode == "13") {
         e.preventDefault()
         functionsEventsAddCategories()
@@ -366,7 +366,7 @@ $editCategoryBtn.addEventListener("click", (e) => {
     functionsEventsEditCategories()
 })
 
-$editCategoryInput.addEventListener("keypress", (e) => {
+$editCategoryInput.addEventListener("keydown", (e) => {
     if (e.keyCode == "13") {
         e.preventDefault()
         functionsEventsEditCategories()
