@@ -92,7 +92,7 @@ const find = (array, propiedad, valor) => { return array.find(obj => obj[propied
 const setItemLocalStorage = (storage) => localStorage.setItem("storage", JSON.stringify(storage))
 const getItemLocalStorage = () => JSON.parse(localStorage.getItem("storage"))
 
-const cleanHTML = (document) => document.innerHTML = ""
+const cleanContainer = (selector) => selector.innerHTML = ""
 
 const operationsEmptyOrNot = () => {
     const operation = dataLocalStorage("operations")
@@ -182,7 +182,7 @@ const categoryAddAlert = () => {
 }
 
 const addCategoryToTable = () => {
-    cleanHTML($tableCategories)
+    cleanContainer($tableCategories)
     generateCategories(dataLocalStorage("categories"))
 }
 
@@ -205,7 +205,7 @@ const editCategoriesLocal = (id) => {
 
 
 const showFormCategoryEdit = (id) => {
-    cleanHTML($tableCategories)
+    cleanContainer($tableCategories)
     addAndRemoveHidden($categories, $editCategory)
     const chosenCategory = find(dataLocalStorage("categories"), "id", id)
     $editCategoryInput.value = chosenCategory.name
@@ -252,10 +252,30 @@ const operationRemoveByFilterCategory = (id) => {
 }
 
 const removeCategory = (id) => {
-    cleanHTML($tableCategories)
+    cleanContainer($tableCategories)
     generateCategories(filter(dataLocalStorage("categories"), "id", id))
     const filteredByRemovedCategory = operationRemoveByFilterCategory(id)
     if (filteredByRemovedCategory.length !== 0) addNewOperation(filteredByRemovedCategory)
+}
+
+// Functions for events
+
+const functionsEventsAddCategories = () => {
+    categoryAddAlert()
+    addCategoryToTable()
+    selectCategories()
+    $formAddCategories.reset()
+    enoughOperations()
+}
+
+const functionsEventsEditCategories = () => {
+    const categoryId = $editCategoryBtn.getAttribute("data-id")
+    addAndRemoveHidden($editCategory, $categories)
+    generateCategories(editCategoryDom(categoryId))
+    editCategoriesLocal(categoryId)
+    addNewOperation(dataLocalStorage("operations"))
+    selectCategories()
+    enoughOperations()
 }
 
 
@@ -269,23 +289,17 @@ const nameCategory = (category) => {
     }
 }
 
-const selectCategoriesOperation = () => {
-    cleanHTML($categorySelectNewOperation)
-    cleanHTML($editSelectCategory)
+const selectCategories = () => {
+    cleanContainer($categorySelectNewOperation)
+    cleanContainer($editSelectCategory)
+    cleanContainer($categoryFilter)
+    $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
     for (const { name, id } of dataLocalStorage("categories")) {
         $categorySelectNewOperation.innerHTML += `<option value="${id}">${name}</option>`
         $editSelectCategory.innerHTML += `<option value="${id}">${name}</option>`
-    }
-}
-
-const selectCategoriesFilter = () => {
-    cleanHTML($categoryFilter)
-    $categoryFilter.innerHTML = `<option value="Todas">Todas</option>`
-    for (const { name, id } of dataLocalStorage("categories")) {
         $categoryFilter.innerHTML += `<option value="${id}">${name}</option>`
     }
 }
-
 const generateCategories = (categories) => {
     for (const { id, name } of categories) {
         const div = document.createElement("div")
@@ -297,7 +311,7 @@ const generateCategories = (categories) => {
         </div>
         <div class="text-blue-800 ml-2">
             <button class="btnEdit cursor-pointer hover:text-black text-xs" data-id="${id}">Editar</button>
-            <button class="btnRemove ml-4 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+            <button class="btnRemove ml-4 max-[300px]:ml-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
         </div>
         `
         $tableCategories.append(div)
@@ -318,8 +332,7 @@ const generateCategories = (categories) => {
         btn.addEventListener("click", () => {
             removeCategory(categoryId)
             removeCategoryLocal(categoryId)
-            selectCategoriesOperation()
-            selectCategoriesFilter()
+            selectCategories()
             operationsEmptyOrNot()
             enoughOperations()
             balanceFunction(dataLocalStorage("operations"))
@@ -327,32 +340,37 @@ const generateCategories = (categories) => {
     }
 }
 
+
 // Events categories
 
 $btnAddCategories.addEventListener("click", (e) => {
     e.preventDefault()
-    categoryAddAlert()
-    addCategoryToTable()
-    selectCategoriesOperation()
-    selectCategoriesFilter()
-    $formAddCategories.reset()
-    enoughOperations()
+    functionsEventsAddCategories()
 })
 
-$cancelEditCategoryBtn.addEventListener("click", () => {
+$addCategoriesInput.addEventListener("keypress", (e) => {
+    e.preventDefault()
+    if (e.keyCode == "13") {
+        functionsEventsAddCategories()
+    }
+})
+
+$cancelEditCategoryBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     addAndRemoveHidden($editCategory, $categories)
     generateCategories(dataLocalStorage("categories"))
 })
 
-$editCategoryBtn.addEventListener("click", () => {
-    const categoryId = $editCategoryBtn.getAttribute("data-id")
-    addAndRemoveHidden($editCategory, $categories)
-    generateCategories(editCategoryDom(categoryId))
-    editCategoriesLocal(categoryId)
-    addNewOperation(dataLocalStorage("operations"))
-    selectCategoriesOperation()
-    selectCategoriesFilter()
-    enoughOperations()
+$editCategoryBtn.addEventListener("click", (e) => {
+    e.preventDefault()
+    functionsEventsEditCategories()
+})
+
+$editCategoryInput.addEventListener("keypress", (e) => {
+    e.preventDefault()
+    if (e.keyCode == "13") {
+        functionsEventsEditCategories()
+    }
 })
 
 
@@ -364,6 +382,8 @@ $editCategoryBtn.addEventListener("click", () => {
 const newOperationEmpty = () => {
     $("#description").value = ""
     $("#amount").value = ""
+    $("#selectType").value = "gasto"
+    $("#selectCategory").selectedIndex = 0;
     $("#date").valueAsDate = new Date()
 }
 
@@ -468,7 +488,7 @@ const amountColorChange = (amount, type) => {
 }
 
 const addNewOperation = (data) => {
-    cleanHTML($(".tableBody"))
+    cleanContainer($(".tableBody"))
     const localOperations = data
     if (localOperations.length !== 0) {
         localOperations.map(({ id, description, amount, type, category, date }) => {
@@ -477,31 +497,31 @@ const addNewOperation = (data) => {
             tr.classList.add(...cls)
             tr.innerHTML += `
             <th class="overflow-y-auto overflow-x-hidden">
-            <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate">
-                <p>${description}</p>
-            </div>
+                <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate">
+                    <p>${description}</p>
+                </div>
             </th>
             <th class="">
-            <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate">
-                <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
-            </div>
+                <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate">
+                    <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
+                </div>
             </th>
             <th class="">
-            <div class="w-24 lg:min-w-[9rem] font-light text-start">
-                <p>${formatDate(date)}</p>
-            </div>
+                <div class="w-24 lg:min-w-[9rem] font-light text-start">
+                    <p>${formatDate(date)}</p>
+                </div>
             </th>
             <th class="">
-            <div class="w-20 lg:min-w-[8rem] font-medium text-start">
-                <p>${amountColorChange(amount, type)}</p>
-            </div>
+                <div class="w-20 lg:min-w-[8rem] font-medium text-start">
+                    <p>${amountColorChange(amount, type)}</p>
+                </div>
             </th>
             <th class="">
-            <div class="w-30 md:ml-4 lg:ml-0 flex 2xl:flex-row lg:flex-col md:flex-row text-blue-800 py-1 text-start">
-                <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
-                <button class="btnOperationRemove 2xl:ml-4 lg:ml-0 md:ml-4 2xl:mt-0 lg:mt-2 md:mt-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
-            </div>
-        </th> `
+                <div class="w-30 md:ml-4 lg:ml-0 flex 2xl:flex-row lg:flex-col md:flex-row text-blue-800 py-1 text-start">
+                    <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
+                    <button class="btnOperationRemove 2xl:ml-4 lg:ml-0 md:ml-4 2xl:mt-0 lg:mt-2 md:mt-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
+                </div>
+            </th> `
 
             $(".tableBody").append(tr)
 
@@ -509,18 +529,18 @@ const addNewOperation = (data) => {
             const responsiveCls = ["md:hidden", "mt-3", "w-11/12", "sm:w-4/5", "flex", "justify-between"]
             trResponsive.classList.add(...responsiveCls)
             trResponsive.innerHTML += `
-        <th class="w-20 sm:w-56 truncate">
-            <div class="font-medium text-start">
-                <p>${description}</p>
-            </div>
-            <div class="font-light text-start">
-                <p>${formatDate(date)}</p>
-            </div>
-            <div class="font-medium text-start">
-                <p>${amountColorChange(amount, type)}</p>
-            </div>
-        </th>
-        <th class="sm:ml-5 ml-3 truncate">
+            <th class="w-20 sm:w-56  max-[300px]:text-sm">
+                <div class="font-medium text-start">
+                    <p>${description}</p>
+                </div>
+                <div class="font-light text-start">
+                    <p>${formatDate(date)}</p>
+                </div>
+                <div class="font-medium text-start">
+                    <p>${amountColorChange(amount, type)}</p>
+                </div>
+            </th>
+            <th class="sm:ml-5 ml-4 mt-1 truncate">
                 <div>
                     <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-sm">${nameCategory(category)}</span>
                 </div>
@@ -532,7 +552,7 @@ const addNewOperation = (data) => {
                         <i class="fa-solid fa-trash-can"></i>
                     </a>
                 </div>
-        </th> `
+            </th> `
             $(".tableBody").append(trResponsive)
         })
 
@@ -571,21 +591,22 @@ $addNewOperationBtn.addEventListener("click", (e) => {
         saveNewOperation()
         filterFunction(dataLocalStorage("operations"))
         operationsEmptyOrNot()
-        selectCategoriesOperation()
         filterType(dataLocalStorage("operations"))
         enoughOperations()
         addAndRemoveHidden($sectionNewOperation, $mainContainer)
     }
 })
 
-$editOperationBtn.addEventListener("click", () => {
+$editOperationBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     const operationId = $editOperationBtn.getAttribute("data-id")
-    if(operationAlert($("#editDescription"), $("#editAmount"))){
+    if (operationAlert($("#editDescription"), $("#editAmount"))) {
         editOperationLocal(operationId)
         filterFunction(dataLocalStorage("operations"))
         enoughOperations()
         addAndRemoveHidden($editOperationSection, $mainContainer)
     }
+
 })
 
 
@@ -869,33 +890,6 @@ const symbolBalance = (balance) => {
     }
 }
 
-const tableReports = () => {
-    cleanHTML($tableCategoriesReports)
-    cleanHTML($tableMonthReports)
-    for (const obj of Object.keys(categoriesTotalBalance)) {
-        const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
-        $tableCategoriesReports.innerHTML += `
-            <tr class="flex justify-between">
-                <th class="font-medium">${nameCategory(obj)}</th>
-                <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
-                <th class="ml-10 font-medium text-red-500">-$${gasto}</th>
-                <th class="ml-10 font-medium">${symbolBalance(balance)}</th>
-            </tr>
-        `
-    }
-    for (const obj of Object.keys(dateTotalBalance)) {
-        const { ganancia, gasto, balance } = dateTotalBalance[obj]
-        $tableMonthReports.innerHTML += `
-            <tr class="flex justify-between">
-                <th class="font-medium">${obj}</th>
-                <th class="ml-10 font-medium text-green-500">+$${ganancia}</th>
-                <th class="ml-10 font-medium text-red-500">-$${gasto}</th>
-                <th class="ml-10 font-medium">${symbolBalance(balance)}</th>
-            </tr>
-        `
-    }
-}
-
 const summaryReports = () => {
     totalBalanceChange()
     tableReports()
@@ -972,13 +966,96 @@ const summaryReports = () => {
     `
 }
 
+const tableReports = () => {
+    cleanContainer($tableCategoriesReports)
+    cleanContainer($tableMonthReports)
+    for (const obj of Object.keys(categoriesTotalBalance)) {
+        const { ganancia, gasto, balance } = categoriesTotalBalance[obj]
+        $tableCategoriesReports.innerHTML += `
+            <tr class="w:full flex justify-between">
+                <th class="font-medium">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-start">
+                        <p class="sm:text-base text-sm">${nameCategory(obj)}</p>
+                    </div>
+                </th>
+                <th class="text-green-500">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">+$${ganancia}</p>
+                    </div>
+                </th>
+                <th class="text-red-500">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">-$${gasto}</p>
+                    </div>
+                </th>
+                <th class="font-medium">
+                    <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                        <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
+                    </div>
+                </th>
+            </tr>
+        `
+    }
+    for (const obj of Object.keys(dateTotalBalance)) {
+        const { ganancia, gasto, balance } = dateTotalBalance[obj]
+        $tableMonthReports.innerHTML += `
+        <tr class="w:full flex justify-between">
+            <th class="font-medium">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-start">
+                    <p class="sm:text-base text-sm">${obj}</p>
+                </div>
+            </th>
+            <th class="text-green-500">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">+$${ganancia}</p>
+                </div>
+            </th>
+            <th class="text-red-500">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">-$${gasto}</p>
+                </div>
+            </th>
+            <th class="font-medium">
+                <div class="w-20 lg:min-w-[9rem] mr-1 font-medium text-end">
+                    <p class="sm:text-base text-sm">${symbolBalance(balance)}</p>
+                </div>
+            </th>
+        </tr>
+        `
+    }
+}
+
+
+
+const restartWebAlert = () => {
+    return confirm(`Está por eliminar todas las operaciones ingresadas hasta el momento ¿Desea continuar?`)
+
+}
+
+// Event
+
+$(".restartWeb").addEventListener("click", (e) => {
+    if (restartWebAlert()) {
+        const operations = []
+        const data = { categories, operations }
+        if (localStorage.getItem("storage")) {
+            setItemLocalStorage(data)
+        }
+        const arrayEmpty = []
+        addNewOperation(arrayEmpty)
+        cleanContainer($tableCategories)
+        generateCategories(categories)
+        selectCategories()
+        enoughOperations()
+    }
+})
+
 // Event OnLoad
 
 window.addEventListener("load", () => {
     generateCategories(categories)
     addCategoryToTable()
-    selectCategoriesOperation()
-    selectCategoriesFilter()
+    selectCategories()
     filterDefaultDate()
     filterFunction()
     if (dataLocalStorage("operations").length !== 0) {
@@ -997,8 +1074,14 @@ const navigationConditional = (e) => {
         chooseTab(tabName)
     }
     else {
-        const tabName = e.target.parentElement.name
-        chooseTab(tabName)
+        if (e.target.parentElement.name) {
+            const tabName = e.target.parentElement.name
+            chooseTab(tabName)
+        }
+        else if (e.target.parentElement.parentElement.name) {
+            const tabName = e.target.parentElement.parentElement.name
+            chooseTab(tabName)
+        }
     }
 }
 
@@ -1033,6 +1116,8 @@ for (const tab of arrOfTabs) {
 for (const tab of arrOfTabsBurger) {
     tab.addEventListener("click", (e) => {
         e.preventDefault()
+        $navbarMenu.classList.add("hidden")
+        addAndRemoveHidden($xmark, $navbarBurguer)
         navigationConditional(e)
     })
 }
@@ -1069,11 +1154,13 @@ $xmark.addEventListener("click", () => {
     addAndRemoveHidden($xmark, $navbarBurguer)
 })
 
-$cancelNewOperationBtn.addEventListener("click", () => {
+$cancelNewOperationBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     addAndRemoveHidden($sectionNewOperation, $mainContainer)
 })
 
-$cancelEditOperationBtn.addEventListener("click", () => {
+$cancelEditOperationBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     addAndRemoveHidden($editOperationSection, $mainContainer)
 })
 
