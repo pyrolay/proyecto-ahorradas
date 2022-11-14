@@ -169,15 +169,15 @@ const categoryAddLocalStorage = () => {
     setItemLocalStorage(storage)
 }
 
-const categoryAddAlert = () => {
-    if ($addCategoriesInput.value === "") {
+const categoryAlert = (input) => {
+    if (input.value === "") {
         return alert(`Por favor ingrese el nombre de la categoría que desea agregar`)
     }
-    else if ($addCategoriesInput.value.length > 20) {
+    else if (input.value.length > 20) {
         return alert(`Ingrese un nombre de categoría mas corto`)
     }
     else {
-        categoryAddLocalStorage()
+        return true
     }
 }
 
@@ -261,11 +261,13 @@ const removeCategory = (id) => {
 // Functions for events
 
 const functionsEventsAddCategories = () => {
-    categoryAddAlert()
-    addCategoryToTable()
-    selectCategories()
-    $formAddCategories.reset()
-    enoughOperations()
+    if (categoryAlert($addCategoriesInput)) {
+        categoryAddLocalStorage()
+        addCategoryToTable()
+        selectCategories()
+        $formAddCategories.reset()
+        enoughOperations()
+    }
 }
 
 const functionsEventsEditCategories = () => {
@@ -363,13 +365,17 @@ $cancelEditCategoryBtn.addEventListener("click", (e) => {
 
 $editCategoryBtn.addEventListener("click", (e) => {
     e.preventDefault()
-    functionsEventsEditCategories()
+    if (categoryAlert($editCategoryInput)) {
+        functionsEventsEditCategories()
+    }
 })
 
 $editCategoryInput.addEventListener("keydown", (e) => {
     if (e.keyCode == "13") {
         e.preventDefault()
-        functionsEventsEditCategories()
+        if (categoryAlert($editCategoryInput)) {
+            functionsEventsEditCategories()
+        }
     }
 })
 
