@@ -31,7 +31,7 @@ El controlador de gastos, es una aplicación que le permite al usuario/a adminis
      - Totales por categoría: se muestra una tabla con las distintas categorías y el total de sus respectivas ganancias, gastos y balances.
      - Totales por mes: similar a la tabla anterior, pero muestra las ganancias, gastos y balances por mes.    
          
-<kbd><img src="https://user-images.githubusercontent.com/107443979/200855269-715c5161-12b6-4438-8920-3d9cf6becd22.png" alt="categorías" width="450" heigth="325"/></kbd>
+<kbd><img src="https://user-images.githubusercontent.com/107443979/201982674-e5e4f4e2-94de-434e-9bc5-79b711b66ad2.png" alt="categorías" width="450" heigth="325"/></kbd>
 
 ## Estado del proyecto 
 ☑️ Proyecto finalizado

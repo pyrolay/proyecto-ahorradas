@@ -64,26 +64,6 @@ const $categoryMaxBalance = $(".categoryMaxBalance")
 const $maxProfitMonth = $(".maxProfitMonth")
 const $maxLossMonth = $(".maxLossMonth")
 
-// Id Random
-const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
-const idStringNumber = "1234567890"
-
-const generateId = () => {
-    const arrayOne = []
-    const arrayTwo = []
-    for (let i = 0; i < 3; i++) {
-        const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
-        const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
-        arrayOne.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
-    }
-    for (let i = 0; i < 3; i++) {
-        const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
-        const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
-        arrayTwo.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
-    }
-    return `${arrayOne.join("")}-${arrayTwo.join("")}`
-}
-
 // Global Helper Functions
 
 const filter = (array, propiedad, valor) => { return array.filter(obj => obj[propiedad] !== valor) }
@@ -110,6 +90,26 @@ const emptyOperationsAndBalance = () => {
     $balanceProfit.innerText = `+$0`
     $balanceLoss.innerText = `-$0`
     $balanceTotal.innerText = `$0`
+}
+
+// Id Random
+const idStringLetters = "abcdefghijklmnopqrstuvwxyz"
+const idStringNumber = "1234567890"
+
+const generateId = () => {
+    const arrayOne = []
+    const arrayTwo = []
+    for (let i = 0; i < 3; i++) {
+        const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
+        const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
+        arrayOne.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
+    }
+    for (let i = 0; i < 3; i++) {
+        const randomIdLetters = Math.floor(Math.random() * idStringLetters.length)
+        const randomIdNumber = Math.floor(Math.random() * idStringNumber.length)
+        arrayTwo.push(idStringLetters[randomIdLetters] + idStringNumber[randomIdNumber])
+    }
+    return `${arrayOne.join("")}-${arrayTwo.join("")}`
 }
 
 // Objects of categories and operations
@@ -302,6 +302,11 @@ const selectCategories = () => {
         $categoryFilter.innerHTML += `<option value="${id}">${name}</option>`
     }
 }
+
+const deleteCategory = () => {
+    return confirm(`Está por eliminar una categoria. Al eliminarla, se borrarán todas las operaciones ingresadas de dicha categoria ¿Desea continuar?`)
+}
+
 const generateCategories = (categories) => {
     for (const { id, name } of categories) {
         const div = document.createElement("div")
@@ -332,12 +337,14 @@ const generateCategories = (categories) => {
     for (const btn of btnRemove) {
         const categoryId = btn.getAttribute("data-id")
         btn.addEventListener("click", () => {
-            removeCategory(categoryId)
-            removeCategoryLocal(categoryId)
-            selectCategories()
-            operationsEmptyOrNot()
-            enoughOperations()
-            balanceFunction(dataLocalStorage("operations"))
+            if (deleteCategory()) {
+                removeCategory(categoryId)
+                removeCategoryLocal(categoryId)
+                selectCategories()
+                operationsEmptyOrNot()
+                enoughOperations()
+                balanceFunction(dataLocalStorage("operations"))
+            }
         })
     }
 }
@@ -493,6 +500,10 @@ const amountColorChange = (amount, type) => {
     else return `<p class="text-green-500">+$${amount}</p>`
 }
 
+const deleteOperation = () => {
+    return confirm(`Está por eliminar una operación ¿Desea continuar?`)
+}
+
 const addNewOperation = (data) => {
     cleanContainer($(".tableBody"))
     const localOperations = data
@@ -503,27 +514,27 @@ const addNewOperation = (data) => {
             tr.classList.add(...cls)
             tr.innerHTML += `
             <th class="overflow-y-auto overflow-x-hidden">
-                <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate">
+                <div class="w-36 lg:min-w-[10rem] mr-5 font-medium text-start truncate h-7">
                     <p>${description}</p>
                 </div>
             </th>
             <th class="">
-                <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate">
+                <div class="w-24 lg:min-w-[9rem] ml-2 text-start truncate h-7">
                     <span class="bg-[#f8b6ce] px-2 py-1 rounded-md text-[#ab062d] text-xs">${nameCategory(category)}</span>
                 </div>
             </th>
             <th class="">
-                <div class="w-24 lg:min-w-[9rem] font-light text-start">
+                <div class="w-24 lg:min-w-[9rem] font-light text-start h-7">
                     <p>${formatDate(date)}</p>
                 </div>
             </th>
             <th class="">
-                <div class="w-20 lg:min-w-[8rem] font-medium text-start">
+                <div class="w-20 lg:min-w-[8rem] font-medium text-start h-7">
                     <p>${amountColorChange(amount, type)}</p>
                 </div>
             </th>
             <th class="">
-                <div class="w-30 md:ml-4 lg:ml-0 flex 2xl:flex-row lg:flex-col md:flex-row text-blue-800 py-1 text-start">
+                <div class="w-30 md:ml-4 lg:ml-0 flex 2xl:flex-row lg:flex-col md:flex-row text-blue-800 py-1 text-start 2xl:mb-2 mb-0">
                     <button class="btnOperationEdit cursor-pointer hover:text-black text-xs flex" data-id="${id}">Editar</button>
                     <button class="btnOperationRemove 2xl:ml-4 lg:ml-0 md:ml-4 2xl:mt-0 lg:mt-2 md:mt-0 cursor-pointer hover:text-black text-xs" data-id="${id}">Eliminar</button>
                 </div>
@@ -578,11 +589,13 @@ const addNewOperation = (data) => {
             const operationId = btn.getAttribute("data-id")
             btn.addEventListener("click", (e) => {
                 e.preventDefault()
-                removeOperationLocal(operationId)
-                addNewOperation(filter(dataLocalStorage("operations"), "id", operationId))
-                operationsEmptyOrNot()
-                filterFunction()
-                enoughOperations()
+                if (deleteOperation()) {
+                    removeOperationLocal(operationId)
+                    addNewOperation(filter(dataLocalStorage("operations"), "id", operationId))
+                    operationsEmptyOrNot()
+                    filterFunction()
+                    enoughOperations()
+                }
             })
         }
     }
@@ -1035,7 +1048,6 @@ const tableReports = () => {
 
 const restartWebAlert = () => {
     return confirm(`Está por eliminar todas las operaciones ingresadas hasta el momento ¿Desea continuar?`)
-
 }
 
 // Event
