@@ -4,7 +4,7 @@
 ## Descripción del proyecto 📌
 El controlador de gastos, es una aplicación que le permite al usuario/a administrar de forma sencilla sus finanzas personales, conociendo cuales son sus ganancias y gastos diarios y mensuales.
 
-**Puede usarlo [aquí](https://pyrolay.github.io/proyecto-ahorradas/)!** 
+**¡Puede usarlo [aquí](https://pyrolay.github.io/proyecto-ahorradas/)!** 
 
 ## Funcionalidad del proyecto ⚙️
 ### La aplicación cuenta en total con tres secciones principales    
